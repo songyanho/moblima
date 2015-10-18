@@ -7,9 +7,9 @@ public class Cineplex {
 	private int cinemaNum;
 	
 	public Cineplex(int cineplex_Id, String cineplex_Name, int cinemaNum) {
-		cineplexId = cineplex_Id;
-		name = cineplex_Name;
-		cinema = new Cinema[cinemaNum];
+		this.cineplexId = cineplex_Id;
+		this.name = cineplex_Name;
+		this.cinema = new Cinema[cinemaNum];
 		int i;
 		for (i = 0; i < cinemaNum; i++) {
 			cinema[i] = new Cinema();
@@ -31,12 +31,19 @@ public class Cineplex {
 		}	
 	}
 	
+	public int getCinemaNum() {
+		return cinemaNum;
+	}
+	
 	public void setName(String cineplex_Name) {
-		name = cineplex_Name;
+		this.name = cineplex_Name;
 	}
 	
 	public void setId(int cineplex_Id) {
-		cineplexId = cineplex_Id;
+		this.cineplexId = cineplex_Id;
 	}
 
+	private void setCinemaNum(int num) {
+		this.cinemaNum = num;
+	}
 }

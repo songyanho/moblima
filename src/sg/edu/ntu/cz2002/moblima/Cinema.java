@@ -17,10 +17,10 @@ public class Cinema {
 		String cinema_Class = sc.nextLine();
 		System.out.println("Enter cinema number of halls:");
 		int hallNum = sc.nextInt();
-		name = cinema_Name;
-		cinemaId = cinema_Id;
-		cinemaClass = cinema_Class;
-		hall = hallNum;
+		this.name = cinema_Name;
+		this.cinemaId = cinema_Id;
+		this.cinemaClass = cinema_Class;
+		this.hall = hallNum;
 	}
 	
 	public Cinema(String cinema_Name, int hallNum, String cinema_Class) {
@@ -46,18 +46,18 @@ public class Cinema {
 	}
 	
 	public void setName(String cinema_Name) {
-		name = cinema_Name;
+		this.name = cinema_Name;
 	}
 	
 	public void setId(int cinema_Id) {
-		cinemaId = cinema_Id;
+		this.cinemaId = cinema_Id;
 	}
 	
 	public void setClass(String cinema_Class) {
-		cinemaClass = cinema_Class;
+		this.cinemaClass = cinema_Class;
 	}
 	
 	public void setHall(int number) {
-		hall = number;
+		this.hall = number;
 	}
 }
