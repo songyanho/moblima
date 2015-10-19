@@ -1,6 +1,7 @@
 # Commit Method #
 
 After you have made changes in your local repository, please follow the steps below to commit correctly
+
 1. First commit in your own project (Only commit, not commit and push)
 
 2. Then pull from upstream
