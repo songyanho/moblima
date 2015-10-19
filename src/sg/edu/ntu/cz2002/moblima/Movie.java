@@ -10,7 +10,7 @@ public class Movie {
 	private double rating;
 	private int movieId;
 	private Review[] review;
-	private final Max = 99;
+	private final int Max = 99;
 	
 	public Movie() {
 		Scanner sc = new Scanner(System.in);
@@ -24,7 +24,7 @@ public class Movie {
 		this.status = sc.nextInt();
 		
 		System.out.print("Sypnosis:");
-		this.synopsis = nextLine();
+		this.synopsis = sc.nextLine();
 		
 		System.out.print("Director:");
 		this.director = sc.nextLine();
@@ -38,7 +38,7 @@ public class Movie {
 		}
 		
 		System.out.print("Movie Id:");
-		this.moveId = sc.nextInt();
+		this.movieId = sc.nextInt();
 		
 		this.rating = 0; //no rating entered before
 		
@@ -54,7 +54,7 @@ public class Movie {
 	}
 	
 	public String getSypnosis() {
-		return sypnosis;
+		return synopsis;
 	}
 	
 	public String getDirector() {
@@ -67,15 +67,16 @@ public class Movie {
 	
 	public double getRating() {
 		int num = 0;
-		if (Movie.review.total < 2)
+		if (this.review.length < 2)
 			System.out.println("NA");
 		else {
-			while (num < review.total) {
+			while (num < review.length) {
 				this.rating += this.review[num].rating;
 				num++;
 			}
-			return rating/review.total;
+			return rating*1.0f/review.length;
 		}
+		return 0;
 	}
 	
 	public int getMovieId() {
@@ -90,7 +91,7 @@ public class Movie {
 		this.title = movie_Title;
 	}
 	
-	public void setStatus(String movie_Status) {
+	public void setStatus(int movie_Status) {
 		this.status = movie_Status;
 	}
 	
