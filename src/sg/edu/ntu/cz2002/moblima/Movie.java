@@ -2,20 +2,21 @@ package sg.edu.ntu.cz2002.moblima;
 import java.util.Scanner;
 
 public class Movie {
-	private String title;
-	private int status;
-	private String synopsis;
-	private String director;
-	private String[] casts;
-	private double rating;
-	private int movieId;
-	private Review[] review;
+	protected String title;
+	protected int status;
+	protected String synopsis;
+	protected String director;
+	protected String[] casts;
+	protected double rating;
+	protected int id;
+	protected Review[] review;
+	private int numReview;
 	private final int Max = 99;
 	
 	public Movie() {
+		/*
 		Scanner sc = new Scanner(System.in);
 		int i = 0; int j = 0;
-		String[] Casts = new String[Max];
 		
 		System.out.print("Movie title:");
 		this.title = sc.nextLine();
@@ -29,20 +30,24 @@ public class Movie {
 		System.out.print("Director:");
 		this.director = sc.nextLine();
 		
+		this.casts = new String[Max];
 		System.out.print("Casts:");
 		String name = sc.nextLine();
 		while (name != "end") {
-			Casts[i] = name;
+			this.casts[i] = name;
 			name = sc.nextLine();
-			i++;
 		}
 		
 		System.out.print("Movie Id:");
-		this.movieId = sc.nextInt();
+		this.moveId = sc.nextInt();
 		
 		this.rating = 0; //no rating entered before
-		
 		this.review = new Review[Max];
+		this.numReview = 0;
+		*/
+		this.casts = new String[Max];
+		this.review = new Review[Max];
+		this.numReview = 0;
 	}
 	
 	public String getTitle() {
@@ -53,7 +58,7 @@ public class Movie {
 		return status;
 	}
 	
-	public String getSypnosis() {
+	public String getSynopsis() {
 		return synopsis;
 	}
 	
@@ -67,20 +72,21 @@ public class Movie {
 	
 	public double getRating() {
 		int num = 0;
-		if (this.review.length < 2)
+		if (this.numReview < 2) {
 			System.out.println("NA");
+			return 0;
+		}
 		else {
-			while (num < review.length) {
+			while (num < this.numReview) {
 				this.rating += this.review[num].rating;
 				num++;
 			}
-			return rating*1.0f/review.length;
+			return rating*1.0f/this.numReview;
 		}
-		return 0;
 	}
 	
 	public int getMovieId() {
-		return movieId;
+		return id;
 	}
 	
 	public Review[] getReview() {
@@ -95,7 +101,7 @@ public class Movie {
 		this.status = movie_Status;
 	}
 	
-	public void setSypnosis(String movie_Sypnosis) {
+	public void setSynopsis(String movie_Sypnosis) {
 		this.synopsis = movie_Sypnosis;
 	}
 	
@@ -103,7 +109,30 @@ public class Movie {
 		this.director = movie_Director;
 	}
 	
-	public void setCast() {
-		
+	public void setCast(int index, String name) {
+		this.casts[index] = name;
 	}
+		
+	public void setRating(double rate) {
+		this.rating = rate;
+	}
+	
+	public void setMovieId(int movie_Id) {
+		this.id = movie_Id;
+	}
+	
+	/*
+	public void setReview() {
+		int index = this.numReview;
+		this.review[index] = new Review(index);
+		Scanner sc = new Scanner(System.in);
+		System.out.print("Your name:");
+		this.review[index].setName(sc.nextLine());
+		System.out.print("Rating: ");
+		this.review[index].setRating(sc.nextInt());
+		System.out.print("Review: ");
+		this.review[index].setComment(sc.nextLine());
+		this.numReview++;
+	}
+	*/
 }

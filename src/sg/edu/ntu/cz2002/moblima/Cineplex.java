@@ -1,18 +1,19 @@
 package sg.edu.ntu.cz2002.moblima;
+import java.util.Scanner;
 
 public class Cineplex {
 	public String name;
 	private Cinema[] cinema;
-	private int cineplexId;
+	private int id;
 	private int cinemaNum;
 	
 	public Cineplex(int cineplex_Id, String cineplex_Name, int cinemaNum) {
-		this.cineplexId = cineplex_Id;
+		this.id = cineplex_Id;
 		this.name = cineplex_Name;
 		this.cinema = new Cinema[cinemaNum];
 		int i;
 		for (i = 0; i < cinemaNum; i++) {
-			cinema[i] = new Cinema();
+			cinema[i] = new Cinema(i);
 		}
 	}
 	
@@ -21,7 +22,7 @@ public class Cineplex {
 	}
 	
 	public int getId() {
-		return cineplexId;
+		return id;
 	}
 	
 	public void getCinema() {
@@ -40,10 +41,27 @@ public class Cineplex {
 	}
 	
 	public void setId(int cineplex_Id) {
-		this.cineplexId = cineplex_Id;
+		this.id = cineplex_Id;
 	}
 
-	private void setCinemaNum(int num) {
+	public void setCinemaNum(int num) {
 		this.cinemaNum = num;
 	}
+	
+	/*
+	public void setCinema() {
+		Scanner sc = new Scanner(System.in);
+		int i;
+		for (i = 0; i < this.cinemaNum; i++) {
+			System.out.print("Cinema name: ");
+			this.cinema[i].setName(sc.nextLine());
+			System.out.print("Cinema Id: ");
+			this.cinema[i].setId(sc.nextInt());
+			System.out.print("Cinema class: ");
+			this.cinema[i].setClass(sc.nextLine());
+			System.out.print("Cinema number of halls: ");
+			this.cinema[i].setHall(sc.nextInt());
+		}
+	}
+	*/
 }

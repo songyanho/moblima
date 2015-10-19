@@ -6,7 +6,49 @@ public class Review {
 	protected double rating;
 	protected String comment;
 	protected int entryId;
-	protected int total;
 	
+	public Review(int index) {
+		/* Scanner sc = new Scanner(System.in);
+		System.out.print("Your name:");
+		this.name = sc.nextLine();
+		System.out.print("Rating: ");
+		this.rating = sc.nextInt();
+		System.out.print("Review: ");
+		this.comment = sc.nextLine();
+		*/
+		this.rating = 0;
+		this.entryId = index;
+	}
 	
+	public void setName(String entry_name) {
+		this.name = entry_name;
+	}
+	
+	public void setRating (int rate) {
+		this.rating = rate;
+	}
+	
+	public void setComment (String review) {
+		this.comment = review;
+	}
+	
+	public void setEntryId(int entry_Id) {
+		this.entryId = entry_Id;
+	}
+	
+	public String getName() {
+		return name;
+	}
+	
+	public double getRating() {
+		return rating;
+	}
+	
+	public String getComment() {
+		return comment;
+	}
+	
+	public int getEntryId() {
+		return entryId;
+	}
 }

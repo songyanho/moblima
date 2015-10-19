@@ -5,8 +5,11 @@ public class Cinema {
 	public String name;
 	public String cinemaClass;
 	public int hall;
-	private int cinemaId;
+	private int id;
+	protected Ticket[] ticket;
+	private int seatNum;
 	
+	/*
 	public Cinema() {
 		Scanner sc = new Scanner(System.in);
 		System.out.println("Enter cinema name:");
@@ -22,11 +25,12 @@ public class Cinema {
 		this.cinemaClass = cinema_Class;
 		this.hall = hallNum;
 	}
+	*/
 	
-	public Cinema(String cinema_Name, int hallNum, String cinema_Class) {
-		name = cinema_Name;
-		hall = hallNum;
-		cinemaClass = cinema_Class;
+	public Cinema(int index) {
+		this.id = index;
+		this.hall = -1;
+		this.ticket = new Ticket[300];
 	}
 	
 	public String getName() {
@@ -34,7 +38,7 @@ public class Cinema {
 	}
 	
 	public int getId() {
-		return cinemaId;
+		return id;
 	}
 	
 	public String getcinemaClass() {
@@ -50,7 +54,7 @@ public class Cinema {
 	}
 	
 	public void setId(int cinema_Id) {
-		this.cinemaId = cinema_Id;
+		this.id = cinema_Id;
 	}
 	
 	public void setClass(String cinema_Class) {
