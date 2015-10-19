@@ -4,5 +4,6 @@
 		{"id": 1, "username":"admin", "password":"admin"}
 	],
 	"holidays":["10/10/2015"],
-	"movies":[]
+	"movies":[],
+	"cineplex":[],
 }
