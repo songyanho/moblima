@@ -1,6 +1,8 @@
 package sg.edu.ntu.cz2002.moblima;
 
-public class Admin {
+import org.json.simple.JSONObject;
+
+public class Admin implements StandardData {
 	protected int id;
 	protected String username;
 	protected String password;
@@ -39,5 +41,14 @@ public class Admin {
 
 	public void setPassword(String password) {
 		this.password = password;
+	}
+
+	@Override
+	public JSONObject toJSONObject() {
+		JSONObject o = new JSONObject();
+		o.put("id", this.id);
+		o.put("username", this.username);
+		o.put("password", this.password);
+		return o;
 	}
 }
