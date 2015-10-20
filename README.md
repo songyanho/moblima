@@ -2,9 +2,8 @@
 
 If you want to change its logic severely and you wish to remove that function, please add this right before the function declaration. For example,
 
-@Deprecated
-
-public void delete(){...} // method that you want to delete
+    @Deprecated
+    public void delete(){...} // method that you want to delete
 
 public void delete(int newVariable){...} // new method
 
