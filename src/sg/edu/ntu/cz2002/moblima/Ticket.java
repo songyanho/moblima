@@ -5,16 +5,11 @@ public class Ticket {
 	protected String type;
 	protected int dayOfWeek;
 	protected int age;
-	protected String cinemaClass;
 	protected double price;
 	//protected PurchasedTickets[] purchasedTickets;
 	
 	public Ticket() {
-		this.id = -1;
-		this.type = "";
-		this.dayOfWeek = -1;
-		this.age = 0;
-		this.cinemaClass = "";
+		this.id = 0;
 		this.price = 0;
 		//this.purchasedTickets = new PurchasedTickets[300];
 	}
@@ -30,11 +25,7 @@ public class Ticket {
 	public int getDayOfWeek() {
 		return dayOfWeek;
 	}
-	
-	public String getCinemaClass() {
-		return cinemaClass;
-	}
-	
+
 	public double getPrice() {
 		return price;
 	}
@@ -57,9 +48,6 @@ public class Ticket {
 		this.dayOfWeek = day;
 	}
 	
-	public void setCinemaClass(String cinema_Class) {
-		this.cinemaClass = cinema_Class;
-	}
 	
 	public void setPrice(double ticket_price) {
 		this.price = ticket_price;

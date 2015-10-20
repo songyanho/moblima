@@ -12,7 +12,10 @@ public class Movie {
 	protected Review[] review;
 	private int numReview;
 	private final int Max = 99;
-	
+	private Seat[] seat;
+	private int seatNum;
+	private int numEmptySeat;
+
 	public Movie() {
 		/*
 		Scanner sc = new Scanner(System.in);
@@ -48,6 +51,10 @@ public class Movie {
 		this.casts = new String[Max];
 		this.review = new Review[Max];
 		this.numReview = 0;
+		this.seatNum = 300;
+		this.seat = new Seat[Max];
+		for (int i = 0; i < this.seatNum; i++)
+			this.seat[i] = new Seat(i);
 	}
 	
 	public String getTitle() {
@@ -121,6 +128,23 @@ public class Movie {
 		this.id = movie_Id;
 	}
 	
+	
+	public int getSeatNum() {
+		return seatNum;
+	}
+
+	public void setSeatNum(int seatNum) {
+		this.seatNum = seatNum;
+	}
+
+	public void assign(int seatId, int ticketId) {
+		if (seat[seatId].getId() == 0) {
+			seat[seatId].assign(ticketId);
+			this.setNumEmptySeat(this.getNumEmptySeat() - 1);
+		}
+		else
+			System.out.println("Seat already assigned to a customer.");
+	}
 	/*
 	public void setReview() {
 		int index = this.numReview;
@@ -135,4 +159,12 @@ public class Movie {
 		this.numReview++;
 	}
 	*/
+
+	public int getNumEmptySeat() {
+		return numEmptySeat;
+	}
+
+	public void setNumEmptySeat(int numEmptySeat) {
+		this.numEmptySeat = numEmptySeat;
+	}
 }

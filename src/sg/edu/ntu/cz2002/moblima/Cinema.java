@@ -2,12 +2,11 @@ package sg.edu.ntu.cz2002.moblima;
 import java.util.Scanner;
 
 public class Cinema {
-	public String name;
-	public String cinemaClass;
-	public int hall;
-	private int id;
-	protected Ticket[] ticket;
-	private int seatNum;
+	protected String name;
+	protected String cinemaClass;
+	protected int hall;
+	protected int id;
+	// protected Ticket[] ticket;
 	
 	/*
 	public Cinema() {
@@ -30,7 +29,6 @@ public class Cinema {
 	public Cinema(int index) {
 		this.id = index;
 		this.hall = -1;
-		this.ticket = new Ticket[300];
 	}
 	
 	public String getName() {

@@ -59,6 +59,52 @@ public class MainActivity {
 				runAdminPanel();
 			}else{
 				
+				System.out.println("1. Search/List movie");
+				System.out.println("2. View movie details");
+				System.out.println("3. Check seat availability");
+				System.out.println("4. Book and purchase ticket");
+				System.out.println("5. View booking history");
+				System.out.println("6. List the Top 5 ranking");
+				System.out.println("7. Quit\n");
+				System.out.println("Enter your choice");
+				int choice = sc.nextInt();
+				do {
+					switch (choice) {
+					case 1:
+					case 2:
+						System.out.println("Select which movie you are interested in: ");
+						// int movieSelect = sc.nextInt();
+						// go into database, search for that movie and list details
+					case 3:
+						System.out.println("Please selet your seat: ");
+						//show seat arrangement
+						//user input selection
+					case 4:
+						//which movie and seat
+					case 5:
+						//return ticket and transaction detail
+					case 6:
+						//store rating of each movie in an array, sort and print the top 5
+					case 7:
+					default:
+					}
+					
+					System.out.println("Do you want to continue?\n 1. Yes\n 2. No");
+					int contSelect = sc.nextInt();
+					if (contSelect == 1) {
+						System.out.println("1. Search/List movie");
+						System.out.println("2. View movie details");
+						System.out.println("3. Check seat availability");
+						System.out.println("4. Book and purchase ticket");
+						System.out.println("5. View booking history");
+						System.out.println("6. List the Top 5 ranking");
+						System.out.println("7. Quit\n");
+						System.out.println("Enter your choice");
+						choice = sc.nextInt();
+					}
+					else
+						break;
+				} while(choice != 7);
 			}
 			
 		}while(true);
