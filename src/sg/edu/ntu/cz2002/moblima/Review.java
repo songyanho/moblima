@@ -25,7 +25,10 @@ public class Review {
 	}
 	
 	public void setRating (int rate) {
-		this.rating = rate;
+		if (rate >= 1.0 && rate <= 5.0)
+			this.rating = rate;
+		else
+			System.out.println("Range: 1-5.");
 	}
 	
 	public void setComment (String review) {
