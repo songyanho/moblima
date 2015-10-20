@@ -1,3 +1,17 @@
+# Before you want to delete a function or modify it #
+
+If you want to change its logic severely and you wish to remove that function, please add this right before the function declaration. For example,
+
+@Deprecated
+
+public void delete(){...} // method that you want to delete
+
+public void delete(int newVariable){...} // new method
+
+Then if other ppl still using depreciated function, eclipse will warn him.
+
+It is better not to remove other ppl function as it will cause their copies not working.
+
 # Git Dictionary #
 
 COMMIT is always done to local repository.
