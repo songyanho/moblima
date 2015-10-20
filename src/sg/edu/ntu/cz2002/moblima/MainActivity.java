@@ -13,6 +13,9 @@ import java.util.Scanner;
 
 import org.json.simple.parser.ParseException;
 
+import sg.edu.ntu.cz2002.moblima.models.Admin;
+import sg.edu.ntu.cz2002.moblima.models.Movie;
+
 public class MainActivity {
 
 	protected static Scanner sc;
@@ -95,6 +98,8 @@ public class MainActivity {
 	private static void runAdminPanel(){
 		boolean loggedIn = loginAdmin();
 		boolean logout = false;
+		String st;
+		int it;
 		int choice;
 		if(!loggedIn){
 			System.out.println("Invalid login. Please try again.");
@@ -112,24 +117,28 @@ public class MainActivity {
 				case 1:
 					Movie movie = new Movie();
 					int i = 0;
-					System.out.print("Movie title:");
-					movie.title = sc.nextLine();
-					System.out.print("Movie status:");
-					movie.status = sc.nextInt();
-					System.out.print("Sypnosis:");
-					movie.synopsis = sc.nextLine();
-					System.out.print("Director:");
-					movie.director = sc.nextLine();
-					movie.casts = new String[99];
-					System.out.print("Casts:");
+					System.out.print("Movie title: ");
+					st = sc.nextLine();
+					movie.setTitle(st);
+					System.out.print("Movie status: ");
+					it = sc.nextInt();
+					movie.setStatus(it);
+					System.out.print("Sypnosis: ");
+					st = sc.nextLine();
+					movie.setSynopsis(st);
+					System.out.print("Director: ");
+					st = sc.nextLine();
+					movie.setDirector(st);
+					ArrayList<String> sat = new ArrayList<String>();
+					System.out.print("Casts (Type end to stop): ");
 					String name = sc.nextLine();
-					while (!name.equals("end")) {
-						movie.casts[i] = name;
-						i++;
+					while (name.length() > 0 && !name.equalsIgnoreCase("end")) {
+						sat.add(name);
 						name = sc.nextLine();
 					}
-					System.out.print("Movie Id:");
-					movie.setMovieId(sc.nextInt());
+					movie.setCasts(sat);
+//					System.out.print("Movie Id: ");
+//					movie.setMovieId(sc.nextInt());
 				case 2:
 				case 3:
 				}

@@ -1,4 +1,4 @@
-package sg.edu.ntu.cz2002.moblima;
+package sg.edu.ntu.cz2002.moblima.models;
 import java.util.Scanner;
 
 public class Review {

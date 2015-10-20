@@ -1,4 +1,5 @@
-package sg.edu.ntu.cz2002.moblima;
+package sg.edu.ntu.cz2002.moblima.models;
+import java.util.ArrayList;
 import java.util.Scanner;
 
 public class Movie {
@@ -6,7 +7,7 @@ public class Movie {
 	protected int status;
 	protected String synopsis;
 	protected String director;
-	protected String[] casts;
+	protected ArrayList<String> casts;
 	protected double rating;
 	protected int id;
 	protected Review[] review;
@@ -48,7 +49,7 @@ public class Movie {
 		this.review = new Review[Max];
 		this.numReview = 0;
 		*/
-		this.casts = new String[Max];
+		this.casts = new ArrayList<String>();
 		this.review = new Review[Max];
 		this.numReview = 0;
 		this.seatNum = 300;
@@ -73,7 +74,7 @@ public class Movie {
 		return director;
 	}
 	
-	public String[] getCast() {
+	public ArrayList<String> getCast() {
 		return casts;
 	}
 	
@@ -116,8 +117,12 @@ public class Movie {
 		this.director = movie_Director;
 	}
 	
-	public void setCast(int index, String name) {
-		this.casts[index] = name;
+	public void addCast(String name) {
+		this.casts.add(name);
+	}
+	
+	public void setCasts(ArrayList<String> casts){
+		this.casts = (ArrayList<String>) casts.clone();
 	}
 		
 	public void setRating(double rate) {

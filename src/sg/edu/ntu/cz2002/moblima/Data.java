@@ -13,6 +13,9 @@ import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 
+import sg.edu.ntu.cz2002.moblima.models.Admin;
+
+@Deprecated
 public class Data {
 
 	protected int panel;

@@ -1,4 +1,4 @@
-package sg.edu.ntu.cz2002.moblima;
+package sg.edu.ntu.cz2002.moblima.models;
 
 public class Seat {
 	protected int id;
