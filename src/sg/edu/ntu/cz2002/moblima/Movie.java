@@ -52,7 +52,7 @@ public class Movie {
 		this.review = new Review[Max];
 		this.numReview = 0;
 		this.seatNum = 300;
-		this.seat = new Seat[Max];
+		this.seat = new Seat[this.seatNum];
 		for (int i = 0; i < this.seatNum; i++)
 			this.seat[i] = new Seat(i);
 	}

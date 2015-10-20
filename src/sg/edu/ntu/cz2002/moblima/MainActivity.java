@@ -59,15 +59,9 @@ public class MainActivity {
 				runAdminPanel();
 			}else{
 				
-				System.out.println("1. Search/List movie");
-				System.out.println("2. View movie details");
-				System.out.println("3. Check seat availability");
-				System.out.println("4. Book and purchase ticket");
-				System.out.println("5. View booking history");
-				System.out.println("6. List the Top 5 ranking");
-				System.out.println("7. Quit\n");
-				System.out.println("Enter your choice");
-				int choice = sc.nextInt();
+
+				String[] menus = {"Search/List movie", "View movie details", "Check seat availability", "Book and purchase ticket", "View booking history", "List the Top 5 ranking", "Quit"};
+				int choice = printMenuAndReturnChoice("Movie-goer", menus);
 				do {
 					switch (choice) {
 					case 1:
@@ -88,22 +82,7 @@ public class MainActivity {
 					case 7:
 					default:
 					}
-					
-					System.out.println("Do you want to continue?\n 1. Yes\n 2. No");
-					int contSelect = sc.nextInt();
-					if (contSelect == 1) {
-						System.out.println("1. Search/List movie");
-						System.out.println("2. View movie details");
-						System.out.println("3. Check seat availability");
-						System.out.println("4. Book and purchase ticket");
-						System.out.println("5. View booking history");
-						System.out.println("6. List the Top 5 ranking");
-						System.out.println("7. Quit\n");
-						System.out.println("Enter your choice");
-						choice = sc.nextInt();
-					}
-					else
-						break;
+					choice = printMenuAndReturnChoice("Movie-goer", menus);
 				} while(choice != 7);
 			}
 			
@@ -111,7 +90,7 @@ public class MainActivity {
 	}
 	
 	private static void runMovieGoerPanel(){
-		
+
 	}
 
 	private static void runAdminPanel(){
@@ -127,6 +106,34 @@ public class MainActivity {
 			String[] menus = {"Movie Listing Management", "Showtime Management", "System configuration", "Logout"};
 			choice = printMenuAndReturnChoice("Admin Panel", menus);
 			switch(choice){
+			case 1:
+				String[] menus_1 = {"Enter forthcoming movie", "Update movie details", "Remove movie"};
+				int choice_1 = printMenuAndReturnChoice("Admin Panel > Movie Listing Management", menus_1);
+				switch (choice_1) {
+				case 1:
+					Movie movie = new Movie();
+					int i = 0;
+					System.out.print("Movie title:");
+					movie.title = sc.nextLine();
+					System.out.print("Movie status:");
+					movie.status = sc.nextInt();
+					System.out.print("Sypnosis:");
+					movie.synopsis = sc.nextLine();
+					System.out.print("Director:");
+					movie.director = sc.nextLine();
+					movie.casts = new String[99];
+					System.out.print("Casts:");
+					String name = sc.nextLine();
+					while (!name.equals("end")) {
+						movie.casts[i] = name;
+						i++;
+						name = sc.nextLine();
+					}
+					System.out.print("Movie Id:");
+					movie.setMovieId(sc.nextInt());
+				case 2:
+				case 3:
+				}
 			case 3:
 				runAdminSystemConfiguration();
 				break;
