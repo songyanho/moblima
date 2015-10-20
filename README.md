@@ -1,4 +1,3 @@
-
 # Before you want to delete a function or modify it completely #
 
 If you want to change its logic severely and you wish to remove that function, please add this right before the function declaration. For example,
@@ -27,7 +26,21 @@ PULL is FETCH + MERGE
 PUSH is updating the server with your local repository in which all the conflicts are resolved.
 
 
-# Commit Method #
+# Commit Method (Easiest way) #
+
+Once you have completed the changes in your local repository
+
+Select project, right click, Team > Fetch from Upstream
+
+Go Git perspective, select synchronise tab, fix all incoming, outgoing and conflict
+
+Go Git staging tab, drag the files you have edited/created/deleted from unstaged box to staged box.
+
+Type commit message then commit and push!
+
+
+
+# Commit Method (Safest way) #
 
 Once you have completed the changes in your local repository, commit to your own repository by multi-selecting the files that you want to commit and right click, Team > Commit.
 
