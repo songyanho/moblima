@@ -1,29 +1,50 @@
-# Commit Method #
- 
- After you have made changes in your local repository, please follow the steps below to commit correctly
+# Git Dictionary #
 
- 1. First commit in your own project (Only commit, not commit and push)
+COMMIT is always done to local repository.
+
+FETCH is comparing with local repository with server copy. Therefore you need to commit to local repository to merge your local repository with server.
+
+MERGE is adding your changes to server copy(which has been fetched)
+
+CONFLICTS arise when eclipse fails to merge your local changes with server copy. You need to manually adding/remove/updating your copy. Remember to resolve all conflicts and do not remove your teammate functions.
+
+PULL is FETCH + MERGE
+
+PUSH is updating the server with your local repository in which all the conflicts are resolved.
+
+
+# Commit Method #
+
+Once you have completed the changes in your local repository, commit to your own repository by multi-selecting the files that you want to commit and right click, Team > Commit.
+
+Do not select the whole project and commit.
+
+Then you select your project, right click, Team > Fetch From Upstream.
+
+Now conflicts arise. Go to Git Perspective, for each file which has conflicts, resolve the conflicts and save. Then commit it again to your local repository.
+
+If you see files that were created by others, please add it to your local repository, or else it will be removed when you push to upstream.
+
+After all conflict has been done, right click Project, Team > Push to Upstream.
+
+
+# Commit Regulations #
+
+After Fetch from Upstream, if you see files that were created by others, please add it to your local repository, or else it will be removed when you push to upstream.
  
- 2. Then fetch from upstream
+Please push to upstream if and only if your part is syntax error-free and checked.
+
+Please avoid removing methods of other people work
  
- 3. If there is/are conflict(s), please make changes(whether to add/delete/change) of your local copy and commit again. Please make sure that you merge your copy and server copy correctly.
+Please avoid renaming/removing methods unless it is needed
  
- 4. Then push to upstream
- 
- # Commit Regulations #
- 
- Please push to upstream if and only if your part is syntax error-free and checked.
- 
- Please avoid removing methods of other people work
- 
- Please avoid renaming/removing methods unless it is needed
- 
- Adding new functions/methods are recommended
- 
- # Commit Frequency #
- 
- Model: Push once a day at max
- 
- Logic: Push if and only if it is completed.
- 
- Data.json: Push if and only if it is syntax error-free, please check its syntax via online tools.
+Adding new functions/methods are recommended
+
+
+# Commit Frequency #
+
+Model: Push once a day if needed
+
+Logic: Push if and only if it is completed.
+
+Data.json: Push if and only if it is syntax error-free, please check its syntax via online tools.
