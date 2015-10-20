@@ -10,3 +10,20 @@
  
  4. Then push to upstream
  
+ # Commit Regulations #
+ 
+ Please push to upstream if and only if your part is syntax error-free and checked.
+ 
+ Please avoid removing methods of other people work
+ 
+ Please avoid renaming/removing methods unless it is needed
+ 
+ Adding new functions/methods are recommended
+ 
+ # Commit Frequency #
+ 
+ Model: Push once a day at max
+ 
+ Logic: Push if and only if it is completed.
+ 
+ Data.json: Push if and only if it is syntax error-free, please check its syntax via online tools.
