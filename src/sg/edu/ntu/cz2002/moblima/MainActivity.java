@@ -58,10 +58,14 @@ public class MainActivity {
 			}else if(action.equalsIgnoreCase("admin")){
 				runAdminPanel();
 			}else{
-
+				
 			}
 			
 		}while(true);
+	}
+	
+	private static void runMovieGoerPanel(){
+		
 	}
 
 	private static void runAdminPanel(){
