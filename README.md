@@ -1,4 +1,4 @@
-# Before you want to delete a function or modify it severely #
+# Before you want to delete a function or modify it completely #
 
 If you want to change its logic severely and you wish to remove that function, please add this right before the function declaration. For example,
 
