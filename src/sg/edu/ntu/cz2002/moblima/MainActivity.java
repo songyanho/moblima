@@ -20,6 +20,13 @@ public class MainActivity {
 
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub
+		
+//		Runtime.getRuntime().addShutdownHook(new Thread(new Runnable() {
+//	        public void run() {
+//	        	data.saveData();
+//	        }
+//	    }, "Shutdown-thread"));
+		
 		sc = new Scanner(System.in);
 		for(int i=0; i<68; i++)
 			System.out.print("*");
@@ -42,12 +49,13 @@ public class MainActivity {
 			e.printStackTrace();
 		}
 
-
-
 		do{
 			System.out.print("\nWelcome\n For movie-goer, please press enter\nFor admin, please enter \"admin\": ");
 			String action = sc.nextLine();
-			if(action.equalsIgnoreCase("admin")){
+			if(action.equalsIgnoreCase("exit")){
+				data.saveData();
+				break;
+			}else if(action.equalsIgnoreCase("admin")){
 				runAdminPanel();
 			}else{
 				System.out.println("1. Search/List movie");
@@ -231,7 +239,7 @@ public class MainActivity {
 					System.out.print("Your choice: ");
 					st = sc.nextLine();
 					if(st.equalsIgnoreCase("Y")){
-						ArrayList<String>th = data.getHolidays();
+						ArrayList<String> th = data.getHolidays();
 						th.add(date);
 						System.out.println("One record was added");
 						jump = true;
