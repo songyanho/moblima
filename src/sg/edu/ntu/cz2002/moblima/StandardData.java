@@ -5,4 +5,5 @@ import org.json.simple.JSONObject;
 public interface StandardData {
 	public abstract JSONObject toJSONObject();
 	
+	
 }
