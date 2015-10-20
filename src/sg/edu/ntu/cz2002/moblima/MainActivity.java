@@ -58,7 +58,6 @@ public class MainActivity {
 			}else if(action.equalsIgnoreCase("admin")){
 				runAdminPanel();
 			}else{
-				
 
 				String[] menus = {"Search/List movie", "View movie details", "Check seat availability", "Book and purchase ticket", "View booking history", "List the Top 5 ranking", "Quit"};
 				int choice = printMenuAndReturnChoice("Movie-goer", menus);
