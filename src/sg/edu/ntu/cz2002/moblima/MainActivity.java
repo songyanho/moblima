@@ -1,8 +1,5 @@
 package sg.edu.ntu.cz2002.moblima;
 
-import java.awt.List;
-import java.io.FileNotFoundException;
-import java.io.IOException;
 import java.text.DateFormatSymbols;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -11,12 +8,15 @@ import java.util.HashMap;
 import java.util.Map.Entry;
 import java.util.Scanner;
 
-import org.json.simple.parser.ParseException;
-
+import sg.edu.ntu.cz2002.moblima.dao.AdminDao;
+import sg.edu.ntu.cz2002.moblima.dao.SettingsDao;
 import sg.edu.ntu.cz2002.moblima.models.Admin;
 import sg.edu.ntu.cz2002.moblima.models.Movie;
 
 public class MainActivity {
+	
+//	protected static AdminDao adminDao;
+//	protected static SettingsDao settingsDao;
 
 	protected static Scanner sc;
 	protected static Data data;
@@ -36,27 +36,12 @@ public class MainActivity {
 		System.out.println("\n*\t Movie Booking and Listing Management Application\t   *");
 		for(int i=0; i<68; i++)
 			System.out.print("*");
-		try {
-			data = new Data();
-		} catch (FileNotFoundException e) {
-			// TODO Auto-generated catch block
-			System.out.println("File Not Found");
-			e.printStackTrace();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			System.out.println("IO Error");
-			e.printStackTrace();
-		} catch (ParseException e) {
-			// TODO Auto-generated catch block
-			System.out.println("Invalid JSON format");
-			e.printStackTrace();
-		}
+		data = new Data();
 
 		do{
 			System.out.print("\nWelcome\n For movie-goer, please press enter\nFor admin, please enter \"admin\": ");
 			String action = sc.nextLine();
 			if(action.equalsIgnoreCase("exit")){
-				data.saveData();
 				break;
 			}else if(action.equalsIgnoreCase("admin")){
 				runAdminPanel();
@@ -116,7 +101,6 @@ public class MainActivity {
 				switch (choice_1) {
 				case 1:
 					Movie movie = new Movie();
-					int i = 0;
 					System.out.print("Movie title: ");
 					st = sc.nextLine();
 					movie.setTitle(st);
@@ -159,7 +143,7 @@ public class MainActivity {
 		String username = sc.nextLine();
 		System.out.print("Password: ");
 		String password = sc.nextLine();
-		HashMap<Integer, Admin> admins = (HashMap<Integer, Admin>) data.getAdmins();
+		HashMap<Integer, Admin> admins = AdminDao.getAllInHashMap();
 		for(Entry<Integer, Admin> e: admins.entrySet()){
 			Admin a = e.getValue();
 			if(a.isUser(username, password)){
@@ -201,19 +185,19 @@ public class MainActivity {
 			choice = printMenuAndReturnChoice("Admin Panel > System Configuration > Public Holiday Management", menus);
 			switch(choice){
 			case 1:
-				CalendarView.printCalendar(Calendar.getInstance().get(Calendar.YEAR), data.getHolidays());
+				CalendarView.printCalendar(Calendar.getInstance().get(Calendar.YEAR), SettingsDao.getHolidays());
 				break;
 			case 2:
 				System.out.print("Enter the year(eg. "+Calendar.getInstance().get(Calendar.YEAR)+"): ");
 				year = sc.nextInt();
 				sc.nextLine();
-				CalendarView.printCalendar(year, data.getHolidays());
+				CalendarView.printCalendar(year, SettingsDao.getHolidays());
 				break;
 			case 3: 
 				t = 0;
 				year = Calendar.getInstance().get(Calendar.YEAR);
 				System.out.println("List of Holidays in Current Year("+year+")");
-				for(String h: data.getHolidays()){
+				for(String h: SettingsDao.getHolidays()){
 					String[] holidayParts = h.split("\\/");
 					if(Integer.parseInt(holidayParts[2]) == year)
 						System.out.println((++t)+". "+holidayParts[0]+" "+new DateFormatSymbols().getMonths()[Integer.parseInt(holidayParts[1])-1]+" "+year);
@@ -227,7 +211,7 @@ public class MainActivity {
 				year = sc.nextInt();
 				sc.nextLine();
 				System.out.println("List of Holidays in Year "+year);
-				for(String h: data.getHolidays()){
+				for(String h: SettingsDao.getHolidays()){
 					String[] holidayParts = h.split("\\/");
 					if(Integer.parseInt(holidayParts[2]) == year)
 						System.out.println((++t)+". "+holidayParts[0]+" "+new DateFormatSymbols().getMonths()[Integer.parseInt(holidayParts[1])-1]+" "+year);
@@ -259,8 +243,9 @@ public class MainActivity {
 					System.out.print("Your choice: ");
 					st = sc.nextLine();
 					if(st.equalsIgnoreCase("Y")){
-						ArrayList<String> th = data.getHolidays();
+						ArrayList<String> th = SettingsDao.getHolidays();
 						th.add(date);
+						SettingsDao.save();
 						System.out.println("One record was added");
 						jump = true;
 					}else if(st.equalsIgnoreCase("N")){
@@ -280,7 +265,7 @@ public class MainActivity {
 					t = 0;
 					System.out.println("List of Holidays in Year "+year);
 					ArrayList<String> holidays = new ArrayList<String>();
-					for(String h: data.getHolidays()){
+					for(String h: SettingsDao.getHolidays()){
 						String[] holidayParts = h.split("\\/");
 						if(Integer.parseInt(holidayParts[2]) == year){
 							holidays.add(h);
@@ -307,8 +292,9 @@ public class MainActivity {
 					System.out.print("Your choice: ");
 					st = sc.nextLine();
 					if(st.equalsIgnoreCase("Y")){
-						ArrayList<String>th = data.getHolidays();
+						ArrayList<String>th = SettingsDao.getHolidays();
 						boolean success = th.remove(date);
+						SettingsDao.save();
 						if(success)
 							System.out.println("One record was removed");
 						else

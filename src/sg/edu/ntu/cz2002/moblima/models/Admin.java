@@ -1,5 +1,8 @@
 package sg.edu.ntu.cz2002.moblima.models;
 
+import java.util.HashMap;
+import java.util.Set;
+
 import org.json.simple.JSONObject;
 
 public class Admin implements StandardData {
@@ -50,5 +53,25 @@ public class Admin implements StandardData {
 		o.put("username", this.username);
 		o.put("password", this.password);
 		return o;
+	}
+	
+	public static HashMap<String, JSONObject> toJSONObjects(HashMap<Integer, Admin> o){
+		HashMap<String, JSONObject> a = new HashMap<String, JSONObject>();
+		Set<Integer> s = o.keySet();
+		for(Integer i: s){
+			a.put(""+i, o.get(i).toJSONObject());
+		}
+		return a;
+	}
+	
+	public static HashMap<Integer, Admin> fromJSONObjects(JSONObject o){
+		HashMap<Integer, Admin> a = new HashMap<Integer, Admin>();
+		Set<String> s = o.keySet();
+		for(String i: s){
+			JSONObject n = (JSONObject) o.get(i);
+			Admin t = new Admin(Integer.parseInt(n.get("id").toString()), n.get("username").toString(), n.get("password").toString());
+			a.put(t.getId(), t);
+		}
+		return a;
 	}
 }
