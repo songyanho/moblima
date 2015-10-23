@@ -54,6 +54,10 @@ public class Admin implements StandardData {
 		o.put("password", this.password);
 		return o;
 	}
+
+	public static Admin fromJSONObject(JSONObject o) {
+		return new Admin(Integer.parseInt(o.get("id").toString()), o.get("username").toString(), o.get("password").toString());
+	}
 	
 	public static HashMap<String, JSONObject> toJSONObjects(HashMap<Integer, Admin> o){
 		HashMap<String, JSONObject> a = new HashMap<String, JSONObject>();
@@ -69,7 +73,7 @@ public class Admin implements StandardData {
 		Set<String> s = o.keySet();
 		for(String i: s){
 			JSONObject n = (JSONObject) o.get(i);
-			Admin t = new Admin(Integer.parseInt(n.get("id").toString()), n.get("username").toString(), n.get("password").toString());
+			Admin t = Admin.fromJSONObject(n);
 			a.put(t.getId(), t);
 		}
 		return a;

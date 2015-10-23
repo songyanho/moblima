@@ -21,7 +21,7 @@ public class Data {
 	protected int adminId;
 
 	public Admin getAdmin(){
-		return AdminDao.getById(adminId);
+		return AdminDao.findById(adminId);
 	}
 
 	public int getAdminId() {
