@@ -11,51 +11,11 @@ public class Movie {
 	protected double rating;
 	protected int id;
 	protected Review[] review;
-	private int numReview;
 	private final int Max = 99;
-	private Seat[] seat;
-	private int seatNum;
-	private int numEmptySeat;
 
 	public Movie() {
-		/*
-		Scanner sc = new Scanner(System.in);
-		int i = 0; int j = 0;
-		
-		System.out.print("Movie title:");
-		this.title = sc.nextLine();
-		
-		System.out.print("Movie status:");
-		this.status = sc.nextInt();
-		
-		System.out.print("Sypnosis:");
-		this.synopsis = sc.nextLine();
-		
-		System.out.print("Director:");
-		this.director = sc.nextLine();
-		
-		this.casts = new String[Max];
-		System.out.print("Casts:");
-		String name = sc.nextLine();
-		while (name != "end") {
-			this.casts[i] = name;
-			name = sc.nextLine();
-		}
-		
-		System.out.print("Movie Id:");
-		this.moveId = sc.nextInt();
-		
-		this.rating = 0; //no rating entered before
-		this.review = new Review[Max];
-		this.numReview = 0;
-		*/
 		this.casts = new ArrayList<String>();
 		this.review = new Review[Max];
-		this.numReview = 0;
-		this.seatNum = 300;
-		this.seat = new Seat[this.seatNum];
-		for (int i = 0; i < this.seatNum; i++)
-			this.seat[i] = new Seat(i);
 	}
 	
 	public String getTitle() {
@@ -80,16 +40,15 @@ public class Movie {
 	
 	public double getRating() {
 		int num = 0;
-		if (this.numReview < 2) {
-			System.out.println("NA");
+		if (this.review.length < 2) {
 			return 0;
 		}
 		else {
-			while (num < this.numReview) {
+			while (num < this.review.length) {
 				this.rating += this.review[num].rating;
 				num++;
 			}
-			return rating*1.0f/this.numReview;
+			return rating*1.0f/this.review.length;
 		}
 	}
 	
@@ -132,24 +91,7 @@ public class Movie {
 	public void setMovieId(int movie_Id) {
 		this.id = movie_Id;
 	}
-	
-	
-	public int getSeatNum() {
-		return seatNum;
-	}
 
-	public void setSeatNum(int seatNum) {
-		this.seatNum = seatNum;
-	}
-
-	public void assign(int seatId, int ticketId) {
-		if (seat[seatId].getId() == 0) {
-			seat[seatId].assign(ticketId);
-			this.setNumEmptySeat(this.getNumEmptySeat() - 1);
-		}
-		else
-			System.out.println("Seat already assigned to a customer.");
-	}
 	/*
 	public void setReview() {
 		int index = this.numReview;
@@ -165,11 +107,4 @@ public class Movie {
 	}
 	*/
 
-	public int getNumEmptySeat() {
-		return numEmptySeat;
-	}
-
-	public void setNumEmptySeat(int numEmptySeat) {
-		this.numEmptySeat = numEmptySeat;
-	}
 }

@@ -17,11 +17,11 @@ public class Cineplex {
 		}
 	}
 	
-	public String getName() {
+	public String getCineplexName() {
 		return name;
 	}
 	
-	public int getId() {
+	public int getCineplexId() {
 		return id;
 	}
 	
@@ -36,16 +36,21 @@ public class Cineplex {
 		return cinemaNum;
 	}
 	
-	public void setName(String cineplex_Name) {
+	public void setCineplexName(String cineplex_Name) {
 		this.name = cineplex_Name;
 	}
 	
-	public void setId(int cineplex_Id) {
+	public void setCineplexId(int cineplex_Id) {
 		this.id = cineplex_Id;
 	}
 
 	public void setCinemaNum(int num) {
-		this.cinemaNum = num;
+		if (num < 3) {
+			this.cinemaNum = 3;
+			System.out.println("At least three cinemas.");
+		}
+		else
+			this.cinemaNum = num;
 	}
 	
 	/*

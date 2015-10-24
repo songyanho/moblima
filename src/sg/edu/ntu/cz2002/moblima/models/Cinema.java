@@ -1,41 +1,25 @@
 package sg.edu.ntu.cz2002.moblima.models;
-import java.util.Scanner;
 
 public class Cinema {
 	protected String name;
 	protected String cinemaClass;
-	protected int hall;
 	protected int id;
-	// protected Ticket[] ticket;
-	
-	/*
-	public Cinema() {
-		Scanner sc = new Scanner(System.in);
-		System.out.println("Enter cinema name:");
-		String cinema_Name = sc.nextLine();
-		System.out.println("Enter cinema Id:");
-		int cinema_Id = sc.nextInt();
-		System.out.println("Enter cinema class:");
-		String cinema_Class = sc.nextLine();
-		System.out.println("Enter cinema number of halls:");
-		int hallNum = sc.nextInt();
-		this.name = cinema_Name;
-		this.cinemaId = cinema_Id;
-		this.cinemaClass = cinema_Class;
-		this.hall = hallNum;
-	}
-	*/
+	protected Seat[] seat;
+	private int seatNum = 300;
+	private int numEmptySeat;
 	
 	public Cinema(int index) {
 		this.id = index;
-		this.hall = -1;
+		seat = new Seat[seatNum];
+		for (int i = 0; i < seatNum; i++)
+			seat[i] = new Seat(i);
 	}
 	
-	public String getName() {
+	public String getCinemaName() {
 		return name;
 	}
 	
-	public int getId() {
+	public int getCinemaId() {
 		return id;
 	}
 	
@@ -43,15 +27,11 @@ public class Cinema {
 		return cinemaClass;
 	}
 	
-	public int getHall() {
-		return hall;
-	}
-	
-	public void setName(String cinema_Name) {
+	public void setCinemaName(String cinema_Name) {
 		this.name = cinema_Name;
 	}
 	
-	public void setId(int cinema_Id) {
+	public void setCinemaId(int cinema_Id) {
 		this.id = cinema_Id;
 	}
 	
@@ -59,7 +39,20 @@ public class Cinema {
 		this.cinemaClass = cinema_Class;
 	}
 	
-	public void setHall(int number) {
-		this.hall = number;
+	public void assign(int seatId, int ticketId) {
+		if (seat[seatId].ticket.getTicketId() == -1) {
+			seat[seatId].assign(ticketId);
+			this.setNumEmptySeat(this.getNumEmptySeat() - 1);
+		}
+		else
+			System.out.println("Seat already assigned to a customer.");
+	}
+	
+	public int getNumEmptySeat() {
+		return numEmptySeat;
+	}
+
+	public void setNumEmptySeat(int numEmptySeat) {
+		this.numEmptySeat = numEmptySeat;
 	}
 }

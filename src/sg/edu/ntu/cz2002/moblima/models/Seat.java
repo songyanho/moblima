@@ -25,14 +25,8 @@ public class Seat {
 	public void setOccupied(boolean occupied) {
 		this.occupied = occupied;
 	}
-	public int getTicketId() {
-		return id;
-	}
-	public void setTicketId(int ticketId) {
-		this.id = ticketId;
-	}
 	public void assign(int ticket_Id) {
-		this.ticket.setId(ticket_Id);
+		this.ticket.setTicketId(ticket_Id);
 		occupied = true;
 	}
 	
