@@ -45,5 +45,4 @@ public class AdminDao {
 		JSONObject t = Database.getObject(DATABASE_NAME);
 		records = Admin.fromJSONObjects(t);
 	}
-	
 }

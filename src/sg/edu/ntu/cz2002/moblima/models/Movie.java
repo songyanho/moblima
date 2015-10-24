@@ -77,7 +77,7 @@ public class Movie implements StandardData{
 	public ArrayList<String> getCasts() {
 		return casts;
 	}
-	
+
 	public void setCasts(ArrayList<String> casts) {
 		this.casts = casts;
 	}
