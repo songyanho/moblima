@@ -39,4 +39,8 @@ public class Settings implements StandardData {
 			holidays.add(h.get(i).toString());
 		return new Settings(holidays);
 	}
+	
+	public static Settings fromJSONObjects(JSONObject o){
+		return Settings.fromJSONObjects(o);
+	}
 }

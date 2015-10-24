@@ -19,16 +19,24 @@ public class AdminDao {
 		return records;
 	}
 
-	public static Admin getById(int id) {
+	public static Admin findById(int id) {
 		// TODO Auto-generated method stub
 		if(records == null) initialize();
-		return records.get(id);
+		if(records.containsKey(id))
+			return records.get(id);
+		return null;
 	}
 
 	public static boolean save(Admin t) {
 		// TODO Auto-generated method stub
 		if(records == null) initialize();
 		records.put(t.getId(), t);
+		return save();
+	}
+
+	public static boolean save() {
+		// TODO Auto-generated method stub
+		if(records == null) initialize();
 		return Database.save(DATABASE_NAME, Admin.toJSONObjects(records));
 	}
 
