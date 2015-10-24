@@ -8,14 +8,6 @@ public class Review {
 	protected int entryId;
 	
 	public Review(int index) {
-		/* Scanner sc = new Scanner(System.in);
-		System.out.print("Your name:");
-		this.name = sc.nextLine();
-		System.out.print("Rating: ");
-		this.rating = sc.nextInt();
-		System.out.print("Review: ");
-		this.comment = sc.nextLine();
-		*/
 		this.rating = 0;
 		this.entryId = index;
 	}

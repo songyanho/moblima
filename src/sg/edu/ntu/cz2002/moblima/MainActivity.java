@@ -11,7 +11,11 @@ import java.util.Scanner;
 import sg.edu.ntu.cz2002.moblima.dao.AdminDao;
 import sg.edu.ntu.cz2002.moblima.dao.MovieDao;
 import sg.edu.ntu.cz2002.moblima.dao.SettingsDao;
+import sg.edu.ntu.cz2002.moblima.dao.CineplexDao;
+import sg.edu.ntu.cz2002.moblima.dao.CinemaDao;
 import sg.edu.ntu.cz2002.moblima.models.Admin;
+import sg.edu.ntu.cz2002.moblima.models.Cineplex;
+import sg.edu.ntu.cz2002.moblima.models.Cinema;
 import sg.edu.ntu.cz2002.moblima.models.Movie;
 
 public class MainActivity {
@@ -27,8 +31,15 @@ public class MainActivity {
 			System.out.print("*");
 		data = new Data();
 
+		if (CineplexDao.getLastId() == 0) {
+			System.out.print("\nNo cineplex has been setup.\n1. Auto Setup\n2. Manual Setup\n");
+			int it = sc.nextInt();
+			boolean auto = it == 1? true: false;
+			setupCineplex(auto);
+		}
+
 		do{
-			System.out.print("\nWelcome\n For movie-goer, please press enter\nFor admin, please enter \"admin\": ");
+			System.out.print("\nWelcome\nFor movie-goer, please press enter\nFor admin, please enter \"admin\": ");
 			String action = sc.nextLine();
 			if(action.equalsIgnoreCase("exit")){
 				break;
@@ -42,44 +53,65 @@ public class MainActivity {
 	}
 
 	private static void movieGoerViewController(){
-		int choice, it;
+		int choice, it, cineplex;
 		String st;
 		boolean exit = false;
-		String[] menus = {"Search/List movie", 
-				"View movie details", 
+		
+		//CODE for selecting cineplex and cinema
+		System.out.println("\nPlease select a cineplex: ");
+		cineplex = selectCineplexAndReturnChoice();
+		String[] menus = {"Search movie",
+				"List movies and details", 
 				"Check seat availability", 
 				"Book and purchase ticket", 
 				"View booking history", 
-				"List the Top 5 ranking", 
+				"List the Top 5 ranking",
+				"Enter review for movie",
 		"Quit"};
 		do {
+			HashMap<Integer, Movie> movies = MovieDao.getAllInHashMap();
 			exit = false;
 			choice = printMenuAndReturnChoice("Movie-goer", menus);
 			switch (choice) {
 			case 1:
+				searchMovieViewController(false);
 				break;
 			case 2:
-				System.out.println("Select which movie you are interested in: ");
+				if(movies.size() <= 0)
+					System.out.println("No movies available");
+				else
+					listMoviesView(movies, false);
 				break;
 			case 3:
-				System.out.println("Please selet your seat: ");
-				//show seat arrangement
-				//user input selection
+				System.out.println("Which movie you want to check?");
+				it = selectMovie(movies);
+				//CODE show empty seat
+				System.out.print("Total of empty seats is ");
 				break;
 			case 4:
 				//which movie and seat
+				System.out.println("Which movie ticket you want to buy?");
+				it = selectMovie(movies);
+				System.out.print("Number of tickets: ");
+				it = sc.nextInt();
+				System.out.println("Choose your seat: ");
+				//CODE show seat arrangement and confirmation
+				
 				break;
 			case 5:
-				//return ticket and transaction detail
+				//CODE history
 				break;
 			case 6:
 				//store rating of each movie in an array, sort and print the top 5
 				break;
 			case 7:
+				//validate customer with transaction id to enter his/her review
 				break;
-			default:
+			case 8:
 				exit = true;
 				break;
+			default:
+				System.out.print("Invalid option! Please try again.");
 			}
 		} while(!exit);
 	}
@@ -90,11 +122,13 @@ public class MainActivity {
 		String st;
 		int it;
 		int choice;
+		int cineplex;
 		if(!loggedIn){
 			System.out.println("Invalid login. Please try again.");
 			return;
 		}
 		System.out.println("Welcome, "+data.getAdmin().getUsername());
+		cineplex = selectCineplexAndReturnChoice();
 		do{
 			String[] menus = {"Movie Listing Management", "Showtime Management", "System configuration", "Logout"};
 			choice = printMenuAndReturnChoice("Admin Panel", menus);
@@ -152,6 +186,20 @@ public class MainActivity {
 		}while(!exit);
 	}
 
+	private static void listCineplexesView(HashMap<Integer, Cineplex> cineplexes, boolean showId){
+		for (Cineplex c: cineplexes.values()) {
+			listCineplexView(c, showId);
+		}
+	}
+	
+	private static void listCineplexView(Cineplex c, boolean showId){
+		if (showId)
+			System.out.println("Cineplex ID: " + c.getCineplexId());
+		System.out.println("Cineplex name: " + c.getCineplexName());
+		System.out.println("Cinema number: " + c.getCinemaNum());
+		System.out.print("\n");
+	}
+	
 	private static void listMoviesView(HashMap<Integer, Movie> movies, boolean showId){
 		for(Movie m: movies.values()){
 			listMovieView(m, showId);
@@ -166,6 +214,7 @@ public class MainActivity {
 		System.out.print("\tstarring ");
 		for(String c: m.getCasts())
 			System.out.print(c+"  ");
+		System.out.print("\n\tDuration in minutes: " + m.getDuration());
 		System.out.println("\n\tis "+ (m.getStatus() == 1 ? "Coming soon" : m.getStatus() == 2 ? "Preview" : "Now Showing"));
 		System.out.println("\tSynopsis: "+m.getSynopsis());
 		System.out.println("\n");
@@ -219,6 +268,7 @@ public class MainActivity {
 				"Edit movie casts",
 				"Edit movie status",
 				"Edit movie synopsis",
+				"Edit movie duration",
 		"Back to previous menu"};
 		do{
 			exit = false;
@@ -385,10 +435,31 @@ public class MainActivity {
 					}
 				}while(!exit2);
 				break;
+			case 6:
+				exit2 = false;
+				do{
+					System.out.println("Current movie duration: " + m.getDuration());
+					System.out.println("Update movie duration(in minutes) to: ");
+					it = sc.nextInt();
+					System.out.println("Movie duration: " + m.getDuration() + " -> " + it);
+					System.out.println("Please confirm the record:\nTo edit, type Y\nTo redo, type N\nTo exit, type E");
+					System.out.print("Your choice: ");
+					st2 = sc.nextLine();
+					if(st2.equalsIgnoreCase("Y")){
+						m.setDuration(it);
+						MovieDao.save();
+						exit2 = true;
+					}else if(st2.equalsIgnoreCase("N")){
+						continue;
+					}else
+						exit2 = true;
+				}while(!exit2);
+				break;
 			default: exit = true; break;
 			}
 		}while(!exit);
 	}
+	
 
 	private static void removeMovieViewController(){
 		int choice, it;
@@ -497,8 +568,7 @@ public class MainActivity {
 			movie.setDirector(st);
 			ArrayList<String> sat = new ArrayList<String>();
 			System.out.println("Casts (Type end to stop): ");
-			System.out.print("\t- ");
-			String name = sc.nextLine();
+			String name = "";
 			do{
 				System.out.print("\t- ");
 				name = sc.nextLine();
@@ -516,6 +586,11 @@ public class MainActivity {
 				sc.nextLine();
 			}while(it<1 || it>3);
 			movie.setStatus(it);
+			System.out.print("Duration in minutes: ");
+			it = sc.nextInt();
+			movie.setDuration(it);
+			System.out.print("\n");
+			sc.nextLine(); //consume newline for next string input
 			listMovieView(movie, false);
 			System.out.println("Please confirm the record:\nTo insert, type Y\nTo redo, type N\nTo exit, type E");
 			System.out.print("Your choice: ");
@@ -730,4 +805,82 @@ public class MainActivity {
 		return 0;
 	}
 
+	private static int selectMovie(HashMap<Integer, Movie> movies) {
+		int i = 0;
+		for (Movie m : movies.values()) {
+			i++;
+			System.out.println(i + ". " + m.getTitle());
+		}
+		int choice = sc.nextInt();
+		sc.nextLine();
+		return choice;
+	}
+	
+	private static void setupCineplex(boolean auto) {
+		int it = 0;
+		String st;
+		boolean exit = false;
+
+		if (auto) {
+			for (int i = 1; i <= 3; i++) {
+				Cineplex c = new Cineplex();
+				String name = new StringBuilder().append("Cineplex ").append(Integer.toString(i)).toString();
+				c.setCineplexId(i);
+				c.setCineplexName(name);
+				c.setCinemaNum(3);
+				CineplexDao.save(c);
+			}
+		}
+		else {
+			System.out.println("Enter number of cineplex: ");
+			it = sc.nextInt();
+			sc.nextLine();
+			int index = 1;
+			while(index <= it) {
+				do {
+					Cineplex c = new Cineplex();
+					System.out.print("\n");
+					System.out.print("Name for cineplex " + index + ": ");
+					st = sc.nextLine();
+					System.out.print("Number of cinema: ");
+					it = sc.nextInt();
+					sc.nextLine();
+					c.setCineplexName(st);
+					c.setCineplexId(index);
+					c.setCinemaNum(it);
+					for(int j=0; j<68; j++)
+						System.out.print("*");
+					System.out.print("\nCineplex " + index + "\nName: " + st);
+					System.out.println("\nNumber of cinema: " + it);
+					for(int j=0; j<68; j++)
+						System.out.print("*");
+					System.out.println("\nPlease confirm the record:\nTo insert, type Y\nTo redo, type N\nTo exit, type E");
+					System.out.print("Your choice: ");
+					st = sc.nextLine();
+					if(st.equalsIgnoreCase("Y")){
+						CineplexDao.save(c);
+						System.out.println("One record was added");
+						exit = true;
+						index++;
+					}else if(st.equalsIgnoreCase("N")){
+						continue;
+					}else{
+						System.out.println("Zero record was added");
+						exit = true;
+						index++;
+					}
+				} while (!exit);
+			}
+		}
+	}
+	
+	private static int selectCineplexAndReturnChoice() {
+		int choice;
+		HashMap<Integer, Cineplex> c = CineplexDao.getAllInHashMap();
+		listCineplexesView(c, true);
+		System.out.print("Select which cineplex to enter: ");
+		choice = sc.nextInt();
+		return choice;
+	}
 }
+	
