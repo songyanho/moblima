@@ -31,8 +31,8 @@ public class Settings implements StandardData {
 		o.put("holidays", holidaysArray);
 		return o;
 	}
-	
-	public static Settings fromJSONObjects(JSONObject o){
+
+	public Settings fromJSONObject(JSONObject o) {
 		ArrayList<String> holidays = new ArrayList<String>();
 		JSONArray h = (JSONArray) o.get("holidays");
 		for(int i=0; i<h.size(); i++)
