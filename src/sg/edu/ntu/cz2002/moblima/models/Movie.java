@@ -8,6 +8,7 @@ import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 
 import sg.edu.ntu.cz2002.moblima.dao.MovieDao;
+import sg.edu.ntu.cz2002.moblima.dao.ReviewDao;
 
 public class Movie implements StandardData{
 	protected int id;
@@ -17,7 +18,7 @@ public class Movie implements StandardData{
 	protected String director;
 	protected ArrayList<String> casts;
 	protected String rating;
-	protected ArrayList<Review> reviews;
+	protected HashMap<Integer, Review> reviews;
 	
 	public enum MovieType{
 		// TODO implement MovieType
@@ -157,16 +158,16 @@ public class Movie implements StandardData{
 		this.rating = rating;
 	}
 
-	public ArrayList<Review> getReviews() {
-		return reviews;
+	public HashMap<Integer, Review> getReviews() {
+		return ReviewDao.findByMovieId(this.id);
 	}
 
-	public void setReviews(ArrayList<Review> reviews) {
+	public void setReviews(HashMap<Integer, Review> reviews) {
 		this.reviews = reviews;
 	}
 	
 	public void addReview(Review review){
-		this.reviews.add(review);
+		ReviewDao.add(review);
 	}
 	
 	@SuppressWarnings("unchecked")
