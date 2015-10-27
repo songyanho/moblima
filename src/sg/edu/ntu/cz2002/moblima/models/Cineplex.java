@@ -1,67 +1,105 @@
 package sg.edu.ntu.cz2002.moblima.models;
-import java.util.Scanner;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Set;
+
+import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
+
+import sg.edu.ntu.cz2002.moblima.dao.CineplexDao;
 
 public class Cineplex {
-	public String name;
-	private Cinema[] cinema;
-	private int id;
-	private int cinemaNum;
+	protected String name;
+	protected ArrayList<Cinema> cinema;
+	protected ArrayList<Movie> movies;
+	protected int id;
+	protected int cinemaNum;
 	
-	public Cineplex(int cineplex_Id, String cineplex_Name, int cinemaNum) {
-		this.id = cineplex_Id;
-		this.name = cineplex_Name;
-		this.cinema = new Cinema[cinemaNum];
-		int i;
-		for (i = 0; i < cinemaNum; i++) {
-			cinema[i] = new Cinema(i);
-		}
+	public Cineplex() {
+		this.id = CineplexDao.getLastId() + 1;
 	}
 	
-	public String getName() {
+	public Cineplex(int id, String name, int cinemaNum) {
+		this.id = id;
+		this.name = name;
+		this.cinemaNum = cinemaNum;
+	}
+	
+	public String getCineplexName() {
 		return name;
 	}
 	
-	public int getId() {
+	public int getCineplexId() {
 		return id;
 	}
 	
-	public void getCinema() {
-		int i;
-		for (i = 0; i < cinemaNum; i++) {
-			System.out.println("Cinema name: " + cinema[i].getName() + ", Class: " + cinema[i].getClass() + ", " + cinema[i].getHall() + " halls.");
-		}	
+	public ArrayList<Cinema> getCinema() {
+		return cinema;
 	}
 	
 	public int getCinemaNum() {
 		return cinemaNum;
 	}
 	
-	public void setName(String cineplex_Name) {
+	public void setCineplexName(String cineplex_Name) {
 		this.name = cineplex_Name;
 	}
 	
-	public void setId(int cineplex_Id) {
+	public void setCineplexId(int cineplex_Id) {
 		this.id = cineplex_Id;
 	}
 
+	public void setCinema(ArrayList<Cinema> cinema) {
+		this.cinema = cinema;
+	}
+
 	public void setCinemaNum(int num) {
-		this.cinemaNum = num;
+		if (num < 3) {
+			this.cinemaNum = 3;
+			System.out.println("At least three cinemas.");
+		}
+		else
+			this.cinemaNum = num;
 	}
 	
-	/*
-	public void setCinema() {
-		Scanner sc = new Scanner(System.in);
-		int i;
-		for (i = 0; i < this.cinemaNum; i++) {
-			System.out.print("Cinema name: ");
-			this.cinema[i].setName(sc.nextLine());
-			System.out.print("Cinema Id: ");
-			this.cinema[i].setId(sc.nextInt());
-			System.out.print("Cinema class: ");
-			this.cinema[i].setClass(sc.nextLine());
-			System.out.print("Cinema number of halls: ");
-			this.cinema[i].setHall(sc.nextInt());
-		}
+	public ArrayList<Movie> getMovies() {
+		return movies;
 	}
-	*/
+
+	public void setMovies(ArrayList<Movie> movies) {
+		this.movies = movies;
+	}
+
+	public JSONObject toJSONObject() {
+		JSONObject o = new JSONObject();
+		o.put("id", this.id);
+		o.put("name", this.name);
+		o.put("cinemaNum", this.cinemaNum);
+		return o;
+	}
+	
+	public static Cineplex fromJSONObject(JSONObject o){
+		return new Cineplex(Integer.parseInt(o.get("id").toString()), o.get("name").toString(), Integer.parseInt(o.get("cinemaNum").toString()));
+	}
+	
+	public static HashMap<String, JSONObject> toJSONObjects(HashMap<Integer, Cineplex> o){
+		HashMap<String, JSONObject> a = new HashMap<String, JSONObject>();
+		Set<Integer> s = o.keySet();
+		for(Integer i: s){
+			a.put(""+i, o.get(i).toJSONObject());
+		}
+		return a;
+	}
+	
+	public static HashMap<Integer, Cineplex> fromJSONObjects(JSONObject o){
+		HashMap<Integer, Cineplex> a = new HashMap<Integer, Cineplex>();
+		Set<String> s = o.keySet();
+		for(String i: s){
+			JSONObject n = (JSONObject) o.get(i);
+			Cineplex t =  Cineplex.fromJSONObject(n);
+			a.put(t.getCineplexId(), t);
+		}
+		return a;
+	}
 }

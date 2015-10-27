@@ -5,16 +5,12 @@ public class Ticket {
 	protected String type;
 	protected int dayOfWeek;
 	protected int age;
-	protected double price;
-	//protected PurchasedTickets[] purchasedTickets;
 	
 	public Ticket() {
-		this.id = 0;
-		this.price = 0;
-		//this.purchasedTickets = new PurchasedTickets[300];
+		this.id = -1;
 	}
 	
-	public int getId() {
+	public int getTicketId() {
 		return id;
 	}
 	
@@ -25,18 +21,8 @@ public class Ticket {
 	public int getDayOfWeek() {
 		return dayOfWeek;
 	}
-
-	public double getPrice() {
-		return price;
-	}
 	
-	/*
-	 public PurchasedTickets[] getPurchasedTickets() {
-		return purchasedTickets;
-	}
-	*/
-	
-	public void setId(int ticket_Id) {
+	public void setTicketId(int ticket_Id) {
 		this.id = ticket_Id;
 	}
 	
@@ -46,11 +32,6 @@ public class Ticket {
 	
 	public void setDayOfWeek (int day) {
 		this.dayOfWeek = day;
-	}
-	
-	
-	public void setPrice(double ticket_price) {
-		this.price = ticket_price;
 	}
 	
 	public void setPurchasedTickets() {

@@ -15,6 +15,7 @@ public class Review implements StandardData {
 	
 	public Review(){
 		this.id = ReviewDao.getLastId()+1;
+		this.rating = 0;
 	}
 	
 	public Review(int id, int movieId, String name, String comment, double rating) {

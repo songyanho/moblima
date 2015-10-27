@@ -33,12 +33,13 @@ public class Movie implements StandardData{
 	public enum MovieStatus{
 		COMINGSOON, PREVIEW, NOWSHOWING, ENDOFSHOWING
 	}
+	protected int duration;
 	
 	public Movie(){
 		this.id = MovieDao.getLastId()+1;
 	}
 
-	public Movie(int id, String title, int status, String director, String synopsis, ArrayList<String> casts, String rating) {
+	public Movie(int id, String title, int status, String director, String synopsis, ArrayList<String> casts, String rating, int duration) {
 		this.id = id;
 		this.title = title;
 		this.status = status;
@@ -46,6 +47,7 @@ public class Movie implements StandardData{
 		this.synopsis = synopsis;
 		this.casts = casts;
 		this.rating = rating;
+		this.duration = duration;
 	}
 	
 	public int getId() {
@@ -183,6 +185,7 @@ public class Movie implements StandardData{
 		JSONArray a = new JSONArray();
 		a.addAll(this.casts);
 		o.put("casts", a);
+		o.put("duration", this.duration);
 		return o;
 	}
 	
@@ -190,7 +193,7 @@ public class Movie implements StandardData{
 		ArrayList<String> casts = new ArrayList<String>();
 		JSONArray castsInJSON = (JSONArray) o.get("casts");
 		casts.addAll(castsInJSON);
-		return new Movie(Integer.parseInt(o.get("id").toString()), o.get("title").toString(), Integer.parseInt(o.get("status").toString()), o.get("director").toString(), o.get("synopsis").toString(), casts, o.get("rating").toString());
+		return new Movie(Integer.parseInt(o.get("id").toString()), o.get("title").toString(), Integer.parseInt(o.get("status").toString()), o.get("director").toString(), o.get("synopsis").toString(), casts, o.get("rating").toString(), Integer.parseInt(o.get("duration").toString()));
 	}
 	
 	public static HashMap<String, JSONObject> toJSONObjects(HashMap<Integer, Movie> o){
@@ -211,5 +214,13 @@ public class Movie implements StandardData{
 			a.put(t.getId(), t);
 		}
 		return a;
+	}
+
+	public int getDuration() {
+		return duration;
+	}
+
+	public void setDuration(int duration) {
+		this.duration = duration;
 	}
 }
