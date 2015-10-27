@@ -8,7 +8,7 @@ import org.json.simple.JSONObject;
 
 import sg.edu.ntu.cz2002.moblima.dao.CinemaDao;
 
-public class Cinema {
+public class Cinema implements StandardData {
 	protected String name;
 	protected String cinemaClass;
 	protected int id;
@@ -20,11 +20,10 @@ public class Cinema {
 		this.id = CinemaDao.getLastId() + 1;
 	}
 	
-	public Cinema(int id, String name, String cinemaClass, ArrayList<Seat> seat, int seatNum) {
+	public Cinema(int id, String name, String cinemaClass, int seatNum) {
 		this.id = id;
 		this.name = name;
 		this.cinemaClass = cinemaClass;
-		this.seat = seat;
 		this.seatNum = seatNum;
 	}
 	
@@ -77,23 +76,22 @@ public class Cinema {
 		this.seatNum = seatNum;
 	}
 	
+	public void showSeats() {
+		System.out.println("Total number of empty seats: " + this.numEmptySeat);
+	}
+	
+	@Override
 	public JSONObject toJSONObject() {
 		JSONObject o = new JSONObject();
 		o.put("id", this.id);
 		o.put("name", this.name);
-		JSONArray a = new JSONArray();
-		a.addAll(this.seat);
-		o.put("seat", a);
 		o.put("cinemaClass", this.cinemaClass);
-		o.put("numEmptySeat", this.numEmptySeat);
+		o.put("seatNum", this.seatNum);
 		return o;
 	}
 	
 	public static Cinema fromJSONObject(JSONObject o){
-		ArrayList<Seat> seat = new ArrayList<Seat>();
-		JSONArray seatInJSON = (JSONArray) o.get("seat");
-		seat.addAll(seatInJSON);
-		return new Cinema(Integer.parseInt(o.get("id").toString()), o.get("name").toString(), o.get("cinemaClass").toString(), seat, Integer.parseInt(o.get("seatNum").toString()));
+		return new Cinema(Integer.parseInt(o.get("id").toString()), o.get("name").toString(), o.get("cinemaClass").toString(), Integer.parseInt(o.get("seatNum").toString()));
 	}
 	
 	public static HashMap<String, JSONObject> toJSONObjects(HashMap<Integer, Cinema> o){

@@ -17,6 +17,7 @@ import sg.edu.ntu.cz2002.moblima.models.Admin;
 import sg.edu.ntu.cz2002.moblima.models.Cineplex;
 import sg.edu.ntu.cz2002.moblima.models.Cinema;
 import sg.edu.ntu.cz2002.moblima.models.Movie;
+import sg.edu.ntu.cz2002.moblima.models.Seat;
 
 public class MainActivity {
 	protected static Scanner sc;
@@ -53,14 +54,28 @@ public class MainActivity {
 	}
 
 	private static void movieGoerViewController(){
-		int choice, it, cineplex;
+		int choice, choice2, it, cineplex = 0;
 		String st;
 		boolean exit = false;
 		
 		//CODE for selecting cineplex and cinema
-		System.out.println("\nPlease select a cineplex: ");
-		cineplex = selectCineplexAndReturnChoice();
-		String[] menus = {"Search movie",
+		System.out.println("Please select the options below:");
+		String[] menus = {"Movie options",
+				"Search movie by cineplex"};
+		do {
+			choice = printMenuAndReturnChoice("Movie-goers", menus);
+			switch(choice) {
+			case 1:
+				break;
+			case 2:
+				cineplex = selectCineplexAndReturnChoice();
+				break;
+			default:
+				System.out.println("Invalid option! Please try again.");
+			}
+		} while (choice < 1 || choice > 3);
+
+		String[] menus2 = {"Search movie",
 				"List movies and details", 
 				"Check seat availability", 
 				"Book and purchase ticket", 
@@ -71,8 +86,8 @@ public class MainActivity {
 		do {
 			HashMap<Integer, Movie> movies = MovieDao.getAllInHashMap();
 			exit = false;
-			choice = printMenuAndReturnChoice("Movie-goer", menus);
-			switch (choice) {
+			choice2 = printMenuAndReturnChoice("Movie-goer", menus2);
+			switch (choice2) {
 			case 1:
 				searchMovieViewController(false);
 				break;
@@ -83,20 +98,17 @@ public class MainActivity {
 					listMoviesView(movies, false);
 				break;
 			case 3:
-				System.out.println("Which movie you want to check?");
 				it = selectMovie(movies);
 				//CODE show empty seat
 				System.out.print("Total of empty seats is ");
 				break;
 			case 4:
 				//which movie and seat
-				System.out.println("Which movie ticket you want to buy?");
-				it = selectMovie(movies);
-				System.out.print("Number of tickets: ");
-				it = sc.nextInt();
-				System.out.println("Choose your seat: ");
 				//CODE show seat arrangement and confirmation
-				
+				showSeatsArrangement(cineplex, 1);
+				if (choice == 1)
+					cineplex = selectCineplexAndReturnChoice();
+				bookTicketViewController(cineplex, selectMovie(movies));
 				break;
 			case 5:
 				//CODE history
@@ -113,7 +125,7 @@ public class MainActivity {
 			default:
 				System.out.print("Invalid option! Please try again.");
 			}
-		} while(!exit);
+		} while(!exit || choice2 < 1 || choice2 > 8);
 	}
 
 	private static void adminViewController(){
@@ -806,6 +818,7 @@ public class MainActivity {
 	}
 
 	private static int selectMovie(HashMap<Integer, Movie> movies) {
+		System.out.println("\nWhich movie you are interested in?");
 		int i = 0;
 		for (Movie m : movies.values()) {
 			i++;
@@ -829,7 +842,7 @@ public class MainActivity {
 				c.setCineplexName(name);
 				c.setCinemaNum(3);
 				CineplexDao.save(c);
-			}
+				}
 		}
 		else {
 			System.out.println("Enter number of cineplex: ");
@@ -863,6 +876,7 @@ public class MainActivity {
 						exit = true;
 						index++;
 					}else if(st.equalsIgnoreCase("N")){
+						exit = false;
 						continue;
 					}else{
 						System.out.println("Zero record was added");
@@ -877,10 +891,107 @@ public class MainActivity {
 	private static int selectCineplexAndReturnChoice() {
 		int choice;
 		HashMap<Integer, Cineplex> c = CineplexDao.getAllInHashMap();
+		System.out.println("Cineplex details:");
 		listCineplexesView(c, true);
 		System.out.print("Select which cineplex to enter: ");
 		choice = sc.nextInt();
 		return choice;
 	}
+	
+	private static void bookTicketViewController(int cineplexId, int movieId) {
+		int it;
+		String st;
+		boolean exit = false;
+		ArrayList<String> sat = new ArrayList<String>();
+		
+		System.out.println("Booking for movie " + MovieDao.findById(movieId).getTitle() + " in cineplex " + CineplexDao.findById(cineplexId).getCineplexName());
+		//show seat arrangement
+		System.out.print("How many tickets: ");
+		it = sc.nextInt();
+		sc.nextLine();
+		System.out.print("Enter seat numbers: ");
+		for (int i = 0; i < it; i++) {
+			st = sc.nextLine();
+			//check the seat is occupied or not
+			sat.add(st);
+		}
+		System.out.println("Seat(s) selected: ");
+		for (String s: sat)
+			System.out.print(s + " ");
+		System.out.println("Confirm payment? (Y|N)");
+		do {
+			st = sc.nextLine();
+			if (st.equalsIgnoreCase("Y")) {
+				//book
+				exit = false;
+			}
+			else if (st.equalsIgnoreCase("N")) {
+				System.out.println("Cancel movie booking.");
+				exit = false;
+			}
+			else {
+				System.out.print("Please type again (Y|N): ");
+				exit = true;
+			}
+		} while (!exit);
+	}
+	
+	private static void showSeatsArrangement(int cineplexId, int cinemaId) {
+		int row = 15;
+		int column = 22;
+		int i, j;
+		char c = 'A';
+		int ascii = (int) c - 2;
+		int digit;
+		// System.out.println("Showing seats arrangement for cinema " + CinemaDao.findById(cinemaId).getCinemaName() + " in " + CineplexDao.findById(cineplexId).getCineplexName());
+		System.out.print("\n");
+		for (i = 0; i < row; i++) {
+			for (j = 0; j < column; j++) {
+				//first row
+				if (i == 0) {
+					if (j == 0 || j == 1 || j == column - 2 || j == column - 1)
+						System.out.print("   ");
+					else {
+						digit = j-1;
+						if (digit > 9)
+							System.out.print(" "+digit+"  ");
+						else
+							System.out.print("  "+digit+"  ");
+					}
+				}
+				//second row as seperated line
+				else if (i == 1) {
+					for (int k = 0; k < 15; k++)
+						System.out.print("------------");
+					System.out.print("\n");
+					break;
+				}
+				//other rows
+				else {
+					//if (j > 10)
+						//System.out.print(" ");
+					if (j == 0 || j == column - 1) {
+						c = (char) ascii;
+						System.out.print(" "+c+" ");
+						}
+					else if (j == 1 || j == column - 2)
+						System.out.print(" | ");
+					//isle
+					else if (j == 4 || j == column - 5)
+						System.out.print("     ");
+					else {
+						//if available
+						System.out.print(" |_| ");
+						//if not available
+					}
+				}
+				if (j % (column - 1) == 0 && j != 0)
+					System.out.print("\n");
+			}
+			ascii += 1;
+		}
+		System.out.print("\n");
+	}
+	
 }
 	

@@ -1,13 +1,29 @@
 package sg.edu.ntu.cz2002.moblima.models;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Set;
 
-public class Ticket {
-	protected int id;
+import org.json.simple.JSONObject;
+
+import sg.edu.ntu.cz2002.moblima.dao.TicketDao;
+
+public class Ticket implements StandardData {
+	protected int id; //timeslot
 	protected String type;
-	protected int dayOfWeek;
-	protected int age;
+	protected String dayOfWeek;
 	
 	public Ticket() {
-		this.id = -1;
+		this.id = TicketDao.getLastId()+1;
+		Date now = new Date();
+		SimpleDateFormat day = new SimpleDateFormat("E");
+		this.dayOfWeek = day.format(now);
+	}
+	
+	public Ticket(int id, String type, String dayOfWeek) {
+		this.id = id;
+		this.type = type;
+		this.dayOfWeek = dayOfWeek;
 	}
 	
 	public int getTicketId() {
@@ -18,7 +34,7 @@ public class Ticket {
 		return type;
 	}
 	
-	public int getDayOfWeek() {
+	public String getDayOfWeek() {
 		return dayOfWeek;
 	}
 	
@@ -30,10 +46,40 @@ public class Ticket {
 		this.type = movie_type;
 	}
 	
-	public void setDayOfWeek (int day) {
+	public void setDayOfWeek (String day) {
 		this.dayOfWeek = day;
 	}
 	
-	public void setPurchasedTickets() {
+	@Override
+	public JSONObject toJSONObject() {
+		JSONObject o = new JSONObject();
+		o.put("id", this.id);
+		o.put("type", this.type);
+		o.put("dayOfWeek", this.dayOfWeek);
+		return o;
+	}
+	
+	public static Ticket fromJSONObject(JSONObject o){
+		return new Ticket(Integer.parseInt(o.get("id").toString()), o.get("type").toString(), o.get("dayOfWeek").toString());
+	}
+	
+	public static HashMap<String, JSONObject> toJSONObjects(HashMap<Integer, Ticket> o){
+		HashMap<String, JSONObject> a = new HashMap<String, JSONObject>();
+		Set<Integer> s = o.keySet();
+		for(Integer i: s){
+			a.put(""+i, o.get(i).toJSONObject());
+		}
+		return a;
+	}
+	
+	public static HashMap<Integer, Ticket> fromJSONObjects(JSONObject o){
+		HashMap<Integer, Ticket> a = new HashMap<Integer, Ticket>();
+		Set<String> s = o.keySet();
+		for(String i: s){
+			JSONObject n = (JSONObject) o.get(i);
+			Ticket t =  Ticket.fromJSONObject(n);
+			a.put(t.getTicketId(), t);
+		}
+		return a;
 	}
 }

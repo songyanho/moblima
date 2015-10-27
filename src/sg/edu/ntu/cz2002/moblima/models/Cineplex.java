@@ -9,7 +9,7 @@ import org.json.simple.JSONObject;
 
 import sg.edu.ntu.cz2002.moblima.dao.CineplexDao;
 
-public class Cineplex {
+public class Cineplex implements StandardData {
 	protected String name;
 	protected ArrayList<Cinema> cinema;
 	protected ArrayList<Movie> movies;
@@ -71,6 +71,7 @@ public class Cineplex {
 		this.movies = movies;
 	}
 
+	@ Override
 	public JSONObject toJSONObject() {
 		JSONObject o = new JSONObject();
 		o.put("id", this.id);
