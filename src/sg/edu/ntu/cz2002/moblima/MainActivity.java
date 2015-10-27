@@ -129,7 +129,7 @@ public class MainActivity {
 			choice = printMenuAndReturnChoice("Admin Panel > Movie Listing Management", menu);
 			switch (choice) {
 			case 1:
-				HashMap<Integer, Movie> movies = MovieDao.getAllInHashMap();
+				HashMap<Integer, Movie> movies = MovieDao.findActiveMovie();
 				if(movies.size() <= 0)
 					System.out.println("No movies available");
 				else
@@ -166,7 +166,7 @@ public class MainActivity {
 		System.out.print("\tstarring ");
 		for(String c: m.getCasts())
 			System.out.print(c+"  ");
-		System.out.println("\n\tis "+ (m.getStatus() == 1 ? "Coming soon" : m.getStatus() == 2 ? "Preview" : "Now Showing"));
+		System.out.println("\n\tis "+ m.getStatusString());
 		System.out.println("\tSynopsis: "+m.getSynopsis());
 		System.out.println("\n");
 	}
@@ -339,22 +339,20 @@ public class MainActivity {
 			case 4:
 				exit2 = false;
 				do{
-					System.out.println("Current movie status: "+(m.getStatus() == 1 ? "Coming soon" : m.getStatus() == 2 ? "Preview" : "Now Showing"));
+					System.out.println("Current movie status: "+m.getStatusString());
 					do{
 						System.out.println("Movie status: ");
-						System.out.println("\t1. Coming soon");
-						System.out.println("\t2. Preview");
-						System.out.println("\t3. Now Showing");
+						Movie.printMovieStatusChoice();
 						System.out.print("Update movie status to: ");
 						it = sc.nextInt();
 						sc.nextLine();
-					}while(it<1 || it>3);
-					System.out.println("Movie status: "+(m.getStatus() == 1 ? "Coming soon" : m.getStatus() == 2 ? "Preview" : "Now Showing")+" -> "+(it == 1 ? "Coming soon" : it == 2 ? "Preview" : "Now Showing"));
+					}while(it<1 || it>4);
+					System.out.println("Movie status: "+m.getStatusString()+" -> "+Movie.getStatusStringFromChoice(it));
 					System.out.println("Please confirm the record:\nTo edit, type Y\nTo redo, type N\nTo exit, type E");
 					System.out.print("Your choice: ");
 					st2 = sc.nextLine();
 					if(st2.equalsIgnoreCase("Y")){
-						m.setStatus(it);
+						m.setStatusFromChoice(it);
 						MovieDao.save();
 						exit2 = true;
 					}else if(st2.equalsIgnoreCase("N")){
@@ -413,8 +411,9 @@ public class MainActivity {
 				System.out.print("Your choice: ");
 				st = sc.nextLine();
 				if(st.equalsIgnoreCase("Y")){
-					MovieDao.deleteById(m.getId());
-					System.out.println("One record was removed");
+					m.setStatusFromChoice(4);
+					MovieDao.save();
+					System.out.println("This movie is set to 'End of Showing'");
 					exit = true;
 				}else if(st.equalsIgnoreCase("N")){
 					continue;
@@ -460,13 +459,10 @@ public class MainActivity {
 			case 3:
 				do{
 					System.out.println("Search movies with status: ");
-					System.out.println("\t1. Coming soon");
-					System.out.println("\t2. Preview");
-					System.out.println("\t3. Now Showing");
-					System.out.print("Movie status: ");
+					Movie.printMovieStatusChoice();
 					it = sc.nextInt();
 					sc.nextLine();
-				}while(it<1 || it>3);
+				}while(it<1 || it>4);
 				results = MovieDao.findByStatus(it);
 				if(results.size() <= 0)
 					System.out.println("No matched movies");
@@ -508,14 +504,12 @@ public class MainActivity {
 			movie.setCasts(sat);
 			do{
 				System.out.println("Movie status: ");
-				System.out.println("\t1. Coming soon");
-				System.out.println("\t2. Preview");
-				System.out.println("\t3. Now Showing");
+				Movie.printMovieStatusChoice();
 				System.out.print("Movie status: ");
 				it = sc.nextInt();
 				sc.nextLine();
-			}while(it<1 || it>3);
-			movie.setStatus(it);
+			}while(it<1 || it>4);
+			movie.setStatusFromChoice(it);
 			listMovieView(movie, false);
 			System.out.println("Please confirm the record:\nTo insert, type Y\nTo redo, type N\nTo exit, type E");
 			System.out.print("Your choice: ");

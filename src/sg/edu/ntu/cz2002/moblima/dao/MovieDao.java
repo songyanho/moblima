@@ -9,9 +9,8 @@ import java.util.Set;
 import org.json.simple.JSONObject;
 
 import sg.edu.ntu.cz2002.moblima.database.Database;
-import sg.edu.ntu.cz2002.moblima.models.Admin;
 import sg.edu.ntu.cz2002.moblima.models.Movie;
-import sg.edu.ntu.cz2002.moblima.models.Review;
+import sg.edu.ntu.cz2002.moblima.models.Movie.MovieStatus;
 
 public class MovieDao {
 	
@@ -20,7 +19,6 @@ public class MovieDao {
 	protected static HashMap<Integer, Movie> records;
 	
 	public static HashMap<Integer, Movie> getAllInHashMap() {
-		// TODO Auto-generated method stub
 		if(records == null) initialize();
 		return records;
 	}
@@ -37,7 +35,6 @@ public class MovieDao {
 	}
 
 	public static Movie findById(int id) {
-		// TODO Auto-generated method stub
 		if(records == null) initialize();
 		if(records.containsKey(id))
 			return records.get(id);
@@ -51,6 +48,16 @@ public class MovieDao {
 			return save();
 		}
 		return false;
+	}
+	
+	public static HashMap<Integer, Movie> findActiveMovie(){
+		if(records == null) initialize();
+		HashMap<Integer, Movie> m = new HashMap<Integer, Movie>();
+		for(Movie i: records.values()){
+			if(i.getStatus() < 4)
+				m.put(i.getId(), i);
+		}
+		return m;
 	}
 	
 	public static HashMap<Integer, Movie> findByTitle(String title){
@@ -75,16 +82,16 @@ public class MovieDao {
 	
 	public static HashMap<Integer, Movie> findByStatus(int status){
 		if(records == null) initialize();
+		MovieStatus ms = Movie.getStatusEnumFromChoice(status);
 		HashMap<Integer, Movie> m = new HashMap<Integer, Movie>();
 		for(Movie i: records.values()){
-			if(i.getStatus() == status)
+			if(i.getStatus() == ms.ordinal())
 				m.put(i.getId(), i);
 		}
 		return m;
 	}
 
 	public static boolean save(Movie t) {
-		// TODO Auto-generated method stub
 		if(records == null) initialize();
 		records.put(t.getId(), t);
 		return save();
@@ -104,7 +111,6 @@ public class MovieDao {
 	}
 
 	public static void initialize() {
-		// TODO Auto-generated method stub
 		JSONObject t = Database.getObject(DATABASE_NAME);
 		records = Movie.fromJSONObjects(t);
 	}

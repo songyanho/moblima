@@ -16,20 +16,35 @@ public class Movie implements StandardData{
 	protected String synopsis;
 	protected String director;
 	protected ArrayList<String> casts;
-	protected double rating;
+	protected String rating;
 	protected ArrayList<Review> reviews;
+	
+	public enum MovieType{
+		// TODO implement MovieType
+		BLOCKBUSTER, THREED
+	}
+	
+	public enum MovieRating{
+		// TODO implement MovieRating
+		GENERAL, PG, PG13, M18, R21
+	}
+	
+	public enum MovieStatus{
+		COMINGSOON, PREVIEW, NOWSHOWING, ENDOFSHOWING
+	}
 	
 	public Movie(){
 		this.id = MovieDao.getLastId()+1;
 	}
 
-	public Movie(int id, String title, int status, String director, String synopsis, ArrayList<String> casts) {
+	public Movie(int id, String title, int status, String director, String synopsis, ArrayList<String> casts, String rating) {
 		this.id = id;
 		this.title = title;
 		this.status = status;
 		this.director = director;
 		this.synopsis = synopsis;
 		this.casts = casts;
+		this.rating = rating;
 	}
 	
 	public int getId() {
@@ -51,9 +66,55 @@ public class Movie implements StandardData{
 	public int getStatus() {
 		return status;
 	}
+	
+	public String getStatusString(){
+		return this.status == Movie.MovieStatus.COMINGSOON.ordinal() ? 		"Coming soon" : 
+			   this.status == Movie.MovieStatus.PREVIEW.ordinal() ? 		"Preview" : 
+			   this.status == Movie.MovieStatus.NOWSHOWING.ordinal() ? 		"Now Showing" : 
+			   																"End of Showing";
+	}
 
+	@Deprecated
 	public void setStatus(int status) {
 		this.status = status;
+	}
+	
+	public void setStatusFromChoice(int choice){
+		switch(choice){
+		case 1:
+			this.status = MovieStatus.COMINGSOON.ordinal();
+			break;
+		case 2:
+			this.status = MovieStatus.PREVIEW.ordinal();
+			break;
+		case 3:
+			this.status = MovieStatus.NOWSHOWING.ordinal();
+			break;
+		default:
+			this.status = MovieStatus.ENDOFSHOWING.ordinal();
+			break;
+		}
+	}
+	
+	public static String getStatusStringFromChoice(int choice){
+		return choice==1 ? 	"Coming soon" : 
+			   choice==2 ? 	"Preview" : 
+			   choice==3 ? 	"Now Showing" : 
+			   				"End of Showing";
+	}
+	
+	public static MovieStatus getStatusEnumFromChoice(int choice){
+		return choice==1 ? 	MovieStatus.COMINGSOON : 
+			   choice==2 ? 	MovieStatus.PREVIEW : 
+			   choice==3 ? 	MovieStatus.NOWSHOWING : 
+			   				MovieStatus.ENDOFSHOWING;
+	}
+	
+	public static void printMovieStatusChoice(){
+		System.out.println("\t1. Coming soon");
+		System.out.println("\t2. Preview");
+		System.out.println("\t3. Now Showing");
+		System.out.println("\t4. End of Showing");
 	}
 
 	public String getSynopsis() {
@@ -88,11 +149,11 @@ public class Movie implements StandardData{
 		this.casts.remove(index);
 	}
 
-	public double getRating() {
+	public String getRating() {
 		return rating;
 	}
 
-	public void setRating(double rating) {
+	public void setRating(String rating) {
 		this.rating = rating;
 	}
 
@@ -108,6 +169,7 @@ public class Movie implements StandardData{
 		this.reviews.add(review);
 	}
 	
+	@SuppressWarnings("unchecked")
 	@Override
 	public JSONObject toJSONObject() {
 		JSONObject o = new JSONObject();
@@ -116,6 +178,7 @@ public class Movie implements StandardData{
 		o.put("status", this.status);
 		o.put("synopsis", this.synopsis);
 		o.put("director", this.director);
+		o.put("rating", this.rating);
 		JSONArray a = new JSONArray();
 		a.addAll(this.casts);
 		o.put("casts", a);
@@ -126,7 +189,7 @@ public class Movie implements StandardData{
 		ArrayList<String> casts = new ArrayList<String>();
 		JSONArray castsInJSON = (JSONArray) o.get("casts");
 		casts.addAll(castsInJSON);
-		return new Movie(Integer.parseInt(o.get("id").toString()), o.get("title").toString(), Integer.parseInt(o.get("status").toString()), o.get("director").toString(), o.get("synopsis").toString(), casts);
+		return new Movie(Integer.parseInt(o.get("id").toString()), o.get("title").toString(), Integer.parseInt(o.get("status").toString()), o.get("director").toString(), o.get("synopsis").toString(), casts, o.get("rating").toString());
 	}
 	
 	public static HashMap<String, JSONObject> toJSONObjects(HashMap<Integer, Movie> o){
