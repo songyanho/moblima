@@ -1,49 +1,105 @@
 package sg.edu.ntu.cz2002.moblima.models;
-import java.util.Scanner;
+import java.util.HashMap;
+import java.util.Set;
 
-public class Review {
+import org.json.simple.JSONObject;
+
+import sg.edu.ntu.cz2002.moblima.dao.ReviewDao;
+
+public class Review implements StandardData {
+	protected int id;
 	protected String name;
 	protected double rating;
 	protected String comment;
-	protected int entryId;
+	protected int movieId;
 	
-	public Review(int index) {
+	public Review(){
+		this.id = ReviewDao.getLastId()+1;
 		this.rating = 0;
-		this.entryId = index;
 	}
 	
-	public void setName(String entry_name) {
-		this.name = entry_name;
+	public Review(int id, int movieId, String name, String comment, double rating) {
+		this.id = id;
+		this.movieId = movieId;
+		this.name = name;
+		this.rating = rating;
+		this.comment = comment;
+	}
+
+	public int getId() {
+		return id;
+	}
+
+	public void setId(int id) {
+		this.id = id;
 	}
 	
-	public void setRating (int rate) {
-		if (rate >= 1.0 && rate <= 5.0)
-			this.rating = rate;
-		else
-			System.out.println("Range: 1-5.");
+	public int getMovieId(){
+		return this.movieId;
 	}
 	
-	public void setComment (String review) {
-		this.comment = review;
+	public void setMovieId(int movieId){
+		this.movieId = movieId;
 	}
-	
-	public void setEntryId(int entry_Id) {
-		this.entryId = entry_Id;
-	}
-	
+
 	public String getName() {
 		return name;
 	}
-	
+
+	public void setName(String name) {
+		this.name = name;
+	}
+
+	public String getComment() {
+		return comment;
+	}
+
+	public void setComment(String comment) {
+		this.comment = comment;
+	}
+
 	public double getRating() {
 		return rating;
 	}
 	
-	public String getComment() {
-		return comment;
+	public void setRating (double rating) {
+		if (rating >= 1.0 && rating <= 5.0)
+			this.rating = rating;
 	}
 	
-	public int getEntryId() {
-		return entryId;
+	@SuppressWarnings("unchecked")
+	@Override
+	public JSONObject toJSONObject() {
+		JSONObject o = new JSONObject();
+		o.put("id", this.id);
+		o.put("movieid", this.movieId);
+		o.put("name", this.name);
+		o.put("comment", this.comment);
+		o.put("rating", this.rating);
+		return o;
+	}
+	
+	public static Review fromJSONObject(JSONObject o){
+		return new Review(Integer.parseInt(o.get("id").toString()), Integer.parseInt(o.get("movieid").toString()), o.get("name").toString(), o.get("comment").toString(), Double.parseDouble(o.get("rating").toString()));
+	}
+	
+	public static HashMap<String, JSONObject> toJSONObjects(HashMap<Integer, Review> o){
+		HashMap<String, JSONObject> a = new HashMap<String, JSONObject>();
+		Set<Integer> s = o.keySet();
+		for(Integer i: s){
+			a.put(""+i, o.get(i).toJSONObject());
+		}
+		return a;
+	}
+	
+	public static HashMap<Integer, Review> fromJSONObjects(JSONObject o){
+		HashMap<Integer, Review> a = new HashMap<Integer, Review>();
+		Set<String> s = o.keySet();
+		for(String i: s){
+			JSONObject n = (JSONObject) o.get(i);
+			Review t =  Review.fromJSONObject(n);
+			a.put(t.getId(), t);
+		}
+		return a;
 	}
 }

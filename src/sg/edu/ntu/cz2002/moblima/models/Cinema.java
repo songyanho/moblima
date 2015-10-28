@@ -10,9 +10,9 @@ import sg.edu.ntu.cz2002.moblima.dao.CinemaDao;
 
 public class Cinema implements StandardData {
 	protected String name;
-	protected String cinemaClass;
+	protected int cinemaClass;
 	protected int id;
-	protected ArrayList<Seat> seat;
+	protected ArrayList<String> seat;
 	private int seatNum;
 	private int numEmptySeat;
 	
@@ -20,11 +20,15 @@ public class Cinema implements StandardData {
 		this.id = CinemaDao.getLastId() + 1;
 	}
 	
-	public Cinema(int id, String name, String cinemaClass, int seatNum) {
+	public Cinema(int id, String name, int cinemaClass, int seatNum) {
 		this.id = id;
 		this.name = name;
 		this.cinemaClass = cinemaClass;
 		this.seatNum = seatNum;
+	}
+	
+	public enum CinemaClass {
+		PREMIERE, GOLD, NORMAL
 	}
 	
 	public String getCinemaName() {
@@ -35,7 +39,7 @@ public class Cinema implements StandardData {
 		return id;
 	}
 	
-	public String getCinemaClass() {
+	public int getCinemaClass() {
 		return cinemaClass;
 	}
 	
@@ -47,17 +51,22 @@ public class Cinema implements StandardData {
 		this.id = cinema_Id;
 	}
 	
-	public void setClass(String cinema_Class) {
-		this.cinemaClass = cinema_Class;
+	public ArrayList<String> getSeat() {
+		return seat;
 	}
-	
+
+	public void setSeat(ArrayList<String> seat) {
+		this.seat = seat;
+	}
+
+	@Deprecated
 	public void assign(int seatId, int ticketId) {
-		if (seat.get(seatId).ticket.getTicketId() == -1) {
+		/* if (seat.get(seatId).ticket.getTicketId() == -1) {
 			seat.get(seatId).assign(ticketId);
 			this.setNumEmptySeat(this.getNumEmptySeat() - 1);
 		}
 		else
-			System.out.println("Seat already assigned to a customer.");
+			System.out.println("Seat already assigned to a customer."); */
 	}
 	
 	public int getNumEmptySeat() {
@@ -80,6 +89,38 @@ public class Cinema implements StandardData {
 		System.out.println("Total number of empty seats: " + this.numEmptySeat);
 	}
 	
+	public void setClassFromChoice(int choice) {
+		switch (choice) {
+		case 1:
+			this.cinemaClass = CinemaClass.PREMIERE.ordinal();
+			break;
+		case 2:
+			this.cinemaClass = CinemaClass.GOLD.ordinal();
+			break;
+		default:
+			this.cinemaClass = CinemaClass.NORMAL.ordinal();
+		}
+	}
+	
+	public static CinemaClass getClassEnumFromChoice(int choice) {
+		return choice == 1? CinemaClass.PREMIERE:
+			   choice == 2?	CinemaClass.GOLD:
+				   			CinemaClass.NORMAL;
+	}
+	
+	public static String getClassStringFromChoice(int choice) {
+		return choice == 1? "PREMIERE":
+			   choice == 2? "GOLD":
+				   			"NORMAL";
+	}
+	
+	public void printClassChoice() {
+		for (CinemaClass c: CinemaClass.values()) {
+			System.out.println("\t" + c.ordinal() + ". " + c.name());
+		}
+	}
+	
+	@SuppressWarnings("unchecked")
 	@Override
 	public JSONObject toJSONObject() {
 		JSONObject o = new JSONObject();
@@ -91,7 +132,7 @@ public class Cinema implements StandardData {
 	}
 	
 	public static Cinema fromJSONObject(JSONObject o){
-		return new Cinema(Integer.parseInt(o.get("id").toString()), o.get("name").toString(), o.get("cinemaClass").toString(), Integer.parseInt(o.get("seatNum").toString()));
+		return new Cinema(Integer.parseInt(o.get("id").toString()), o.get("name").toString(), Integer.parseInt(o.get("cinemaClass").toString()), Integer.parseInt(o.get("seatNum").toString()));
 	}
 	
 	public static HashMap<String, JSONObject> toJSONObjects(HashMap<Integer, Cinema> o){
@@ -103,6 +144,7 @@ public class Cinema implements StandardData {
 		return a;
 	}
 	
+	@SuppressWarnings("unchecked")
 	public static HashMap<Integer, Cinema> fromJSONObjects(JSONObject o){
 		HashMap<Integer, Cinema> a = new HashMap<Integer, Cinema>();
 		Set<String> s = o.keySet();

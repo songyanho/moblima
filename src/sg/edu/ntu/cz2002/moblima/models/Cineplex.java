@@ -9,10 +9,10 @@ import org.json.simple.JSONObject;
 
 import sg.edu.ntu.cz2002.moblima.dao.CineplexDao;
 
-public class Cineplex implements StandardData {
+public class Cineplex {
 	protected String name;
-	protected ArrayList<Cinema> cinema;
-	protected ArrayList<Movie> movies;
+	protected HashMap<Integer, Cinema> cinema;
+	protected HashMap<Integer, Movie> movies;
 	protected int id;
 	protected int cinemaNum;
 	
@@ -34,7 +34,7 @@ public class Cineplex implements StandardData {
 		return id;
 	}
 	
-	public ArrayList<Cinema> getCinema() {
+	public HashMap<Integer, Cinema> getCinema() {
 		return cinema;
 	}
 	
@@ -50,7 +50,7 @@ public class Cineplex implements StandardData {
 		this.id = cineplex_Id;
 	}
 
-	public void setCinema(ArrayList<Cinema> cinema) {
+	public void setCinema(HashMap<Integer, Cinema> cinema) {
 		this.cinema = cinema;
 	}
 
@@ -63,15 +63,14 @@ public class Cineplex implements StandardData {
 			this.cinemaNum = num;
 	}
 	
-	public ArrayList<Movie> getMovies() {
+	public HashMap<Integer, Movie> getMovies() {
 		return movies;
 	}
 
-	public void setMovies(ArrayList<Movie> movies) {
+	public void setMovies(HashMap<Integer, Movie> movies) {
 		this.movies = movies;
 	}
 
-	@ Override
 	public JSONObject toJSONObject() {
 		JSONObject o = new JSONObject();
 		o.put("id", this.id);

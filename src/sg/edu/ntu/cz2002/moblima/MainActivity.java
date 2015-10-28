@@ -8,16 +8,8 @@ import java.util.HashMap;
 import java.util.Map.Entry;
 import java.util.Scanner;
 
-import sg.edu.ntu.cz2002.moblima.dao.AdminDao;
-import sg.edu.ntu.cz2002.moblima.dao.MovieDao;
-import sg.edu.ntu.cz2002.moblima.dao.SettingsDao;
-import sg.edu.ntu.cz2002.moblima.dao.CineplexDao;
-import sg.edu.ntu.cz2002.moblima.dao.CinemaDao;
-import sg.edu.ntu.cz2002.moblima.models.Admin;
-import sg.edu.ntu.cz2002.moblima.models.Cineplex;
-import sg.edu.ntu.cz2002.moblima.models.Cinema;
-import sg.edu.ntu.cz2002.moblima.models.Movie;
-import sg.edu.ntu.cz2002.moblima.models.Seat;
+import sg.edu.ntu.cz2002.moblima.dao.*;
+import sg.edu.ntu.cz2002.moblima.models.*;
 
 public class MainActivity {
 	protected static Scanner sc;
@@ -38,9 +30,9 @@ public class MainActivity {
 			boolean auto = it == 1? true: false;
 			setupCineplex(auto);
 		}
-
+		
 		do{
-			System.out.print("\nWelcome\nFor movie-goer, please press enter\nFor admin, please enter \"admin\": ");
+			System.out.print("\nWelcome\n For movie-goer, please press enter\nFor admin, please enter \"admin\": ");
 			String action = sc.nextLine();
 			if(action.equalsIgnoreCase("exit")){
 				break;
@@ -54,28 +46,14 @@ public class MainActivity {
 	}
 
 	private static void movieGoerViewController(){
-		int choice, choice2, it, cineplex = 0;
+		int choice, it, cineplex;
 		String st;
 		boolean exit = false;
 		
 		//CODE for selecting cineplex and cinema
-		System.out.println("Please select the options below:");
-		String[] menus = {"Movie options",
-				"Search movie by cineplex"};
-		do {
-			choice = printMenuAndReturnChoice("Movie-goers", menus);
-			switch(choice) {
-			case 1:
-				break;
-			case 2:
-				cineplex = selectCineplexAndReturnChoice();
-				break;
-			default:
-				System.out.println("Invalid option! Please try again.");
-			}
-		} while (choice < 1 || choice > 3);
-
-		String[] menus2 = {"Search movie",
+		System.out.println("\nPlease select a cineplex: ");
+		cineplex = selectCineplexAndReturnChoice();
+		String[] menus = {"Search movie",
 				"List movies and details", 
 				"Check seat availability", 
 				"Book and purchase ticket", 
@@ -86,8 +64,8 @@ public class MainActivity {
 		do {
 			HashMap<Integer, Movie> movies = MovieDao.getAllInHashMap();
 			exit = false;
-			choice2 = printMenuAndReturnChoice("Movie-goer", menus2);
-			switch (choice2) {
+			choice = printMenuAndReturnChoice("Movie-goer", menus);
+			switch (choice) {
 			case 1:
 				searchMovieViewController(false);
 				break;
@@ -104,11 +82,10 @@ public class MainActivity {
 				break;
 			case 4:
 				//which movie and seat
+				it = selectMovie(movies);
 				//CODE show seat arrangement and confirmation
 				showSeatsArrangement(cineplex, 1);
-				if (choice == 1)
-					cineplex = selectCineplexAndReturnChoice();
-				bookTicketViewController(cineplex, selectMovie(movies));
+				bookTicketViewController();
 				break;
 			case 5:
 				//CODE history
@@ -125,7 +102,7 @@ public class MainActivity {
 			default:
 				System.out.print("Invalid option! Please try again.");
 			}
-		} while(!exit || choice2 < 1 || choice2 > 8);
+		} while(!exit);
 	}
 
 	private static void adminViewController(){
@@ -134,13 +111,11 @@ public class MainActivity {
 		String st;
 		int it;
 		int choice;
-		int cineplex;
 		if(!loggedIn){
 			System.out.println("Invalid login. Please try again.");
 			return;
 		}
 		System.out.println("Welcome, "+data.getAdmin().getUsername());
-		cineplex = selectCineplexAndReturnChoice();
 		do{
 			String[] menus = {"Movie Listing Management", "Showtime Management", "System configuration", "Logout"};
 			choice = printMenuAndReturnChoice("Admin Panel", menus);
@@ -175,7 +150,7 @@ public class MainActivity {
 			choice = printMenuAndReturnChoice("Admin Panel > Movie Listing Management", menu);
 			switch (choice) {
 			case 1:
-				HashMap<Integer, Movie> movies = MovieDao.getAllInHashMap();
+				HashMap<Integer, Movie> movies = MovieDao.findActiveMovie();
 				if(movies.size() <= 0)
 					System.out.println("No movies available");
 				else
@@ -227,7 +202,7 @@ public class MainActivity {
 		for(String c: m.getCasts())
 			System.out.print(c+"  ");
 		System.out.print("\n\tDuration in minutes: " + m.getDuration());
-		System.out.println("\n\tis "+ (m.getStatus() == 1 ? "Coming soon" : m.getStatus() == 2 ? "Preview" : "Now Showing"));
+		System.out.println("\n\tis "+ m.getStatusString());
 		System.out.println("\tSynopsis: "+m.getSynopsis());
 		System.out.println("\n");
 	}
@@ -401,22 +376,20 @@ public class MainActivity {
 			case 4:
 				exit2 = false;
 				do{
-					System.out.println("Current movie status: "+(m.getStatus() == 1 ? "Coming soon" : m.getStatus() == 2 ? "Preview" : "Now Showing"));
+					System.out.println("Current movie status: "+m.getStatusString());
 					do{
 						System.out.println("Movie status: ");
-						System.out.println("\t1. Coming soon");
-						System.out.println("\t2. Preview");
-						System.out.println("\t3. Now Showing");
+						Movie.printMovieStatusChoice();
 						System.out.print("Update movie status to: ");
 						it = sc.nextInt();
 						sc.nextLine();
-					}while(it<1 || it>3);
-					System.out.println("Movie status: "+(m.getStatus() == 1 ? "Coming soon" : m.getStatus() == 2 ? "Preview" : "Now Showing")+" -> "+(it == 1 ? "Coming soon" : it == 2 ? "Preview" : "Now Showing"));
+					}while(it<1 || it>4);
+					System.out.println("Movie status: "+m.getStatusString()+" -> "+Movie.getStatusStringFromChoice(it));
 					System.out.println("Please confirm the record:\nTo edit, type Y\nTo redo, type N\nTo exit, type E");
 					System.out.print("Your choice: ");
 					st2 = sc.nextLine();
 					if(st2.equalsIgnoreCase("Y")){
-						m.setStatus(it);
+						m.setStatusFromChoice(it);
 						MovieDao.save();
 						exit2 = true;
 					}else if(st2.equalsIgnoreCase("N")){
@@ -471,7 +444,6 @@ public class MainActivity {
 			}
 		}while(!exit);
 	}
-	
 
 	private static void removeMovieViewController(){
 		int choice, it;
@@ -496,8 +468,9 @@ public class MainActivity {
 				System.out.print("Your choice: ");
 				st = sc.nextLine();
 				if(st.equalsIgnoreCase("Y")){
-					MovieDao.deleteById(m.getId());
-					System.out.println("One record was removed");
+					m.setStatusFromChoice(4);
+					MovieDao.save();
+					System.out.println("This movie is set to 'End of Showing'");
 					exit = true;
 				}else if(st.equalsIgnoreCase("N")){
 					continue;
@@ -543,13 +516,10 @@ public class MainActivity {
 			case 3:
 				do{
 					System.out.println("Search movies with status: ");
-					System.out.println("\t1. Coming soon");
-					System.out.println("\t2. Preview");
-					System.out.println("\t3. Now Showing");
-					System.out.print("Movie status: ");
+					Movie.printMovieStatusChoice();
 					it = sc.nextInt();
 					sc.nextLine();
-				}while(it<1 || it>3);
+				}while(it<1 || it>4);
 				results = MovieDao.findByStatus(it);
 				if(results.size() <= 0)
 					System.out.println("No matched movies");
@@ -580,7 +550,8 @@ public class MainActivity {
 			movie.setDirector(st);
 			ArrayList<String> sat = new ArrayList<String>();
 			System.out.println("Casts (Type end to stop): ");
-			String name = "";
+			System.out.print("\t- ");
+			String name = sc.nextLine();
 			do{
 				System.out.print("\t- ");
 				name = sc.nextLine();
@@ -590,19 +561,16 @@ public class MainActivity {
 			movie.setCasts(sat);
 			do{
 				System.out.println("Movie status: ");
-				System.out.println("\t1. Coming soon");
-				System.out.println("\t2. Preview");
-				System.out.println("\t3. Now Showing");
+				Movie.printMovieStatusChoice();
 				System.out.print("Movie status: ");
 				it = sc.nextInt();
 				sc.nextLine();
-			}while(it<1 || it>3);
-			movie.setStatus(it);
+			}while(it<1 || it>4);
+			movie.setStatusFromChoice(it);
 			System.out.print("Duration in minutes: ");
 			it = sc.nextInt();
+			sc.nextLine();
 			movie.setDuration(it);
-			System.out.print("\n");
-			sc.nextLine(); //consume newline for next string input
 			listMovieView(movie, false);
 			System.out.println("Please confirm the record:\nTo insert, type Y\nTo redo, type N\nTo exit, type E");
 			System.out.print("Your choice: ");
@@ -816,15 +784,18 @@ public class MainActivity {
 		}
 		return 0;
 	}
-
+	
 	private static int selectMovie(HashMap<Integer, Movie> movies) {
-		System.out.println("\nWhich movie you are interested in?");
 		int i = 0;
+		int choice;
+		System.out.println("Which movie you are interested in?");
 		for (Movie m : movies.values()) {
 			i++;
 			System.out.println(i + ". " + m.getTitle());
 		}
-		int choice = sc.nextInt();
+		do {
+			choice = sc.nextInt();
+		} while (choice < 0 || choice > i);
 		sc.nextLine();
 		return choice;
 	}
@@ -842,7 +813,7 @@ public class MainActivity {
 				c.setCineplexName(name);
 				c.setCinemaNum(3);
 				CineplexDao.save(c);
-				}
+			}
 		}
 		else {
 			System.out.println("Enter number of cineplex: ");
@@ -876,7 +847,6 @@ public class MainActivity {
 						exit = true;
 						index++;
 					}else if(st.equalsIgnoreCase("N")){
-						exit = false;
 						continue;
 					}else{
 						System.out.println("Zero record was added");
@@ -891,52 +861,13 @@ public class MainActivity {
 	private static int selectCineplexAndReturnChoice() {
 		int choice;
 		HashMap<Integer, Cineplex> c = CineplexDao.getAllInHashMap();
-		System.out.println("Cineplex details:");
 		listCineplexesView(c, true);
 		System.out.print("Select which cineplex to enter: ");
 		choice = sc.nextInt();
 		return choice;
 	}
 	
-	private static void bookTicketViewController(int cineplexId, int movieId) {
-		int it;
-		String st;
-		boolean exit = false;
-		ArrayList<String> sat = new ArrayList<String>();
-		
-		System.out.println("Booking for movie " + MovieDao.findById(movieId).getTitle() + " in cineplex " + CineplexDao.findById(cineplexId).getCineplexName());
-		//show seat arrangement
-		System.out.print("How many tickets: ");
-		it = sc.nextInt();
-		sc.nextLine();
-		System.out.print("Enter seat numbers: ");
-		for (int i = 0; i < it; i++) {
-			st = sc.nextLine();
-			//check the seat is occupied or not
-			sat.add(st);
-		}
-		System.out.println("Seat(s) selected: ");
-		for (String s: sat)
-			System.out.print(s + " ");
-		System.out.println("Confirm payment? (Y|N)");
-		do {
-			st = sc.nextLine();
-			if (st.equalsIgnoreCase("Y")) {
-				//book
-				exit = false;
-			}
-			else if (st.equalsIgnoreCase("N")) {
-				System.out.println("Cancel movie booking.");
-				exit = false;
-			}
-			else {
-				System.out.print("Please type again (Y|N): ");
-				exit = true;
-			}
-		} while (!exit);
-	}
-	
-	private static void showSeatsArrangement(int cineplexId, int cinemaId) {
+	private static void showSeatsArrangement(int cinemaId, int movieId) {
 		int row = 15;
 		int column = 22;
 		int i, j;
@@ -981,6 +912,8 @@ public class MainActivity {
 						System.out.print("     ");
 					else {
 						//if available
+						Cinema cinema = CinemaDao.findById(cinemaId);
+						Movie movie = MovieDao.findById(movieId);
 						System.out.print(" |_| ");
 						//if not available
 					}
@@ -992,6 +925,42 @@ public class MainActivity {
 		}
 		System.out.print("\n");
 	}
-	
+
+	private static void bookTicketViewController(int movieId) {
+		int ticketNum;
+		boolean exit = false;
+		String seatId;
+		String st;
+		Cinema c = CinemaDao.findById(movieId);
+		ArrayList<String> seat = c.getSeat();
+		
+		System.out.print("How many ticket: ");
+		ticketNum = sc.nextInt();
+		sc.nextLine();
+		for (int i = 0; i < ticketNum; i++) {
+			System.out.print("Enter seat " + (i+1) + " :");
+			seatId = sc.nextLine();
+			seat.add(seatId);
+		}
+		System.out.println("Booking for seats:");
+		for (int i = 0; i < ticketNum; i++) {
+			System.out.print(seat.get(i) + "\t");
+		}
+		System.out.println("\nConfirm booking (Y|N): ");
+		do {
+			st = sc.nextLine();
+			if (st.equalsIgnoreCase("Y")) {
+				for (int i = 0; i < ticketNum; i++) {
+					Ticket tick = new Ticket();
+					tick.setSeatId(seat.get(i));
+					TicketDao.save(tick);
+				}
+				exit = true;
+			}
+			else if (st.equalsIgnoreCase("N"))
+				exit = true;
+			else
+				exit = false;
+		} while (!exit);
+	}
 }
-	
