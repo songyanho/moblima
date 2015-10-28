@@ -9,49 +9,83 @@ import org.json.simple.JSONObject;
 import sg.edu.ntu.cz2002.moblima.dao.CinemaDao;
 
 public class Cinema {
+	protected int id;
 	protected String name;
 	protected String cinemaClass;
-	protected int id;
+	protected int cineplexId;
 	protected ArrayList<Seat> seat;
-	private int seatNum;
-	private int numEmptySeat;
-	
+	protected int seatNum;
+	protected int numEmptySeat;
+
 	public Cinema() {
 		this.id = CinemaDao.getLastId() + 1;
 	}
 	
-	public Cinema(int id, String name, String cinemaClass, ArrayList<Seat> seat, int seatNum) {
+	public Cinema(int id, String name, String cinemaClass, int cineplexId) {
 		this.id = id;
 		this.name = name;
 		this.cinemaClass = cinemaClass;
+		this.cineplexId = cineplexId;
 		this.seat = seat;
 		this.seatNum = seatNum;
 	}
 	
-	public String getCinemaName() {
+	public String getName() {
 		return name;
 	}
-	
-	public int getCinemaId() {
+
+	public void setName(String name) {
+		this.name = name;
+	}
+
+	public int getCineplexId() {
+		return cineplexId;
+	}
+
+	public void setCineplexId(int cineplexId) {
+		this.cineplexId = cineplexId;
+	}
+
+	public int getId() {
 		return id;
 	}
+
+	public void setId(int id) {
+		this.id = id;
+	}
+
+	public ArrayList<Seat> getSeat() {
+		return seat;
+	}
+
+	public void setSeat(ArrayList<Seat> seat) {
+		this.seat = seat;
+	}
+
+	public void setCinemaClass(String cinemaClass) {
+		this.cinemaClass = cinemaClass;
+	}
 	
+	public int getSeatNum() {
+		return seatNum;
+	}
+
+	public void setSeatNum(int seatNum) {
+		this.seatNum = seatNum;
+	}
+
+	public int getNumEmptySeat() {
+		return numEmptySeat;
+	}
+
+	public void setNumEmptySeat(int numEmptySeat) {
+		this.numEmptySeat = numEmptySeat;
+	}
+
 	public String getCinemaClass() {
 		return cinemaClass;
 	}
-	
-	public void setCinemaName(String cinema_Name) {
-		this.name = cinema_Name;
-	}
-	
-	public void setCinemaId(int cinema_Id) {
-		this.id = cinema_Id;
-	}
-	
-	public void setClass(String cinema_Class) {
-		this.cinemaClass = cinema_Class;
-	}
-	
+
 	public void assign(int seatId, int ticketId) {
 		if (seat.get(seatId).ticket.getTicketId() == -1) {
 			seat.get(seatId).assign(ticketId);
@@ -61,39 +95,30 @@ public class Cinema {
 			System.out.println("Seat already assigned to a customer.");
 	}
 	
-	public int getNumEmptySeat() {
-		return numEmptySeat;
-	}
-
-	public void setNumEmptySeat(int numEmptySeat) {
-		this.numEmptySeat = numEmptySeat;
-	}
-
-	public int getSeatNum() {
-		return seatNum;
-	}
-
-	public void setSeatNum(int seatNum) {
-		this.seatNum = seatNum;
-	}
-	
 	public JSONObject toJSONObject() {
 		JSONObject o = new JSONObject();
 		o.put("id", this.id);
 		o.put("name", this.name);
-		JSONArray a = new JSONArray();
-		a.addAll(this.seat);
-		o.put("seat", a);
 		o.put("cinemaClass", this.cinemaClass);
+		o.put("cineplexid", this.cineplexId);
+//		JSONArray a = new JSONArray();
+//		a.addAll(this.seat);
+//		o.put("seat", a);
 		o.put("numEmptySeat", this.numEmptySeat);
 		return o;
 	}
 	
 	public static Cinema fromJSONObject(JSONObject o){
 		ArrayList<Seat> seat = new ArrayList<Seat>();
-		JSONArray seatInJSON = (JSONArray) o.get("seat");
-		seat.addAll(seatInJSON);
-		return new Cinema(Integer.parseInt(o.get("id").toString()), o.get("name").toString(), o.get("cinemaClass").toString(), seat, Integer.parseInt(o.get("seatNum").toString()));
+//		JSONArray seatInJSON = (JSONArray) o.get("seat");
+//		seat.addAll(seatInJSON);
+		return new Cinema(
+				Integer.parseInt(o.get("id").toString()), 
+				o.get("name").toString(), 
+				o.get("cinemaClass").toString(), 
+				Integer.parseInt(o.get("cineplexid").toString())//, 
+//				Integer.parseInt(o.get("seatNum").toString())
+				);
 	}
 	
 	public static HashMap<String, JSONObject> toJSONObjects(HashMap<Integer, Cinema> o){
@@ -111,7 +136,7 @@ public class Cinema {
 		for(String i: s){
 			JSONObject n = (JSONObject) o.get(i);
 			Cinema t =  Cinema.fromJSONObject(n);
-			a.put(t.getCinemaId(), t);
+			a.put(t.getId(), t);
 		}
 		return a;
 	}

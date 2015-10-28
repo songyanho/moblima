@@ -13,21 +13,16 @@ import sg.edu.ntu.cz2002.moblima.dao.ReviewDao;
 public class Movie implements StandardData{
 	protected int id;
 	protected String title;
-	protected int status;
+	protected MovieStatus status;
 	protected String synopsis;
 	protected String director;
 	protected ArrayList<String> casts;
-	protected String rating;
+	protected MovieRating rating;
 	protected HashMap<Integer, Review> reviews;
-	
-	public enum MovieType{
-		// TODO implement MovieType
-		BLOCKBUSTER, THREED
-	}
 	
 	public enum MovieRating{
 		// TODO implement MovieRating
-		GENERAL, PG, PG13, M18, R21
+		GENERAL, PG, PG13, M18, R21, UNRATED
 	}
 	
 	public enum MovieStatus{
@@ -39,14 +34,14 @@ public class Movie implements StandardData{
 		this.id = MovieDao.getLastId()+1;
 	}
 
-	public Movie(int id, String title, int status, String director, String synopsis, ArrayList<String> casts, String rating, int duration) {
+	public Movie(int id, String title, int status, String director, String synopsis, ArrayList<String> casts, int rating, int duration) {
 		this.id = id;
 		this.title = title;
-		this.status = status;
+		this.status = Movie.getStatusEnumFromOrdinal(status);
 		this.director = director;
 		this.synopsis = synopsis;
 		this.casts = casts;
-		this.rating = rating;
+		this.rating = Movie.getRatingEnumFromOrdinal(rating);
 		this.duration = duration;
 	}
 	
@@ -66,35 +61,35 @@ public class Movie implements StandardData{
 		this.title = title;
 	}
 
-	public int getStatus() {
+	public MovieStatus getStatus() {
 		return status;
 	}
 	
 	public String getStatusString(){
-		return this.status == Movie.MovieStatus.COMINGSOON.ordinal() ? 		"Coming soon" : 
-			   this.status == Movie.MovieStatus.PREVIEW.ordinal() ? 		"Preview" : 
-			   this.status == Movie.MovieStatus.NOWSHOWING.ordinal() ? 		"Now Showing" : 
-			   																"End of Showing";
+		return this.status == MovieStatus.COMINGSOON ? 	"Coming soon" : 
+			   this.status == MovieStatus.PREVIEW ? 	"Preview" : 
+			   this.status == MovieStatus.NOWSHOWING ? 	"Now Showing" : 
+			   											"End of Showing";
 	}
 
 	@Deprecated
-	public void setStatus(int status) {
+	public void setStatus(MovieStatus status) {
 		this.status = status;
 	}
 	
 	public void setStatusFromChoice(int choice){
 		switch(choice){
 		case 1:
-			this.status = MovieStatus.COMINGSOON.ordinal();
+			this.status = MovieStatus.COMINGSOON;
 			break;
 		case 2:
-			this.status = MovieStatus.PREVIEW.ordinal();
+			this.status = MovieStatus.PREVIEW;
 			break;
 		case 3:
-			this.status = MovieStatus.NOWSHOWING.ordinal();
+			this.status = MovieStatus.NOWSHOWING;
 			break;
 		default:
-			this.status = MovieStatus.ENDOFSHOWING.ordinal();
+			this.status = MovieStatus.ENDOFSHOWING;
 			break;
 		}
 	}
@@ -113,6 +108,13 @@ public class Movie implements StandardData{
 			   				MovieStatus.ENDOFSHOWING;
 	}
 	
+	public static MovieStatus getStatusEnumFromOrdinal(int ordinal){
+		return ordinal == MovieStatus.COMINGSOON.ordinal() ? MovieStatus.COMINGSOON :
+			   ordinal == MovieStatus.PREVIEW.ordinal() ? MovieStatus.PREVIEW :
+			   ordinal == MovieStatus.NOWSHOWING.ordinal() ? MovieStatus.NOWSHOWING :
+				   	MovieStatus.ENDOFSHOWING;
+	}
+	
 	public static void printMovieStatusChoice(){
 		System.out.println("\t1. Coming soon");
 		System.out.println("\t2. Preview");
@@ -120,6 +122,82 @@ public class Movie implements StandardData{
 		System.out.println("\t4. End of Showing");
 	}
 
+	public MovieRating getRating() {
+		return rating;
+	}
+	
+	public String getRatingString(){
+		return this.rating == MovieRating.GENERAL ? "General" : 
+			   this.rating == MovieRating.PG ? 		"PG" : 
+			   this.rating == MovieRating.PG13 ? 	"PG13" : 
+			   this.rating == MovieRating.M18 ? 	"M18" : 
+			   this.rating == MovieRating.R21 ?		"R21" :
+			   										"Unrated";
+	}
+
+	public void setRating(MovieRating rating) {
+		this.rating = rating;
+	}
+	
+	public void setRatingFromChoice(int choice){
+		switch(choice){
+		case 1:
+			this.rating = MovieRating.GENERAL;
+			break;
+		case 2:
+			this.rating = MovieRating.PG;
+			break;
+		case 3:
+			this.rating = MovieRating.PG13;
+			break;
+		case 4:
+			this.rating = MovieRating.M18;
+			break;
+		case 5:
+			this.rating = MovieRating.R21;
+			break;
+		default:
+			this.rating = MovieRating.UNRATED;
+			break;
+		}
+	}
+	
+	public static String getRatingStringFromChoice(int choice){
+		return choice==1 ? 	"General" : 
+			   choice==2 ? 	"PG" : 
+			   choice==3 ? 	"PG13" : 
+			   choice==4 ?	"M18" :
+			   choice==5 ?	"R21" :
+			   				"Unrated";
+	}
+	
+	public static MovieRating getRatingEnumFromChoice(int choice){
+		return choice==1 ? 	MovieRating.GENERAL : 
+			   choice==2 ? 	MovieRating.PG : 
+			   choice==3 ? 	MovieRating.PG13 : 
+			   choice==4 ?	MovieRating.M18 : 
+			   choice==5 ?	MovieRating.R21 :
+				   			MovieRating.UNRATED;
+	}
+	
+	public static MovieRating getRatingEnumFromOrdinal(int ordinal){
+		return ordinal == MovieRating.GENERAL.ordinal() ? MovieRating.GENERAL :
+			   ordinal == MovieRating.PG.ordinal() ? MovieRating.PG :
+			   ordinal == MovieRating.PG13.ordinal() ? MovieRating.PG13 :
+			   ordinal == MovieRating.M18.ordinal() ? MovieRating.M18 :
+			   ordinal == MovieRating.R21.ordinal() ? MovieRating.R21 :
+				   			MovieRating.UNRATED;
+	}
+	
+	public static void printMovieRatingChoice(){
+		System.out.println("\t1. General");
+		System.out.println("\t2. PG");
+		System.out.println("\t3. PG13");
+		System.out.println("\t4. M18");
+		System.out.println("\t5. R21");
+		System.out.println("\t6. Unrated");
+	}
+	
 	public String getSynopsis() {
 		return synopsis;
 	}
@@ -152,14 +230,6 @@ public class Movie implements StandardData{
 		this.casts.remove(index);
 	}
 
-	public String getRating() {
-		return rating;
-	}
-
-	public void setRating(String rating) {
-		this.rating = rating;
-	}
-
 	public HashMap<Integer, Review> getReviews() {
 		return ReviewDao.findByMovieId(this.id);
 	}
@@ -171,6 +241,14 @@ public class Movie implements StandardData{
 	public void addReview(Review review){
 		ReviewDao.add(review);
 	}
+
+	public int getDuration() {
+		return duration;
+	}
+
+	public void setDuration(int duration) {
+		this.duration = duration;
+	}
 	
 	@SuppressWarnings("unchecked")
 	@Override
@@ -178,7 +256,7 @@ public class Movie implements StandardData{
 		JSONObject o = new JSONObject();
 		o.put("id", this.id);
 		o.put("title", this.title);
-		o.put("status", this.status);
+		o.put("status", this.status.ordinal());
 		o.put("synopsis", this.synopsis);
 		o.put("director", this.director);
 		o.put("rating", this.rating);
@@ -193,7 +271,15 @@ public class Movie implements StandardData{
 		ArrayList<String> casts = new ArrayList<String>();
 		JSONArray castsInJSON = (JSONArray) o.get("casts");
 		casts.addAll(castsInJSON);
-		return new Movie(Integer.parseInt(o.get("id").toString()), o.get("title").toString(), Integer.parseInt(o.get("status").toString()), o.get("director").toString(), o.get("synopsis").toString(), casts, o.get("rating").toString(), Integer.parseInt(o.get("duration").toString()));
+		return new Movie(
+				Integer.parseInt(o.get("id").toString()), 
+				o.get("title").toString(), 
+				Integer.parseInt(o.get("status").toString()), 
+				o.get("director").toString(), 
+				o.get("synopsis").toString(), 
+				casts, 
+				Integer.parseInt(o.get("rating").toString()), 
+				Integer.parseInt(o.get("duration").toString()));
 	}
 	
 	public static HashMap<String, JSONObject> toJSONObjects(HashMap<Integer, Movie> o){
@@ -214,13 +300,5 @@ public class Movie implements StandardData{
 			a.put(t.getId(), t);
 		}
 		return a;
-	}
-
-	public int getDuration() {
-		return duration;
-	}
-
-	public void setDuration(int duration) {
-		this.duration = duration;
 	}
 }
