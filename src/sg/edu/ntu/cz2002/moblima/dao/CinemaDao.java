@@ -20,7 +20,7 @@ public class CinemaDao {
 		if(records == null) initialize();
 		return records;
 	}
-	
+
 	public static Cinema findById(int id) {
 		if(records == null) initialize();
 		if(records.containsKey(id))
