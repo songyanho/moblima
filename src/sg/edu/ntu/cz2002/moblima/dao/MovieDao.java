@@ -49,12 +49,12 @@ public class MovieDao {
 		}
 		return false;
 	}
-	
+
 	public static HashMap<Integer, Movie> findActiveMovie(){
 		if(records == null) initialize();
 		HashMap<Integer, Movie> m = new HashMap<Integer, Movie>();
 		for(Movie i: records.values()){
-			if(i.getStatus() < 4)
+			if(i.getStatus() != MovieStatus.ENDOFSHOWING)
 				m.put(i.getId(), i);
 		}
 		return m;
@@ -85,7 +85,7 @@ public class MovieDao {
 		MovieStatus ms = Movie.getStatusEnumFromChoice(status);
 		HashMap<Integer, Movie> m = new HashMap<Integer, Movie>();
 		for(Movie i: records.values()){
-			if(i.getStatus() == ms.ordinal())
+			if(i.getStatus() == ms)
 				m.put(i.getId(), i);
 		}
 		return m;

@@ -7,13 +7,13 @@ import java.util.Set;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 
-import sg.edu.ntu.cz2002.moblima.dao.CineplexDao;
+import sg.edu.ntu.cz2002.moblima.dao.*;
 
 public class Cineplex {
-	protected String name;
-	protected HashMap<Integer, Cinema> cinema;
-	protected HashMap<Integer, Movie> movies;
 	protected int id;
+	protected String name;
+//	protected HashMap<Integer, Cinema> cinema;
+//	protected HashMap<Integer, Movie> movies;
 	protected int cinemaNum;
 	
 	public Cineplex() {
@@ -30,12 +30,12 @@ public class Cineplex {
 		return name;
 	}
 	
-	public int getCineplexId() {
+	public int getId() {
 		return id;
 	}
 	
-	public HashMap<Integer, Cinema> getCinema() {
-		return cinema;
+	public HashMap<Integer, Cinema> getCinemas() {
+		return CinemaDao.findByCineplex(this.id);
 	}
 	
 	public int getCinemaNum() {
@@ -46,13 +46,13 @@ public class Cineplex {
 		this.name = cineplex_Name;
 	}
 	
-	public void setCineplexId(int cineplex_Id) {
-		this.id = cineplex_Id;
+	public void setId(int id) {
+		this.id = id;
 	}
 
-	public void setCinema(HashMap<Integer, Cinema> cinema) {
-		this.cinema = cinema;
-	}
+//	public void setCinema(HashMap<Integer, Cinema> cinema) {
+//		this.cinema = cinema;
+//	}
 
 	public void setCinemaNum(int num) {
 		if (num < 3) {
@@ -63,13 +63,13 @@ public class Cineplex {
 			this.cinemaNum = num;
 	}
 	
-	public HashMap<Integer, Movie> getMovies() {
-		return movies;
-	}
+//	public HashMap<Integer, Movie> getMovies() {
+//		return movies;
+//	}
 
-	public void setMovies(HashMap<Integer, Movie> movies) {
-		this.movies = movies;
-	}
+//	public void setMovies(HashMap<Integer, Movie> movies) {
+//		this.movies = movies;
+//	}
 
 	public JSONObject toJSONObject() {
 		JSONObject o = new JSONObject();
@@ -98,7 +98,7 @@ public class Cineplex {
 		for(String i: s){
 			JSONObject n = (JSONObject) o.get(i);
 			Cineplex t =  Cineplex.fromJSONObject(n);
-			a.put(t.getCineplexId(), t);
+			a.put(t.getId(), t);
 		}
 		return a;
 	}

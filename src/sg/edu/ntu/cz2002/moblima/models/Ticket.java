@@ -9,6 +9,7 @@ import org.json.simple.JSONObject;
 import sg.edu.ntu.cz2002.moblima.dao.CinemaDao;
 import sg.edu.ntu.cz2002.moblima.dao.MovieDao;
 import sg.edu.ntu.cz2002.moblima.dao.TicketDao;
+import sg.edu.ntu.cz2002.moblima.models.Movie.MovieType;
 
 public class Ticket implements StandardData {
 	protected int id; //timeslot
@@ -77,22 +78,24 @@ public class Ticket implements StandardData {
 		double basePrice = 0;;
 		Movie movie = MovieDao.findById(this.movieId);
 		Cinema cinema = CinemaDao.findById(this.cinemaId);
-		int mType = movie.getType();
-		if (mType == 1)
+		MovieType mType = movie.getType();
+		if (mType.ordinal() == 1)
 			typePrice = 3.0;
-		else if (mType == 2)
+		else if (mType.ordinal() == 2)
 			typePrice = 5.0;
 		else
 			typePrice = 1.0;
 		
-		int mClass = cinema.getCinemaClass();
+		String mClass = cinema.getCinemaClass();
+		classPrice = 0;
+		/* 
 		if (mClass == 1)
 			classPrice = 5.0;
 		else if (mClass == 2)
 			classPrice = 3.0;
 		else
 			classPrice = 0;
-		
+		*/
 		return basePrice + typePrice + classPrice + discount;
 	}
 	

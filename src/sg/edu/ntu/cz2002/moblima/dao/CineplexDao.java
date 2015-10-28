@@ -43,15 +43,15 @@ public class CineplexDao {
 		HashMap<Integer, Cineplex> c = new HashMap<Integer, Cineplex>();
 		for(Cineplex i: records.values()){
 			if(i.getCineplexName().toLowerCase().contains(name.toLowerCase()))
-				c.put(i.getCineplexId(), i);
+				c.put(i.getId(), i);
 		}
 		return c;
 	}
 	
 	public static boolean add(Cineplex t){
 		if(records == null) initialize();
-		if(records.containsKey(t.getCineplexId())) return false; 
-		records.put(t.getCineplexId(), t);
+		if(records.containsKey(t.getId())) return false; 
+		records.put(t.getId(), t);
 		save();
 		return true;
 	}
@@ -59,7 +59,7 @@ public class CineplexDao {
 	public static boolean save(Cineplex t) {
 		// TODO Auto-generated method stub
 		if(records == null) initialize();
-		records.put(t.getCineplexId(), t);
+		records.put(t.getId(), t);
 		return save();
 	}
 
@@ -73,5 +73,21 @@ public class CineplexDao {
 		// TODO Auto-generated method stub
 		JSONObject t = Database.getObject(DATABASE_NAME);
 		records = Cineplex.fromJSONObjects(t);
+	}
+	
+	@Deprecated
+	public static void resetData(){
+		String[] cineplex = {"The Cathay Cineplex", 
+							 "Cathay Cineplex Cineleisure Orchard", 
+							 "Cathay Cineplex Causeway Point", 
+							 "Cathay Cineplex Amk Hub", 
+							 "Cathay Cineplex Downtown East", 
+							 "Cathay Cineplex West Mall", 
+							 "Cathay Cineplex Jem"};
+		records = new HashMap<Integer, Cineplex>();
+		for(int i=0; i<cineplex.length; i++){
+			records.put((i+1), new Cineplex((i+1), cineplex[i], 3));
+		}
+		save();
 	}
 }
