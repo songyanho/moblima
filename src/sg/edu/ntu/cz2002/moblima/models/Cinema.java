@@ -83,7 +83,7 @@ public class Cinema {
 	public String getCinemaClass() {
 		return cinemaClass;
 	}
-
+	
 	/*
 	public void assign(int seatId, int ticketId) {
 		if (seat.get(seatId).ticket.getTicketId() == -1) {
@@ -95,6 +95,7 @@ public class Cinema {
 	}
 	*/
 	
+	@SuppressWarnings("unchecked")
 	public JSONObject toJSONObject() {
 		JSONObject o = new JSONObject();
 		o.put("id", this.id);

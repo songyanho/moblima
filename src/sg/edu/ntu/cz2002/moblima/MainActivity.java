@@ -53,7 +53,6 @@ public class MainActivity {
 		int choice, it, cineplex;
 		String st;
 		boolean exit = false;
-		
 		//CODE for selecting cineplex and cinema
 		System.out.println("\nPlease select a cineplex: ");
 		cineplex = selectCineplexAndReturnChoice();

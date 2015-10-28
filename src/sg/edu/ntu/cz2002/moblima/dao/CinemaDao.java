@@ -13,9 +13,9 @@ import sg.edu.ntu.cz2002.moblima.models.*;
 
 public class CinemaDao {
 	protected static final String DATABASE_NAME = "cinema";
-	
+
 	protected static HashMap<Integer, Cinema> records;
-	
+
 	public static HashMap<Integer, Cinema> getAllInHashMap() {
 		if(records == null) initialize();
 		return records;
@@ -27,7 +27,7 @@ public class CinemaDao {
 			return records.get(id);
 		return null;
 	}
-	
+
 	public static int getLastId(){
 		if(records == null) initialize();
 		Set<Integer> ids = records.keySet();
@@ -38,7 +38,7 @@ public class CinemaDao {
 		Collections.sort(a);
 		return a.get(a.size()-1);
 	}
-	
+
 	public static HashMap<Integer, Cinema> findByClass(String cinemaClass) {
 		if(records == null) initialize();
 		HashMap<Integer, Cinema> c = new HashMap<Integer, Cinema>();
@@ -48,7 +48,7 @@ public class CinemaDao {
 		}
 		return c;
 	}
-	
+
 	public static HashMap<Integer, Cinema> findByName(String name) {
 		if(records == null) initialize();
 		HashMap<Integer, Cinema> c = new HashMap<Integer, Cinema>();
@@ -76,7 +76,7 @@ public class CinemaDao {
 		save();
 		return true;
 	}
-	
+
 	public static boolean save(Cinema t) {
 		// TODO Auto-generated method stub
 		if(records == null) initialize();

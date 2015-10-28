@@ -1,12 +1,10 @@
 package sg.edu.ntu.cz2002.moblima.models;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Scanner;
 import java.util.Set;
 
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
-
 import sg.edu.ntu.cz2002.moblima.dao.*;
 
 public class Movie implements StandardData{
@@ -35,7 +33,6 @@ public class Movie implements StandardData{
 		COMINGSOON, PREVIEW, NOWSHOWING, ENDOFSHOWING
 	}
 
-	
 	public Movie(){
 		this.id = MovieDao.getLastId()+1;
 	}
@@ -123,7 +120,7 @@ public class Movie implements StandardData{
 	
 	public static void printMovieStatusChoice(){
 		for (MovieStatus m: MovieStatus.values()) {
-		System.out.println("\t" + m.ordinal() + ". " + m.name());
+		System.out.println("\t" + (m.ordinal()+1) + ". " + m.name());
 		}
 	}
 	
@@ -164,9 +161,9 @@ public class Movie implements StandardData{
 				   MovieType.NORMAL;
 	}
 	
-	public static void printMovieTypeChoice(){
+	public void printMovieTypeChoice(){
 		for (MovieType m: MovieType.values()) {
-		System.out.println("\t" + m.ordinal() + ". " + m.name());
+			System.out.println("\t" + (m.ordinal()+1) + ". " + m.name());
 		}
 	}
 	
@@ -239,7 +236,7 @@ public class Movie implements StandardData{
 	
 	public static void printMovieRatingChoice(){
 		for (MovieRating m: MovieRating.values()) {
-		System.out.println("\t" + m.ordinal() + ". " + m.name());
+		System.out.println("\t" + (m.ordinal()+1) + ". " + m.name());
 		}
 	}
 	
@@ -274,7 +271,7 @@ public class Movie implements StandardData{
 	public void removeCast(int index){
 		this.casts.remove(index);
 	}
-	
+
 	public HashMap<Integer, Review> getReviews() {
 		return ReviewDao.findByMovieId(this.id);
 	}
@@ -294,7 +291,7 @@ public class Movie implements StandardData{
 	public void addReview(Review review){
 		ReviewDao.add(review);
 	}
-	
+
 	@SuppressWarnings("unchecked")
 	@Override
 	public JSONObject toJSONObject() {
@@ -312,6 +309,7 @@ public class Movie implements StandardData{
 		return o;
 	}
 	
+	@SuppressWarnings("unchecked")
 	public static Movie fromJSONObject(JSONObject o){
 		ArrayList<String> casts = new ArrayList<String>();
 		JSONArray castsInJSON = (JSONArray) o.get("casts");
@@ -333,6 +331,8 @@ public class Movie implements StandardData{
 		for(Integer i: s){
 			a.put(""+i, o.get(i).toJSONObject());
 		}
+		
+		
 		return a;
 	}
 	
