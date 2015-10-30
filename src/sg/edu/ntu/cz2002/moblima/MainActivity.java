@@ -1,6 +1,7 @@
 package sg.edu.ntu.cz2002.moblima;
 
 import java.text.DateFormatSymbols;
+import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -18,6 +19,7 @@ import java.util.Map.Entry;
 import java.util.Scanner;
 import java.util.Set;
 import java.util.TimeZone;
+import java.math.RoundingMode;
 
 import sg.edu.ntu.cz2002.moblima.dao.*;
 import sg.edu.ntu.cz2002.moblima.models.*;
@@ -69,8 +71,8 @@ public class MainActivity {
 				"Check seat availability", 
 				"Book and purchase ticket", 
 				"View booking history", 
-				"List the Top 5 ranking",
 				"Enter review for movie",
+				"Show past reviews",
 		"Quit"};
 		do {
 			HashMap<Integer, Movie> movies = MovieDao.getAllInHashMap();
@@ -103,18 +105,14 @@ public class MainActivity {
 				//CODE history
 				break;
 			case 6:
-				//store rating of each movie in an array, sort and print the top 5
-				listRanking();
-				break;
-			case 7:
 				//validate customer with transaction id to enter his/her review
 				addReviewViewController(movies);
 				break;
-			case 8:
-				exit = true;
+			case 7:
+				showReviews(movies);
 				break;
 			default:
-				System.out.print("Invalid option! Please try again.");
+				exit = true;
 			}
 		} while(!exit);
 	}
@@ -131,7 +129,7 @@ public class MainActivity {
 		}
 		System.out.println("Welcome, "+data.getAdmin().getUsername());
 		do{
-			String[] menus = {"Movie Listing Management", "Showtime Management", "System configuration", "Logout"};
+			String[] menus = {"Movie Listing Management", "Showtime Management", "System configuration", "List top 5 ranking", "Logout"};
 			choice = printMenuAndReturnChoice("Admin Panel", menus);
 			switch(choice){
 			case 1:
@@ -143,6 +141,8 @@ public class MainActivity {
 			case 3:
 				adminSystemConfigurationViewController();
 				break;
+			case 4:
+				listRanking();
 			default: 
 				data.setAdminId(0); 
 				logout = true; 
@@ -464,6 +464,7 @@ public class MainActivity {
 	}
 
 	private static void listMovieView(Movie m, boolean showId){
+		DecimalFormat df = new DecimalFormat("#.#");
 		if(showId)
 			System.out.println("Movie ID: "+m.getId());
 		System.out.print("\n");
@@ -476,6 +477,12 @@ public class MainActivity {
 		System.out.print("\n\tDuration in minutes: " + m.getDuration());
 		System.out.println("\n\tis "+ m.getStatusString());
 		System.out.println("\tSynopsis: "+m.getSynopsis());
+		double rating = calculateOverallRating(m.getId());
+		rating = Double.parseDouble(df.format(rating));
+		if (rating != 0)
+			System.out.println("\tReviewers' overall rating: " + rating);
+		else
+			System.out.println("\tReviewers' overall rating: NA");
 	}
 
 	private static void editMovieViewController(){
@@ -1228,15 +1235,7 @@ public class MainActivity {
 		sc.nextLine();
 		for (int i = 0; i < ticketNum; i++) {
 			System.out.print("Enter seat " + (i+1) + " :");
-			while (true) {
-				try {
-					seatId = sc.nextLine();
-					break;
-				}
-				catch (InputMismatchException e) {
-					System.out.println("Please enter again.");
-				}
-			}
+			seatId = sc.nextLine();
 			seat.add(seatId);
 		}
 		System.out.println("Booking for seats:");
@@ -1261,36 +1260,54 @@ public class MainActivity {
 		} while (!exit);
 	}
 	
+	private static double calculateOverallRating(int movieId) {
+		HashMap<Integer, Review> reviews = ReviewDao.findByMovieId(movieId);
+		double rating = 0;
+		double length = 0;
+		for (Review r: reviews.values()) {
+			rating += r.getRating();
+			length++;
+		}
+		if (length <= 1) {
+			return 0;
+		}
+		else {
+			return rating/length;
+		}
+	}
+	
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	private static void listRanking() {
-		double rating;
-		double length;
-		HashMap<Integer, Movie> movies = MovieDao.getAllInHashMap();
-		//HashMap<Integer, Review> reviews = ReviewDao.getAllInHashMap();
-		HashMap<String, Double> ratingList = new HashMap<String, Double>();
-		for (Movie m: movies.values()) {
-			HashMap<Integer, Review> reviews = ReviewDao.findByMovieId(m.getId());
-			rating = 0;
-			length = 0;
-			for (Review r: reviews.values()) {
-				rating += r.getRating();
-				length++;
+	    String[] menus = {"By ticket sales", "By overall reviews' rating"};
+	    int choice = printMenuAndReturnChoice("Movie-goer > List the Top 5 ranking", menus);
+	    if (choice == 1)
+	    	//do something
+	    	System.out.println("\nWaiting to be implemented... You want to try? XD");
+	    else {
+			double rating;
+			HashMap<Integer, Movie> movies = MovieDao.getAllInHashMap();
+			HashMap<String, Double> ratingList = new HashMap<String, Double>();
+			for (Movie m: movies.values()) {
+				rating = calculateOverallRating(m.getId());
+				if (rating != 0)
+					ratingList.put(m.getTitle(), rating);
 			}
-			ratingList.put(m.getTitle(), rating/length);
-		}
-		
-	    Map<String, Double> map = sortByValues(ratingList); 
-	    System.out.println("The top 5 ranking by overall reviewers' rating");
-	    for (int i = 0; i < 68; i++)
-	    	System.out.print("-");
-	    Set set = map.entrySet();
-	    Iterator it = set.iterator();
-	    int index = 1;
-	    while(it.hasNext()) {
-	         Map.Entry entry = (Map.Entry)it.next();
-	         System.out.print("\nRank " + index + ". " + entry.getKey() + ", rating = ");
-	         System.out.format("%.1f", entry.getValue());
-	         index++;
+		    Map<String, Double> map = sortByValues(ratingList);
+		    
+		    System.out.println("\nThe top 5 ranking");
+	    	for (int i = 0; i < 68; i++)
+	    		System.out.print("-");
+	    	Set set = map.entrySet();
+	    	Iterator it = set.iterator();
+	    	int index = 1;
+	    	while(it.hasNext()) {
+	    		Map.Entry entry = (Map.Entry)it.next();
+	    		if (!Double.isNaN(Double.parseDouble(entry.getValue().toString()))) {
+	    			System.out.print("\nRank " + index + ". " + entry.getKey() + ", rating = ");
+	    			System.out.format("%.1f", entry.getValue());
+	    			index++;
+	    		}
+	    	}
 	    }
 	}
 	
@@ -1320,6 +1337,8 @@ public class MainActivity {
 		  boolean movieExit, showExit;
 		  double dt;
 		  String st;
+		  DecimalFormat df = new DecimalFormat("#.##");
+		  df.setRoundingMode(RoundingMode.DOWN);
 		  Review r = new Review();
 		  movieExit = false;
 		  while (!movieExit) {
@@ -1337,6 +1356,7 @@ public class MainActivity {
 			  r.setName(st);
 			  System.out.print("Enter rating: ");
 			  dt = sc.nextDouble();
+			  dt = Double.parseDouble(df.format(dt));
 			  sc.nextLine();
 			  r.setRating(dt);
 			  System.out.print("Enter comment: ");
@@ -1344,7 +1364,7 @@ public class MainActivity {
 			  r.setComment(st);
 			  showExit = false;
 			  while (!showExit) {
-				  System.out.println("\nReview for movie <<" + movies.get(movie).getTitle() + ">>");
+				  System.out.println("\nReviewing for movie <<" + movies.get(movie).getTitle() + ">>");
 				  System.out.println("Name: " + r.getName());
 				  System.out.println("Rating: " + r.getRating());
 				  System.out.println("Comment: " + r.getComment());
@@ -1392,5 +1412,32 @@ public class MainActivity {
 				  }
 			  }
 		  }
+	  }
+	  
+	  private static void showReviews(HashMap<Integer, Movie> movies) {
+		  int index = 1;
+		  int movie;
+		  System.out.println("Which movie reviews you want to read?");
+		  for (Movie m: movies.values()) {
+			  System.out.println(index + ". " + m.getTitle());
+			  index++;
+		  }
+		  System.out.print("\n");
+		  movie = sc.nextInt();
+		  sc.nextLine();
+		  HashMap<Integer, Review> reviews = ReviewDao.findByMovieId(movie);
+		  index = 1;
+		  if (!reviews.isEmpty()) {
+			  for (Review r: reviews.values()) {
+				  System.out.print("\n");
+				  System.out.println("<< Review " + index + " >>");
+				  System.out.println("Name: " + r.getName());
+				  System.out.println("Rating: " + r.getRating());
+				  System.out.println("Comment: " + r.getComment());
+				  index++;
+			  }
+		  }
+		  else
+			  System.out.print("No past reviews.");
 	  }
 }
