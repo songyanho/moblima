@@ -1,15 +1,15 @@
 package sg.edu.ntu.cz2002.moblima.models;
 
-import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.Set;
 import java.util.TimeZone;
 
-import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 
+import sg.edu.ntu.cz2002.moblima.dao.CinemaDao;
+import sg.edu.ntu.cz2002.moblima.dao.CineplexDao;
 import sg.edu.ntu.cz2002.moblima.dao.MovieDao;
 import sg.edu.ntu.cz2002.moblima.dao.ShowtimeDao;
 
@@ -75,6 +75,10 @@ public class Showtime implements StandardData {
 	public int getCineplexId() {
 		return cineplexId;
 	}
+	
+	public Cineplex getCineplex(){
+		return CineplexDao.findById(this.cineplexId);
+	}
 
 	public void setCineplexId(int cineplexId) {
 		this.cineplexId = cineplexId;
@@ -82,6 +86,10 @@ public class Showtime implements StandardData {
 
 	public int getCinemaId() {
 		return cinemaId;
+	}
+	
+	public Cinema getCinema(){
+		return CinemaDao.findById(this.cinemaId);
 	}
 
 	public void setCinemaId(int cinemaId) {
@@ -140,6 +148,7 @@ public class Showtime implements StandardData {
 		return a;
 	}
 	
+	@SuppressWarnings("unchecked")
 	public static HashMap<Integer, Showtime> fromJSONObjects(JSONObject o){
 		HashMap<Integer, Showtime> a = new HashMap<Integer, Showtime>();
 		Set<String> s = o.keySet();

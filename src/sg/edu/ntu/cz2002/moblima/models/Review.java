@@ -92,6 +92,7 @@ public class Review implements StandardData {
 		return a;
 	}
 	
+	@SuppressWarnings("unchecked")
 	public static HashMap<Integer, Review> fromJSONObjects(JSONObject o){
 		HashMap<Integer, Review> a = new HashMap<Integer, Review>();
 		Set<String> s = o.keySet();

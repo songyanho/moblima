@@ -1,12 +1,12 @@
 package sg.edu.ntu.cz2002.moblima.models;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Set;
 
-import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
-import sg.edu.ntu.cz2002.moblima.dao.*;
+
+import sg.edu.ntu.cz2002.moblima.dao.CinemaDao;
+import sg.edu.ntu.cz2002.moblima.dao.CineplexDao;
 
 public class Cineplex {
 	protected int id;
