@@ -1,92 +1,107 @@
 package sg.edu.ntu.cz2002.moblima.models;
-import java.text.SimpleDateFormat;
-import java.util.Date;
+
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Set;
 
+import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 
-import sg.edu.ntu.cz2002.moblima.dao.CinemaDao;
-import sg.edu.ntu.cz2002.moblima.dao.MovieDao;
-import sg.edu.ntu.cz2002.moblima.dao.TicketDao;
-import sg.edu.ntu.cz2002.moblima.models.Movie.MovieType;
+import sg.edu.ntu.cz2002.moblima.dao.*;
 
-public class Ticket implements StandardData {
-	protected int id; //timeslot
-	protected int movieId;
-	protected int cinemaId;
-	protected String seatId;
-	protected String dayOfWeek;
+public class Ticket implements StandardData{
+	protected int id;
+	protected int showTime;
+	protected AgeGroup ageGroup;
+	protected double price;
+	protected ArrayList<String> seat;
 
+	public enum AgeGroup {
+		CHILD, ADULT, SENIOR;
+	}
+	
+	public static AgeGroup getAgeGroupEnumFromOrdinal(int ordinal) {
+		return ordinal == AgeGroup.CHILD.ordinal()? AgeGroup.CHILD:
+				ordinal == AgeGroup.ADULT.ordinal()? AgeGroup.ADULT:
+							AgeGroup.SENIOR;
+	}		
+	
+	public static AgeGroup getAgeGroupEnumFromChoice(int choice) {
+		return choice==1 ? 	AgeGroup.CHILD : 
+			   choice==2 ? 	AgeGroup.ADULT : 
+				   			AgeGroup.SENIOR;
+	}
+	
+	public static String getAgeGroupStringFromChoice(int choice) {
+		return choice==1 ? 	"CHILD" : 
+			   choice==2 ? 	"ADULT" : 
+				   			"SENIOR" ;
+	}
+	
+	public void printAgeGroupChoice() {
+		for (AgeGroup a: AgeGroup.values())
+			System.out.print("\t" + (a.ordinal()+1) + ". " + a.name());
+	}
+	
 	public Ticket() {
 		this.id = TicketDao.getLastId()+1;
-		Date now = new Date();
-		SimpleDateFormat day = new SimpleDateFormat("E");
-		this.dayOfWeek = day.format(now);
 	}
 	
-	public Ticket(int id, int movieId, int cinemaId, String seatId, String dayOfWeek) {
+	public Ticket(int id, int showTime, int ageGroup, double price, ArrayList<String> seat) {
 		this.id = id;
-		this.movieId = movieId;
-		this.cinemaId = cinemaId;
-		this.seatId = seatId;
-		this.dayOfWeek = dayOfWeek;
+		this.showTime = showTime;
+		this.ageGroup = getAgeGroupEnumFromOrdinal(ageGroup);
+		this.price = price;
+		this.seat = seat;
 	}
-	
-	public int getTicketId() {
+
+	public int getId() {
 		return id;
 	}
-	
-	public String getDayOfWeek() {
-		return dayOfWeek;
-	}
-	
-	public void setTicketId(int ticket_Id) {
-		this.id = ticket_Id;
-	}
-	
-	public void setDayOfWeek (String day) {
-		this.dayOfWeek = day;
-	}
-	
-	public int getMovieId() {
-		return movieId;
+
+	public void setId(int id) {
+		this.id = id;
 	}
 
-	public void setMovieId(int movieId) {
-		this.movieId = movieId;
+	public int getShowTime() {
+		return showTime;
 	}
 
-	public int getCinemaId() {
-		return cinemaId;
+	public void setShowTime(int showTime) {
+		this.showTime = showTime;
 	}
 
-	public void setCinemaId(int cinemaId) {
-		this.cinemaId = cinemaId;
+	public double getPrice() {
+		return price;
 	}
 
-	public String getSeatId() {
-		return seatId;
+	public void setPrice(double price) {
+		this.price = price;
 	}
 
-	public void setSeatId(String seatId) {
-		this.seatId = seatId;
+	public ArrayList<String> getSeat() {
+		return seat;
 	}
 
+	public void setSeat(ArrayList<String> seat) {
+		this.seat = seat;
+	}
+
+	@Deprecated
 	public double calculatePrice() {
 		double typePrice, classPrice, discount = 0;
 		double basePrice = 0;;
-		Movie movie = MovieDao.findById(this.movieId);
-		Cinema cinema = CinemaDao.findById(this.cinemaId);
-		MovieType mType = movie.getType();
-		if (mType.ordinal() == 1)
+		//Movie movie = MovieDao.findById(this.movieId);
+		//Cinema cinema = CinemaDao.findById(this.cinemaId);
+		//MovieType mType = movie.getType();
+		//if (mType.ordinal() == 1)
 			typePrice = 3.0;
-		else if (mType.ordinal() == 2)
+		//else if (mType.ordinal() == 2)
 			typePrice = 5.0;
-		else
+		//else
 			typePrice = 1.0;
 		
-		String mClass = cinema.getCinemaClass();
+		//String mClass = cinema.getCinemaClass();
 		classPrice = 0;
 		/* 
 		if (mClass == 1)
@@ -97,22 +112,31 @@ public class Ticket implements StandardData {
 			classPrice = 0;
 		*/
 		return basePrice + typePrice + classPrice + discount;
-	}
+	} 
+	
 	
 	@SuppressWarnings("unchecked")
 	@Override
 	public JSONObject toJSONObject() {
 		JSONObject o = new JSONObject();
 		o.put("id", this.id);
-		o.put("movieId", this.movieId);
-		o.put("cinemaId", this.cinemaId);
-		o.put("seatId", this.seatId);
-		o.put("dayOfWeek", this.dayOfWeek);
+		o.put("showTime", this.showTime);
+		o.put("age", this.ageGroup);
+		o.put("price", this.price);
+		o.put("seat", this.seat);
 		return o;
 	}
 	
+	@SuppressWarnings("unchecked")
 	public static Ticket fromJSONObject(JSONObject o){
-		return new Ticket(Integer.parseInt(o.get("id").toString()), Integer.parseInt(o.get("movieId").toString()), Integer.parseInt(o.get("cinemaId").toString()), o.get("seatId").toString(), o.get("dayOfWeek").toString());
+		ArrayList<String> seat = new ArrayList<String>();
+		JSONArray seatsInJSON = (JSONArray) o.get("seat");
+		seat.addAll(seatsInJSON);
+		return new Ticket(Integer.parseInt(o.get("id").toString()), 
+				Integer.parseInt(o.get("showTime").toString()), 
+				Integer.parseInt(o.get("ageGroup").toString()),
+				Double.parseDouble(o.get("price").toString()), 
+				seat);
 	}
 	
 	public static HashMap<String, JSONObject> toJSONObjects(HashMap<Integer, Ticket> o){
@@ -131,7 +155,7 @@ public class Ticket implements StandardData {
 		for(String i: s){
 			JSONObject n = (JSONObject) o.get(i);
 			Ticket t =  Ticket.fromJSONObject(n);
-			a.put(t.getTicketId(), t);
+			a.put(t.getId(), t);
 		}
 		return a;
 	}

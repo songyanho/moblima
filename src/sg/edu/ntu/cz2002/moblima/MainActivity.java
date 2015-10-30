@@ -1485,7 +1485,7 @@ public class MainActivity {
 			if (st.equalsIgnoreCase("Y")) {
 				for (int i = 0; i < ticketNum; i++) {
 					Ticket tick = new Ticket();
-					tick.setSeatId(seat.get(i));
+//					tick.setSeatId(seat.get(i));
 					TicketDao.save(tick);
 				}
 				exit = true;

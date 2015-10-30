@@ -161,7 +161,7 @@ public class Movie implements StandardData{
 				   MovieType.NORMAL;
 	}
 	
-	public void printMovieTypeChoice(){
+	public static void printMovieTypeChoice(){
 		for (MovieType m: MovieType.values()) {
 			System.out.println("\t" + (m.ordinal()+1) + ". " + m.name());
 		}

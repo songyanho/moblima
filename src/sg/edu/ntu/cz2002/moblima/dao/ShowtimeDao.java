@@ -12,10 +12,7 @@ import org.json.simple.JSONObject;
 
 import sg.edu.ntu.cz2002.moblima.CalendarView;
 import sg.edu.ntu.cz2002.moblima.database.Database;
-import sg.edu.ntu.cz2002.moblima.models.Cinema;
-import sg.edu.ntu.cz2002.moblima.models.Cineplex;
-import sg.edu.ntu.cz2002.moblima.models.Movie;
-import sg.edu.ntu.cz2002.moblima.models.Showtime;
+import sg.edu.ntu.cz2002.moblima.models.*;
 
 public class ShowtimeDao {
 	protected static final String DATABASE_NAME = "showtime";

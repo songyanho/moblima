@@ -25,10 +25,10 @@ public class Seat {
 	public void setOccupied(boolean occupied) {
 		this.occupied = occupied;
 	}
-	public void assign(int ticket_Id) {
-		this.ticket.setTicketId(ticket_Id);
-		occupied = true;
-	}
+	//public void assign(int ticket_Id) {
+	//	this.ticket.setTicketId(ticket_Id);
+	//	occupied = true;
+	//}
 	
 	//row and column code
 	
