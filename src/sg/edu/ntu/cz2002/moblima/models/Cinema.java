@@ -13,7 +13,7 @@ public class Cinema {
 	protected String name;
 	protected String cinemaClass;
 	protected int cineplexId;
-	protected ArrayList<Seat> seat;
+	protected ArrayList<String> seat;
 	protected int seatNum;
 	protected int numEmptySeat;
 
@@ -26,8 +26,6 @@ public class Cinema {
 		this.name = name;
 		this.cinemaClass = cinemaClass;
 		this.cineplexId = cineplexId;
-		this.seat = seat;
-		this.seatNum = seatNum;
 	}
 	
 	public String getName() {
@@ -54,11 +52,11 @@ public class Cinema {
 		this.id = id;
 	}
 
-	public ArrayList<Seat> getSeat() {
+	public ArrayList<String> getSeat() {
 		return seat;
 	}
 
-	public void setSeat(ArrayList<Seat> seat) {
+	public void setSeat(ArrayList<String> seat) {
 		this.seat = seat;
 	}
 
@@ -85,7 +83,8 @@ public class Cinema {
 	public String getCinemaClass() {
 		return cinemaClass;
 	}
-
+	
+	/*
 	public void assign(int seatId, int ticketId) {
 		if (seat.get(seatId).ticket.getTicketId() == -1) {
 			seat.get(seatId).assign(ticketId);
@@ -94,7 +93,9 @@ public class Cinema {
 		else
 			System.out.println("Seat already assigned to a customer.");
 	}
+	*/
 	
+	@SuppressWarnings("unchecked")
 	public JSONObject toJSONObject() {
 		JSONObject o = new JSONObject();
 		o.put("id", this.id);

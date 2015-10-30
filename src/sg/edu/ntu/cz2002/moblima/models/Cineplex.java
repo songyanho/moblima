@@ -6,9 +6,7 @@ import java.util.Set;
 
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
-
-import sg.edu.ntu.cz2002.moblima.dao.CinemaDao;
-import sg.edu.ntu.cz2002.moblima.dao.CineplexDao;
+import sg.edu.ntu.cz2002.moblima.dao.*;
 
 public class Cineplex {
 	protected int id;
@@ -47,8 +45,8 @@ public class Cineplex {
 		this.name = cineplex_Name;
 	}
 	
-	public void setId(int cineplex_Id) {
-		this.id = cineplex_Id;
+	public void setId(int id) {
+		this.id = id;
 	}
 
 //	public void setCinema(HashMap<Integer, Cinema> cinema) {
@@ -72,6 +70,7 @@ public class Cineplex {
 //		this.movies = movies;
 //	}
 
+	@SuppressWarnings("unchecked")
 	public JSONObject toJSONObject() {
 		JSONObject o = new JSONObject();
 		o.put("id", this.id);
@@ -93,6 +92,7 @@ public class Cineplex {
 		return a;
 	}
 	
+	@SuppressWarnings("unchecked")
 	public static HashMap<Integer, Cineplex> fromJSONObjects(JSONObject o){
 		HashMap<Integer, Cineplex> a = new HashMap<Integer, Cineplex>();
 		Set<String> s = o.keySet();

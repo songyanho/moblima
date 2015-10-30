@@ -11,23 +11,9 @@ import java.util.Map.Entry;
 import java.util.Scanner;
 import java.util.TimeZone;
 
-import sg.edu.ntu.cz2002.moblima.dao.AdminDao;
-import sg.edu.ntu.cz2002.moblima.dao.CinemaDao;
-import sg.edu.ntu.cz2002.moblima.dao.CineplexDao;
-import sg.edu.ntu.cz2002.moblima.dao.AdminDao;
-import sg.edu.ntu.cz2002.moblima.dao.MovieDao;
-import sg.edu.ntu.cz2002.moblima.dao.MovieDao;
-import sg.edu.ntu.cz2002.moblima.dao.SettingsDao;
-import sg.edu.ntu.cz2002.moblima.dao.ShowtimeDao;
-import sg.edu.ntu.cz2002.moblima.dao.SettingsDao;
-import sg.edu.ntu.cz2002.moblima.models.Admin;
-import sg.edu.ntu.cz2002.moblima.models.Cinema;
-import sg.edu.ntu.cz2002.moblima.models.Cineplex;
-import sg.edu.ntu.cz2002.moblima.models.Admin;
-import sg.edu.ntu.cz2002.moblima.models.Movie;
-import sg.edu.ntu.cz2002.moblima.models.Showtime;
+import sg.edu.ntu.cz2002.moblima.dao.*;
+import sg.edu.ntu.cz2002.moblima.models.*;
 import sg.edu.ntu.cz2002.moblima.models.Showtime.MovieType;
-import sg.edu.ntu.cz2002.moblima.models.Movie;
 
 public class MainActivity {
 	protected static Scanner sc;
@@ -67,7 +53,6 @@ public class MainActivity {
 		int choice, it, cineplex;
 		String st;
 		boolean exit = false;
-
 		//CODE for selecting cineplex and cinema
 		System.out.println("\nPlease select a cineplex: ");
 		cineplex = selectCineplexAndReturnChoice();
@@ -94,20 +79,16 @@ public class MainActivity {
 					listMoviesView(movies, false);
 				break;
 			case 3:
-				System.out.println("Which movie you want to check?");
 				it = selectMovie(movies);
 				//CODE show empty seat
 				System.out.print("Total of empty seats is ");
 				break;
 			case 4:
 				//which movie and seat
-				System.out.println("Which movie ticket you want to buy?");
 				it = selectMovie(movies);
-				System.out.print("Number of tickets: ");
-				it = sc.nextInt();
-				System.out.println("Choose your seat: ");
 				//CODE show seat arrangement and confirmation
-
+				showSeatsArrangement(cineplex, it);
+				bookTicketViewController(it);
 				break;
 			case 5:
 				//CODE history
@@ -413,7 +394,7 @@ public class MainActivity {
 		}
 		return timeslot;
 	}
-
+	
 	private static void movieManagementViewController(){
 		String st;
 		int it, choice;
@@ -1073,11 +1054,15 @@ public class MainActivity {
 
 	private static int selectMovie(HashMap<Integer, Movie> movies) {
 		int i = 0;
+		int choice;
+		System.out.println("Which movie you are interested in?");
 		for (Movie m : movies.values()) {
 			i++;
 			System.out.println(i + ". " + m.getTitle());
 		}
-		int choice = sc.nextInt();
+		do {
+			choice = sc.nextInt();
+		} while (choice < 0 || choice > i);
 		sc.nextLine();
 		return choice;
 	}
@@ -1148,5 +1133,108 @@ public class MainActivity {
 		choice = sc.nextInt();
 		return choice;
 	}
+	
+	//incomplete
+	private static void showSeatsArrangement(int cinemaId, int movieId) {
+		int row = 15;
+		int column = 22;
+		int i, j;
+		char c = 'A';
+		int ascii = (int) c - 2;
+		int digit;
+		// System.out.println("Showing seats arrangement for cinema " + CinemaDao.findById(cinemaId).getCinemaName() + " in " + CineplexDao.findById(cineplexId).getCineplexName());
+		System.out.print("\n");
+		for (i = 0; i < row; i++) {
+			for (j = 0; j < column; j++) {
+				//first row
+				if (i == 0) {
+					if (j == 0 || j == 1 || j == column - 2 || j == column - 1)
+						System.out.print("   ");
+					else {
+						digit = j-1;
+						if (digit > 9)
+							System.out.print(" "+digit+"  ");
+						else
+							System.out.print("  "+digit+"  ");
+					}
+				}
+				//second row as seperated line
+				else if (i == 1) {
+					for (int k = 0; k < 15; k++)
+						System.out.print("------------");
+					System.out.print("\n");
+					break;
+				}
+				//other rows
+				else {
+					//if (j > 10)
+						//System.out.print(" ");
+					if (j == 0 || j == column - 1) {
+						c = (char) ascii;
+						System.out.print(" "+c+" ");
+						}
+					else if (j == 1 || j == column - 2)
+						System.out.print(" | ");
+					//isle
+					else if (j == 4 || j == column - 5)
+						System.out.print("     ");
+					else {
+						//if available
+						Cinema cinema = CinemaDao.findById(cinemaId);
+						ArrayList<String> isOccupied = cinema.getSeat();
+						String seatId = new StringBuilder().append(c).append(j).toString();
+						if (isOccupied.contains(seatId)) // implement seat into cinema.json??
+							System.out.print("  X  ");
+						// Movie movie = MovieDao.findById(movieId);
+						else
+							System.out.print(" |_| ");
+						//if not available
+					}
+				}
+				if (j % (column - 1) == 0 && j != 0)
+					System.out.print("\n");
+			}
+			ascii += 1;
+		}
+		System.out.print("\n");
+	}
 
+	//incomplete
+	private static void bookTicketViewController(int movieId) {
+		int ticketNum;
+		boolean exit = false;
+		String seatId;
+		String st;
+		Cinema c = CinemaDao.findById(movieId);
+		ArrayList<String> seat = c.getSeat();
+		
+		System.out.print("How many ticket: ");
+		ticketNum = sc.nextInt();
+		sc.nextLine();
+		for (int i = 0; i < ticketNum; i++) {
+			System.out.print("Enter seat " + (i+1) + " :");
+			seatId = sc.nextLine();
+			seat.add(seatId);
+		}
+		System.out.println("Booking for seats:");
+		for (int i = 0; i < ticketNum; i++) {
+			System.out.print(seat.get(i) + "\t");
+		}
+		System.out.println("\nConfirm booking (Y|N): ");
+		do {
+			st = sc.nextLine();
+			if (st.equalsIgnoreCase("Y")) {
+				for (int i = 0; i < ticketNum; i++) {
+					Ticket tick = new Ticket();
+					tick.setSeatId(seat.get(i));
+					TicketDao.save(tick);
+				}
+				exit = true;
+			}
+			else if (st.equalsIgnoreCase("N"))
+				exit = true;
+			else
+				exit = false;
+		} while (!exit);
+	}
 }

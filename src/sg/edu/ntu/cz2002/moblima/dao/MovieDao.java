@@ -49,7 +49,7 @@ public class MovieDao {
 		}
 		return false;
 	}
-	
+
 	public static HashMap<Integer, Movie> findActiveMovie(){
 		if(records == null) initialize();
 		HashMap<Integer, Movie> m = new HashMap<Integer, Movie>();

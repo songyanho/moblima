@@ -9,8 +9,7 @@ import java.util.Set;
 import org.json.simple.JSONObject;
 
 import sg.edu.ntu.cz2002.moblima.database.Database;
-import sg.edu.ntu.cz2002.moblima.models.Cinema;
-import sg.edu.ntu.cz2002.moblima.models.Cineplex;
+import sg.edu.ntu.cz2002.moblima.models.*;
 
 public class CinemaDao {
 	protected static final String DATABASE_NAME = "cinema";
@@ -106,7 +105,7 @@ public class CinemaDao {
 				Cinema c = new Cinema();
 				c.setName("Cinema "+(i+1));
 				// TODO set class
-				c.setCinemaClass("Platinum Movie Suites");
+				// c.setCinemaClass("Platinum Movie Suites");
 				c.setCineplexId(cp1.getId());
 				// TODO set seat number
 				c.setSeatNum(109);
