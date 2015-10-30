@@ -41,8 +41,8 @@ public class TicketDao {
 	
 	public static boolean add(Ticket t){
 		if(records == null) initialize();
-		if(records.containsKey(t.getTicketId())) return false; 
-		records.put(t.getTicketId(), t);
+		if(records.containsKey(t.getId())) return false; 
+		records.put(t.getId(), t);
 		save();
 		return true;
 	}
@@ -50,7 +50,7 @@ public class TicketDao {
 	public static boolean save(Ticket t) {
 		// TODO Auto-generated method stub
 		if(records == null) initialize();
-		records.put(t.getTicketId(), t);
+		records.put(t.getId(), t);
 		return save();
 	}
 

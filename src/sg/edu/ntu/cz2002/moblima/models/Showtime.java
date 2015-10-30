@@ -108,6 +108,10 @@ public class Showtime implements StandardData {
 		this.price = price;
 	}
 	
+	public void printInfo() {
+		
+	}
+	
 	@SuppressWarnings("unchecked")
 	@Override
 	public JSONObject toJSONObject() {

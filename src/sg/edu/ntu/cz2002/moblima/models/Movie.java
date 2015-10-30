@@ -161,7 +161,7 @@ public class Movie implements StandardData{
 				   MovieType.NORMAL;
 	}
 	
-	public void printMovieTypeChoice(){
+	public static void printMovieTypeChoice(){
 		for (MovieType m: MovieType.values()) {
 			System.out.println("\t" + (m.ordinal()+1) + ". " + m.name());
 		}
@@ -301,7 +301,7 @@ public class Movie implements StandardData{
 		o.put("status", this.status.ordinal());
 		o.put("synopsis", this.synopsis);
 		o.put("director", this.director);
-		o.put("rating", this.rating);
+		o.put("rating", this.rating.ordinal());
 		JSONArray a = new JSONArray();
 		a.addAll(this.casts);
 		o.put("casts", a);
@@ -336,7 +336,6 @@ public class Movie implements StandardData{
 		return a;
 	}
 	
-	@SuppressWarnings("unchecked")
 	public static HashMap<Integer, Movie> fromJSONObjects(JSONObject o){
 		HashMap<Integer, Movie> a = new HashMap<Integer, Movie>();
 		Set<String> s = o.keySet();

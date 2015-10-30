@@ -1,14 +1,22 @@
 package sg.edu.ntu.cz2002.moblima;
 
-import java.text.DateFormat;
 import java.text.DateFormatSymbols;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.GregorianCalendar;
 import java.util.HashMap;
+import java.util.InputMismatchException;
+import java.util.Iterator;
+import java.util.LinkedHashMap;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Scanner;
+import java.util.Set;
 import java.util.TimeZone;
 
 import sg.edu.ntu.cz2002.moblima.dao.*;
@@ -68,6 +76,7 @@ public class MainActivity {
 			HashMap<Integer, Movie> movies = MovieDao.getAllInHashMap();
 			exit = false;
 			choice = printMenuAndReturnChoice("Movie-goer", menus);
+			System.out.print("\n");
 			switch (choice) {
 			case 1:
 				searchMovieViewController(false);
@@ -95,9 +104,11 @@ public class MainActivity {
 				break;
 			case 6:
 				//store rating of each movie in an array, sort and print the top 5
+				listRanking();
 				break;
 			case 7:
 				//validate customer with transaction id to enter his/her review
+				addReviewViewController(movies);
 				break;
 			case 8:
 				exit = true;
@@ -390,15 +401,16 @@ public class MainActivity {
 	private static void listMovieView(Movie m, boolean showId){
 		if(showId)
 			System.out.println("Movie ID: "+m.getId());
+		System.out.print("\n");
 		System.out.println("Movie << "+m.getTitle()+" >> ("+m.getRatingString()+")");
 		System.out.println("\tfrom "+m.getDirector());
 		System.out.print("\tstarring ");
 		for(String c: m.getCasts())
 			System.out.print(c+"  ");
+		System.out.print("\n\tMovie rating: " + m.getRatingString());
 		System.out.print("\n\tDuration in minutes: " + m.getDuration());
 		System.out.println("\n\tis "+ m.getStatusString());
 		System.out.println("\tSynopsis: "+m.getSynopsis());
-		System.out.println("\n");
 	}
 
 	private static void editMovieViewController(){
@@ -731,7 +743,7 @@ public class MainActivity {
 		boolean exitNewMovie;
 		do{
 			exitNewMovie = false;
-			System.out.println("Adding new movie: ");
+			System.out.println("Adding new movie...");
 			Movie movie = new Movie();
 			System.out.print("Movie title: ");
 			st = sc.nextLine();
@@ -744,8 +756,7 @@ public class MainActivity {
 			movie.setDirector(st);
 			ArrayList<String> sat = new ArrayList<String>();
 			System.out.println("Casts (Type end to stop): ");
-			System.out.print("\t- ");
-			String name = sc.nextLine();
+			String name;
 			do{
 				System.out.print("\t- ");
 				name = sc.nextLine();
@@ -761,12 +772,20 @@ public class MainActivity {
 				sc.nextLine();
 			}while(it<1 || it>4);
 			movie.setStatusFromChoice(it);
+			do{
+				System.out.println("Movie rating: ");
+				Movie.printMovieRatingChoice();
+				System.out.print("Movie rating: ");
+				it = sc.nextInt();
+				sc.nextLine();
+			}while(it<1 || it>6);
+			movie.setRatingFromChoice(it);
 			System.out.print("Duration in minutes: ");
 			it = sc.nextInt();
 			sc.nextLine();
 			movie.setDuration(it);
 			listMovieView(movie, false);
-			System.out.println("Please confirm the record:\nTo insert, type Y\nTo redo, type N\nTo exit, type E");
+			System.out.println("\nPlease confirm the record:\nTo insert, type Y\nTo redo, type N\nTo exit, type E");
 			System.out.print("Your choice: ");
 			st = sc.nextLine();
 			if(st.equalsIgnoreCase("Y")){
@@ -1079,10 +1098,15 @@ public class MainActivity {
 						System.out.print("   ");
 					else {
 						digit = j-1;
-						if (digit > 9)
+						if (digit > 9) 
 							System.out.print(" "+digit+"  ");
-						else
+						else 
 							System.out.print("  "+digit+"  ");
+
+						//if (j == 10 && controlSpace > 0) {
+						//	System.out.print(" ");
+						//	controlSpace--;
+						//}
 					}
 				}
 				//second row as seperated line
@@ -1106,11 +1130,8 @@ public class MainActivity {
 					else if (j == 4 || j == column - 5)
 						System.out.print("     ");
 					else {
-						//if available
-						Cinema cinema = CinemaDao.findById(cinemaId);
-						ArrayList<String> isOccupied = cinema.getSeat();
-						String seatId = new StringBuilder().append(c).append(j).toString();
-						if (isOccupied.contains(seatId)) // implement seat into cinema.json??
+						//if available (get occupied seat list)
+						if (c == 'B' && j >6)
 							System.out.print("  X  ");
 						// Movie movie = MovieDao.findById(movieId);
 						else
@@ -1135,12 +1156,22 @@ public class MainActivity {
 		Cinema c = CinemaDao.findById(movieId);
 		ArrayList<String> seat = c.getSeat();
 		
+		//ask for movie -> cineplex and cinema
+		
 		System.out.print("How many ticket: ");
 		ticketNum = sc.nextInt();
 		sc.nextLine();
 		for (int i = 0; i < ticketNum; i++) {
 			System.out.print("Enter seat " + (i+1) + " :");
-			seatId = sc.nextLine();
+			while (true) {
+				try {
+					seatId = sc.nextLine();
+					break;
+				}
+				catch (InputMismatchException e) {
+					System.out.println("Please enter again.");
+				}
+			}
 			seat.add(seatId);
 		}
 		System.out.println("Booking for seats:");
@@ -1152,9 +1183,9 @@ public class MainActivity {
 			st = sc.nextLine();
 			if (st.equalsIgnoreCase("Y")) {
 				for (int i = 0; i < ticketNum; i++) {
-					Ticket tick = new Ticket();
-					tick.setSeatId(seat.get(i));
-					TicketDao.save(tick);
+					//Ticket tick = new Ticket();
+					//tick.setSeatId(seat.get(i));
+					//TicketDao.save(tick);
 				}
 				exit = true;
 			}
@@ -1164,4 +1195,137 @@ public class MainActivity {
 				exit = false;
 		} while (!exit);
 	}
+	
+	@SuppressWarnings({ "unchecked", "rawtypes" })
+	private static void listRanking() {
+		double rating;
+		double length;
+		HashMap<Integer, Movie> movies = MovieDao.getAllInHashMap();
+		//HashMap<Integer, Review> reviews = ReviewDao.getAllInHashMap();
+		HashMap<String, Double> ratingList = new HashMap<String, Double>();
+		for (Movie m: movies.values()) {
+			HashMap<Integer, Review> reviews = ReviewDao.findByMovieId(m.getId());
+			rating = 0;
+			length = 0;
+			for (Review r: reviews.values()) {
+				rating += r.getRating();
+				length++;
+			}
+			ratingList.put(m.getTitle(), rating/length);
+		}
+		
+	    Map<String, Double> map = sortByValues(ratingList); 
+	    System.out.println("The top 5 ranking by overall reviewers' rating");
+	    for (int i = 0; i < 68; i++)
+	    	System.out.print("-");
+	    Set set = map.entrySet();
+	    Iterator it = set.iterator();
+	    int index = 1;
+	    while(it.hasNext()) {
+	         Map.Entry entry = (Map.Entry)it.next();
+	         System.out.print("\nRank " + index + ". " + entry.getKey() + ", rating = ");
+	         System.out.format("%.1f", entry.getValue());
+	         index++;
+	    }
+	}
+	
+	  @SuppressWarnings({ "rawtypes", "unchecked" })
+	private static HashMap sortByValues(HashMap map) { 
+	       List l = new LinkedList(map.entrySet());
+	       // Defined Custom Comparator here
+	       Collections.sort(l, new Comparator() {
+	            public int compare(Object o1, Object o2) {
+	               return ((Comparable) ((Map.Entry) (o2)).getValue())
+	                  .compareTo(((Map.Entry) (o1)).getValue());
+	            }
+	       });
+
+	       // Here I am copying the sorted list in HashMap
+	       // using LinkedHashMap to preserve the insertion order
+	       HashMap sortedHashMap = new LinkedHashMap();
+	       for (Iterator it = l.iterator(); it.hasNext();) {
+	              Map.Entry entry = (Map.Entry) it.next();
+	              sortedHashMap.put(entry.getKey(), entry.getValue());
+	       } 
+	       return sortedHashMap;
+	  }
+	  
+	  private static void addReviewViewController(HashMap<Integer, Movie> movies) {
+		  int it, edit, movie, index = 1;
+		  boolean movieExit, showExit;
+		  double dt;
+		  String st;
+		  Review r = new Review();
+		  movieExit = false;
+		  while (!movieExit) {
+			  System.out.println("Which movie you want to review for: ");
+			  for (Movie m: movies.values()) {
+				  System.out.println(index + ". " + m.getTitle());
+				  index++;
+			  }
+			  System.out.print("\n");
+			  movie = sc.nextInt();
+			  sc.nextLine();
+			  r.setMovieId(movie);
+			  System.out.print("Enter name: ");
+			  st = sc.nextLine();
+			  r.setName(st);
+			  System.out.print("Enter rating: ");
+			  dt = sc.nextDouble();
+			  sc.nextLine();
+			  r.setRating(dt);
+			  System.out.print("Enter comment: ");
+			  st = sc.nextLine();
+			  r.setComment(st);
+			  showExit = false;
+			  while (!showExit) {
+				  System.out.println("\nReview for movie <<" + movies.get(movie).getTitle() + ">>");
+				  System.out.println("Name: " + r.getName());
+				  System.out.println("Rating: " + r.getRating());
+				  System.out.println("Comment: " + r.getComment());
+				  String[] menus = {"Confirm to add review", "Edit entry", "Back to movie selection", "Back to main menu"};
+				  it = printMenuAndReturnChoice("Add Review", menus);
+				  switch (it) {
+				  case 1: 
+					  ReviewDao.save(r);
+					  System.out.print("Review successfully added.");
+					  movieExit = true;
+					  showExit = true;
+					  break;
+				  case 2: 
+					  String[] editMenus = {"Edit name", "Edit rating", "Edit comment"};
+					  edit = printMenuAndReturnChoice("Add Review > Edit", editMenus);
+					  if (edit == 1) {
+						  System.out.print("Enter name: ");
+						  st = sc.nextLine();
+						  r.setName(st);
+					  }
+					  else if (edit == 2) {
+						  System.out.print("Enter rating: ");
+						  dt = sc.nextDouble();
+						  r.setRating(dt);
+					  }
+					  else {
+						  System.out.print("Enter comment: ");
+						  st = sc.nextLine();
+						  r.setComment(st);
+					  }
+					  movieExit = false;
+					  showExit = false;
+					  break;
+				  case 3:
+					  showExit = true;
+					  movieExit = false;
+					  break;
+				  case 4:
+					  showExit = true;
+					  movieExit = true;
+					  break;
+				  default:
+					  System.out.println("Invalid option.");
+					  break;
+				  }
+			  }
+		  }
+	  }
 }
