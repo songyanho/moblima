@@ -15,7 +15,6 @@ import sg.edu.ntu.cz2002.moblima.CalendarView;
 import sg.edu.ntu.cz2002.moblima.database.Database;
 import sg.edu.ntu.cz2002.moblima.models.*;
 
-
 public class ShowtimeDao {
 	protected static final String DATABASE_NAME = "showtime";
 	
