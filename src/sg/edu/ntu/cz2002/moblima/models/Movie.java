@@ -336,6 +336,7 @@ public class Movie implements StandardData{
 		return a;
 	}
 	
+	@SuppressWarnings("unchecked")
 	public static HashMap<Integer, Movie> fromJSONObjects(JSONObject o){
 		HashMap<Integer, Movie> a = new HashMap<Integer, Movie>();
 		Set<String> s = o.keySet();
