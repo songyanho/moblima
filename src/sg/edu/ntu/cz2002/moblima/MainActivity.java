@@ -42,7 +42,7 @@ public class MainActivity {
 			boolean auto = it == 1? true: false;
 			setupCineplex(auto);
 		}
-		
+
 		do{
 			System.out.print("\nWelcome\n For movie-goer, please press enter\nFor admin, please enter \"admin\": ");
 			String action = sc.nextLine();
@@ -165,19 +165,19 @@ public class MainActivity {
 			choice = printMenuAndReturnChoice("Admin Panel > Movie Showtime Management", menu);
 			switch(choice){
 			case 1:
-				
+				listShowtimeViewController();
 				break;
 			case 2:
-				
+
 				break;
 			case 3:
 				addNewShowtimeViewController();
 				break;
 			case 4:
-				
+
 				break;
 			case 5:
-				
+
 				break;
 			default:
 				exit = true;
@@ -185,11 +185,69 @@ public class MainActivity {
 			}
 		}while(!exit);
 	}
-	
+
+	public static void listShowtimeViewController(){
+		String st;
+		int it, choice;
+		int weekOffset = 0;
+		ArrayList<Cineplex> cineplexes = new ArrayList<Cineplex>();
+		String[] cineplexMenu = new String[CineplexDao.getAllInHashMap().size()+1];
+		it = 0;
+		for(Cineplex c: CineplexDao.getAllInHashMap().values()){
+			cineplexMenu[it++] = c.getCineplexName();
+			cineplexes.add(c);
+		}
+		cineplexMenu[it] = "Back to previous menu";
+		choice = printMenuAndReturnChoice("Admin Panel > Movie Showtime Management > List > Select Cineplex", cineplexMenu);
+		if(choice <= 0 || choice >= cineplexes.size())
+			return;
+		Cineplex selectedCineplex = cineplexes.get(choice-1);
+		System.out.println("You have selected <<" + selectedCineplex.getCineplexName()+">>");
+//		HashMap<Integer, Cinema> cinemasHashMap = selectedCineplex.getCinemas();
+//		String[] cinemaMenu = new String[cinemasHashMap.size()+1];
+//		ArrayList<Cinema> cinemas = new ArrayList<Cinema>();
+//		it=0;
+//		for(Cinema ci: cinemasHashMap.values()){
+//			cinemaMenu[it++] = ci.getName() + " (" + ci.getCinemaClass() + ")";
+//			cinemas.add(ci);
+//		}
+//		cinemaMenu[it] = "Back to previous menu";
+//		choice = printMenuAndReturnChoice("Admin Panel > Movie Showtime Management > List > Select Cinema", cinemaMenu);
+//		if(choice<=0 || choice >= cinemas.size())
+//			return;
+//		Cinema selectedCinema = cinemas.get(choice-1);
+//		System.out.println("You have selected <<" + selectedCinema.getName()+">>");
+
+		String[] weekMenu = {"Last 2 week", "Last week", "Current week", "Next week", "Next 2 week", "Back to previous menu"};
+		choice = printMenuAndReturnChoice("Admin Panel > Movie Showtime Management > Select week", weekMenu);
+		if(choice<=0 || choice >= weekMenu.length)
+			return;
+		weekOffset = choice-3;
+		//int timeslot[][][] = cinemaTimetableView(selectedCinema, weekOffset);
+
+		String[] dayMenu = CalendarView.dayOfWeek(true, weekOffset, true);
+		choice = printMenuAndReturnChoice("Admin Panel > Movie Showtime Management > List > Select Showtime Day", dayMenu);
+		if(choice<=0 || choice >= dayMenu.length)
+			return;
+		choice-=1;
+		int dayOfWeek = dayMenu[choice].equalsIgnoreCase("sunday")?0: 
+			dayMenu[choice].equalsIgnoreCase("monday")?1:
+				dayMenu[choice].equalsIgnoreCase("tuesday")?2:
+					dayMenu[choice].equalsIgnoreCase("wednesday")?3:
+						dayMenu[choice].equalsIgnoreCase("thursday")?4:
+							dayMenu[choice].equalsIgnoreCase("friday")?5:6;
+		Calendar c = new GregorianCalendar();
+		c.add(Calendar.WEEK_OF_YEAR, weekOffset);
+		c.set(Calendar.DAY_OF_WEEK, dayOfWeek);
+		HashMap<Movie, ArrayList<Showtime>> sortedShowtimes = ShowtimeDao.getAllOnDate(c, selectedCineplex);
+		
+	}
+
 	private static void addNewShowtimeViewController(){
 		String st;
 		int it, choice;
 		boolean exit = false;
+		int weekOffset = 0;
 		HashMap<Integer, Cineplex> showCineplexes = new HashMap<Integer, Cineplex>();
 		printMenuAndReturnChoice("Admin Panel > Movie Showtime Management > Select Movie", null);
 		System.out.println("List of movies");
@@ -225,8 +283,8 @@ public class MainActivity {
 				cineplexes.add(c);
 			}
 			cineplexMenu[it] = "Back to previous menu";
-			choice = printMenuAndReturnChoice("Admin Panel > Movie Showtime Management > Select Cineplex", cineplexMenu);
-			if(choice <= 0 || choice >= cineplexes.size()+1)
+			choice = printMenuAndReturnChoice("Admin Panel > Movie Showtime Management > New > Select Cineplex", cineplexMenu);
+			if(choice <= 0 || choice >= cineplexes.size())
 				break;
 			Cineplex selectedCineplex = cineplexes.get(choice-1);
 			System.out.println("You have selected <<" + selectedCineplex.getCineplexName()+">>");
@@ -240,15 +298,21 @@ public class MainActivity {
 					cinemas.add(ci);
 				}
 				cinemaMenu[it] = "Back to previous menu";
-				choice = printMenuAndReturnChoice("Admin Panel > Movie Showtime Management > Select Cinema", cinemaMenu);
-				if(choice<=0 || choice >= cinemas.size()+1)
+				choice = printMenuAndReturnChoice("Admin Panel > Movie Showtime Management > New > Select Cinema", cinemaMenu);
+				if(choice<=0 || choice >= cinemas.size())
 					break;
 				Cinema selectedCinema = cinemas.get(choice-1);
 				System.out.println("You have selected <<" + selectedCinema.getName()+">>");
-				int timeslot[][][] = cinemaTimetableView(selectedCinema, 0);
-				
-				String[] dayMenu = CalendarView.dayOfWeek(true);
-				choice = printMenuAndReturnChoice("Admin Panel > Movie Showtime Management > Select Showtime Day", dayMenu);
+
+				String[] weekMenu = {"Current week", "Next week", "Next 2 week", "Back to previous menu"};
+				choice = printMenuAndReturnChoice("Admin Panel > Movie Showtime Management > New > Select week", weekMenu);
+				if(choice<=0 || choice >= weekMenu.length)
+					break;
+				weekOffset = choice-1;
+				int timeslot[][][] = cinemaTimetableView(selectedCinema, weekOffset);
+
+				String[] dayMenu = CalendarView.dayOfWeek(true, weekOffset, false);
+				choice = printMenuAndReturnChoice("Admin Panel > Movie Showtime Management > New > Select Showtime Day", dayMenu);
 				if(choice<=0 || choice >= dayMenu.length)
 					break;
 				choice-=1;
@@ -258,9 +322,9 @@ public class MainActivity {
 							dayMenu[choice].equalsIgnoreCase("wednesday")?3:
 								dayMenu[choice].equalsIgnoreCase("thursday")?4:
 									dayMenu[choice].equalsIgnoreCase("friday")?5:6;
-				ArrayList<Calendar> availableTimeSlot = CalendarView.timeslot(true, timeslot[dayOfWeek], selectedMovie.getDuration(), dayOfWeek, 0);
+				ArrayList<Calendar> availableTimeSlot = CalendarView.timeslot(true, timeslot[dayOfWeek], selectedMovie.getDuration(), dayOfWeek, weekOffset);
 				String[] timeMenu = CalendarView.timeslotInString(availableTimeSlot, true);
-				choice = printMenuAndReturnChoice("Admin Panel > Movie Showtime Management > Select Showtime Time", timeMenu);
+				choice = printMenuAndReturnChoice("Admin Panel > Movie Showtime Management > New > Select Showtime Time", timeMenu);
 				if(choice<=0 || choice >= timeMenu.length)
 					break;
 				Showtime ns = new Showtime();
@@ -274,7 +338,7 @@ public class MainActivity {
 			}while(true);
 		}while(true);
 	}
-	
+
 	private static int[][][] cinemaTimetableView(Cinema c, int weekOffset){
 		SimpleDateFormat df = new SimpleDateFormat("MMM dd,yyyy");
 		ArrayList<Calendar> calendars = CalendarView.getWeekCalendars(weekOffset);
@@ -284,7 +348,7 @@ public class MainActivity {
 		calendar.set(Calendar.MINUTE, 1);
 		System.out.print("\n\nTimetable of <"+c.getName()+"> from "+df.format(calendars.get(0).getTime())+" to "+df.format(calendars.get(6).getTime()));
 		System.out.println("\n\n|  TIME  | Sun | Mon | Tue | Wed | Thu | Fri | Sat |");
-		
+
 		int timeslot[][][] = new int[7][15][2];
 		for(int i=0; i<7; i++){
 			for(int j=0; j<15; j++){
@@ -296,6 +360,7 @@ public class MainActivity {
 					timeslot[i][j][0] = -1;
 					timeslot[i][j][1] = -1;
 				}
+				continue;
 			}
 			ArrayList<Showtime> currentShowTimes = ShowtimeDao.getAllOnDate(calendars.get(i), c);
 			for(Showtime s: currentShowTimes){
@@ -322,7 +387,7 @@ public class MainActivity {
 				}
 			}
 		}
-		
+
 		for(int h=10; h<=24; h++){
 			for(int m=0; m<=30; m+=30){
 				System.out.print("|  "+h+":"+(m==0?"00":m));
@@ -383,7 +448,7 @@ public class MainActivity {
 			listCineplexView(c, showId);
 		}
 	}
-	
+
 	private static void listCineplexView(Cineplex c, boolean showId){
 		if (showId)
 			System.out.println("Cineplex ID: " + c.getId());
@@ -391,7 +456,7 @@ public class MainActivity {
 		System.out.println("Cinema number: " + c.getCinemaNum());
 		System.out.print("\n");
 	}
-	
+
 	private static void listMoviesView(HashMap<Integer, Movie> movies, boolean showId){
 		for(Movie m: movies.values()){
 			listMovieView(m, showId);
@@ -997,7 +1062,7 @@ public class MainActivity {
 		}
 		return 0;
 	}
-	
+
 	private static int selectMovie(HashMap<Integer, Movie> movies) {
 		int i = 0;
 		int choice;
@@ -1012,7 +1077,7 @@ public class MainActivity {
 		sc.nextLine();
 		return choice;
 	}
-	
+
 	private static void setupCineplex(boolean auto) {
 		int it = 0;
 		String st;
@@ -1070,7 +1135,7 @@ public class MainActivity {
 			}
 		}
 	}
-	
+
 	private static int selectCineplexAndReturnChoice() {
 		int choice;
 		HashMap<Integer, Cineplex> c = CineplexDao.getAllInHashMap();
