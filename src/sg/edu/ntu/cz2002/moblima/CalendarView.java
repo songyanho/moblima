@@ -88,6 +88,7 @@ public class CalendarView {
 	
 	public static ArrayList<Calendar> getWeekCalendars(int weekOffset){
 		Calendar calendar = Calendar.getInstance();
+		calendar.setTimeZone(TimeZone.getTimeZone("Asia/Singapore"));
 		if(weekOffset > 0){
 			calendar.add(Calendar.DATE, weekOffset*7);
 		}
@@ -136,7 +137,6 @@ public class CalendarView {
 					try {
 						Thread.sleep(1);
 					} catch (InterruptedException e) {
-						// TODO Auto-generated catch block
 						e.printStackTrace();
 					}
 					System.err.flush();

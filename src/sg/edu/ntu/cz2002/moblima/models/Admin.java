@@ -46,6 +46,7 @@ public class Admin implements StandardData {
 		this.password = password;
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public JSONObject toJSONObject() {
 		JSONObject o = new JSONObject();
@@ -68,6 +69,7 @@ public class Admin implements StandardData {
 		return a;
 	}
 	
+	@SuppressWarnings("unchecked")
 	public static HashMap<Integer, Admin> fromJSONObjects(JSONObject o){
 		HashMap<Integer, Admin> a = new HashMap<Integer, Admin>();
 		Set<String> s = o.keySet();

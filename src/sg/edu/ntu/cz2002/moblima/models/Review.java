@@ -65,6 +65,10 @@ public class Review implements StandardData {
 	public void setRating (double rating) {
 		if (rating >= 1.0 && rating <= 5.0)
 			this.rating = rating;
+		else {
+			System.out.println("Enter only 1 - 5 [best].");
+			this.rating = 0;
+		}
 	}
 	
 	@SuppressWarnings("unchecked")
@@ -92,6 +96,7 @@ public class Review implements StandardData {
 		return a;
 	}
 	
+	@SuppressWarnings("unchecked")
 	public static HashMap<Integer, Review> fromJSONObjects(JSONObject o){
 		HashMap<Integer, Review> a = new HashMap<Integer, Review>();
 		Set<String> s = o.keySet();

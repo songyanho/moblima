@@ -1,6 +1,5 @@
 package sg.edu.ntu.cz2002.moblima.dao;
 
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collection;
@@ -42,12 +41,19 @@ public class ShowtimeDao {
 	  return list;
 	}
 	
+	public static Showtime findById(int id) {
+		if(records == null) initialize();
+		if(records.containsKey(id))
+			return records.get(id);
+		return null;
+	}
+	
 	public static HashMap<Movie, ArrayList<Showtime>> getAllOnDate(Calendar c, Cineplex cineplex){
 		if(records == null) initialize();
 		HashMap<Movie, ArrayList<Showtime>> movieWithShowtime = new HashMap<Movie, ArrayList<Showtime>>();
 		HashMap<Movie, HashMap<Long, Showtime>> m = new HashMap<Movie, HashMap<Long, Showtime>>();
 		for(Showtime s: records.values()){
-			if(CalendarView.sameDay(c, s.getDate())){
+			if(CalendarView.sameDay(c, s.getDate()) && cineplex.getId() == s.getCineplexId()){
 				if(!m.containsKey(s.getMovie())){
 					movieWithShowtime.put(s.getMovie(), new ArrayList<Showtime>());
 					m.put(s.getMovie(), new HashMap<Long, Showtime>());
@@ -56,6 +62,28 @@ public class ShowtimeDao {
 			}
 		}
 		for(Movie mm: m.keySet()){
+			Collection<Long> unsorted = m.get(mm).keySet();
+			List<Long> sorted = asSortedList(unsorted);
+			for(Long ll: sorted)
+				movieWithShowtime.get(mm).add(m.get(mm).get(ll));
+		}
+		return movieWithShowtime;
+	}
+	
+	public static HashMap<Cineplex, ArrayList<Showtime>> getAllOnDate(Calendar c, Movie movie){
+		if(records == null) initialize();
+		HashMap<Cineplex, ArrayList<Showtime>> movieWithShowtime = new HashMap<Cineplex, ArrayList<Showtime>>();
+		HashMap<Cineplex, HashMap<Long, Showtime>> m = new HashMap<Cineplex, HashMap<Long, Showtime>>();
+		for(Showtime s: records.values()){
+			if(CalendarView.sameDay(c, s.getDate()) && movie.getId() == s.getMovieId()){
+				if(!m.containsKey(s.getCineplex())){
+					movieWithShowtime.put(s.getCineplex(), new ArrayList<Showtime>());
+					m.put(s.getCineplex(), new HashMap<Long, Showtime>());
+				}
+				m.get(s.getCineplex()).put(s.getDate().getTimeInMillis(), s);
+			}
+		}
+		for(Cineplex mm: m.keySet()){
 			Collection<Long> unsorted = m.get(mm).keySet();
 			List<Long> sorted = asSortedList(unsorted);
 			for(Long ll: sorted)
@@ -73,6 +101,23 @@ public class ShowtimeDao {
 			}
 		}
 		return t;
+	}
+	
+	public static boolean deleteShowtimeWithId(int id){
+		if(records == null) initialize();
+		if(!records.containsKey(id)) return false;
+		//TODO remove related Ticket sold
+		records.remove(id);
+		return save();
+	}
+	
+	public static boolean deleteAllWithMovieId(int movieId){
+		if(records == null) initialize();
+		for(Showtime s: records.values()){
+			if(s.getMovieId() == movieId)
+				records.remove(s.getId());
+		}
+		return save();
 	}
 	
 	public static boolean save(Showtime t) {

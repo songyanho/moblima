@@ -3,7 +3,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Set;
 
-import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 
 import sg.edu.ntu.cz2002.moblima.dao.CinemaDao;
@@ -110,7 +109,7 @@ public class Cinema {
 	}
 	
 	public static Cinema fromJSONObject(JSONObject o){
-		ArrayList<Seat> seat = new ArrayList<Seat>();
+//		ArrayList<Seat> seat = new ArrayList<Seat>();
 //		JSONArray seatInJSON = (JSONArray) o.get("seat");
 //		seat.addAll(seatInJSON);
 		return new Cinema(
@@ -131,6 +130,7 @@ public class Cinema {
 		return a;
 	}
 	
+	@SuppressWarnings("unchecked")
 	public static HashMap<Integer, Cinema> fromJSONObjects(JSONObject o){
 		HashMap<Integer, Cinema> a = new HashMap<Integer, Cinema>();
 		Set<String> s = o.keySet();
