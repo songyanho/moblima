@@ -10,16 +10,15 @@ import java.util.TimeZone;
 
 public class CalendarView {
 	
-	public static final String[] dayOfWeek(boolean back){ 
+	public static final String[] dayOfWeek(boolean back, int weekOffset, boolean all){ 
 		String[] a;
 		if(back)
 			a =  new String[]{"Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Back to previous menu"};
 		else
 			a =  new String[]{"Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"};
 		Calendar c = new GregorianCalendar();
-//		int b = c.get(Calendar.DAY_OF_WEEK);
-//		int d = a.length-c.get(Calendar.DAY_OF_WEEK);
-		a = Arrays.copyOfRange(a, c.get(Calendar.DAY_OF_WEEK)-1, 8);
+		if(weekOffset == 0 && !all)
+			a = Arrays.copyOfRange(a, c.get(Calendar.DAY_OF_WEEK)-1, 8);
 		return a;
 	}
 	

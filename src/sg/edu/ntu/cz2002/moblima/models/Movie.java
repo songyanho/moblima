@@ -259,7 +259,7 @@ public class Movie implements StandardData{
 		o.put("status", this.status.ordinal());
 		o.put("synopsis", this.synopsis);
 		o.put("director", this.director);
-		o.put("rating", this.rating);
+		o.put("rating", this.rating.ordinal());
 		JSONArray a = new JSONArray();
 		a.addAll(this.casts);
 		o.put("casts", a);
