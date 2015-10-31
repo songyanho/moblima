@@ -60,7 +60,6 @@ public class MainActivity {
 
 	private static void movieGoerViewController(){
 		int choice, it, cineplex;
-		String st;
 		boolean exit = false;
 		//CODE for selecting cineplex and cinema
 		System.out.println("\nPlease select a cineplex: ");
@@ -1676,7 +1675,8 @@ public class MainActivity {
 		  }
 	  }
 	  
-	  private static void showReviews(HashMap<Integer, Movie> movies) {
+	  @SuppressWarnings("unused")
+	private static void showReviews(HashMap<Integer, Movie> movies) {
 		  int index = 1;
 		  int movie;
 		  System.out.println("Which movie reviews you want to read?");
