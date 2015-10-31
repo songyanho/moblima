@@ -10,21 +10,24 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.GregorianCalendar;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Random;
 import java.util.Scanner;
 import java.util.Set;
 import java.util.TimeZone;
 
 import sg.edu.ntu.cz2002.moblima.dao.*;
 import sg.edu.ntu.cz2002.moblima.models.*;
+import sg.edu.ntu.cz2002.moblima.models.Cinema.CinemaClass;
 import sg.edu.ntu.cz2002.moblima.models.Showtime.MovieType;
+import sg.edu.ntu.cz2002.moblima.models.Ticket.AgeGroup;
 
-import sg.edu.ntu.cz2002.moblima.models.Ticket;
 public class MainActivity {
 	protected static Scanner sc;
 	protected static Data data;
@@ -44,7 +47,26 @@ public class MainActivity {
 			boolean auto = it == 1? true: false;
 			setupCineplex(auto);
 		}
-
+		
+		if (CinemaDao.getLastId() == 0) {
+			int loop = CineplexDao.getLastId();		
+			Random rand = new Random();
+			for (int i = 0; i < loop; i++) {
+				for (int j = 0; j < 3; j++) {
+					Cinema c = new Cinema();
+					String name = "Cinema " + (j+1);
+					c.setName(name);
+					ArrayList<String> seat = new ArrayList<String>();
+					c.setSeat(seat);
+					int r = rand.nextInt(4);
+					c.setCinemaClassFromChoice(r);
+					c.setCineplexId(i);
+					c.setNumEmptySeat(300);
+					CinemaDao.save(c);
+				}
+			}
+		}
+		
 		do{
 			System.out.print("\nWelcome\n For movie-goer, please press enter\nFor admin, please enter \"admin\": ");
 			String action = sc.nextLine();
@@ -94,10 +116,7 @@ public class MainActivity {
 				break;
 			case 4:
 				//which movie and seat
-				it = selectMovie(movies);
-				//CODE show seat arrangement and confirmation
-				showSeatsArrangement(cineplex, it);
-				bookTicketViewController(it);
+				bookTicketViewController();
 				break;
 			case 5:
 				//CODE history
@@ -1399,7 +1418,7 @@ public class MainActivity {
 		int choice;
 		HashMap<Integer, Cineplex> c = CineplexDao.getAllInHashMap();
 		listCineplexesView(c, true);
-		System.out.print("Select which cineplex to enter: ");
+		System.out.print("Select cineplex: ");
 		choice = sc.nextInt();
 		return choice;
 	}
@@ -1470,35 +1489,111 @@ public class MainActivity {
 	}
 
 	//incomplete
-	private static void bookTicketViewController(int movieId) {
-		int ticketNum;
+	private static void bookTicketViewController() {
+		Calendar c = new GregorianCalendar();
+		c.setTimeZone(TimeZone.getTimeZone("Asia/Singapore"));
+		c.add(Calendar.WEEK_OF_YEAR, 3);
+		SimpleDateFormat df = new SimpleDateFormat("EEE, MMM dd, YYYY");
+		
+		int ticketNum, showtimeId;
+		int i = 0;
 		boolean exit = false;
 		String seatId;
 		String st;
-		Cinema c = CinemaDao.findById(movieId);
-		ArrayList<String> seat = c.getSeat();
+		ArrayList<String> seat = new ArrayList<String>();
+		HashMap<Integer, Movie> movies = MovieDao.findActiveMovie();
+		
+		System.out.print("\n");
+		/*
+		int movieId = selectMovie(movies);
+		int cineplexId = selectCineplexAndReturnChoice();
+		Cineplex cineplex = CineplexDao.findById(cineplexId);
+		HashMap<Movie, ArrayList<Showtime>> movieShowtime = ShowtimeDao.getAllOnDate(c, cineplex);
+		Set<Movie> movieSet = movieShowtime.keySet();
 
+		for (Movie m: movieSet) {
+			if (movies.get(movieId).getId() == m.getId()) {
+				for(int j=1; i<=7; i++){
+					c.set(Calendar.DAY_OF_WEEK, j);
+					HashMap<Movie, ArrayList<Showtime>> sortedShowtimes = ShowtimeDao.getAllOnDate(c, cineplex);
+					showtimeOfTheDayView(cineplex, sortedShowtimes, df.format(c.getTime()), true);
+				}
+				showtimeOfTheDayView(cineplex, movieShowtime, df.format(c.getTime()), true);
+			}
+			else {
+				System.out.println("The movie << " + m.getTitle() + " >> is not currently available in " + cineplex.getCineplexName());
+				return;
+			}
+		}
+		*/
+		listShowtimeByMovieViewController(true);
+		System.out.print("Enter showtime ID: ");
+		showtimeId = sc.nextInt();
+		sc.nextLine();
+		Showtime showtime = ShowtimeDao.findById(showtimeId);
+		Cinema cinema = CinemaDao.findById(showtime.getCinemaId());
+		ArrayList<String> occupiedSeat = cinema.getSeat();
+		boolean empty = occupiedSeat.isEmpty();
+		
 		System.out.print("How many ticket: ");
 		ticketNum = sc.nextInt();
 		sc.nextLine();
-		for (int i = 0; i < ticketNum; i++) {
-			System.out.print("Enter seat " + (i+1) + " :");
+		do {
+			System.out.print("Enter seat " + (i+1) + ": ");
 			seatId = sc.nextLine();
-			seat.add(seatId);
-		}
+			if (seatInputChecking(seatId)) {
+				if (!empty) {
+					if (occupiedSeat.contains(seatId)) {
+						System.out.println("This seat has been assigned to another person.");
+						continue;
+					}
+					if (seat.contains(seatId)) {
+						System.out.println("You just entered this seat.");
+						continue;
+					}
+				}
+				seatId = seatId.toUpperCase();
+				seat.add(seatId);
+				i++;
+			}
+			else {
+				System.out.println("Please enter seat in the format of (alphabet + digit)");
+				continue;
+			}
+		} while (i < ticketNum);
+		
 		System.out.println("Booking for seats:");
-		for (int i = 0; i < ticketNum; i++) {
+		for (i = 0; i < ticketNum; i++) {
 			System.out.print(seat.get(i) + "\t");
 		}
 		System.out.println("\nConfirm booking (Y|N): ");
 		do {
 			st = sc.nextLine();
 			if (st.equalsIgnoreCase("Y")) {
-				for (int i = 0; i < ticketNum; i++) {
+				ArrayList<Double> price = new ArrayList<Double>();
+				double total = 0;
+				DecimalFormat deciformat = new DecimalFormat("#.##");
+				deciformat.setRoundingMode(RoundingMode.HALF_UP);
+				
+				for (i = 0; i < ticketNum; i++) {
 					Ticket tick = new Ticket();
-//					tick.setSeatId(seat.get(i));
+					tick.setSeatId(seat.get(i));
+					tick.setShowtime(showtimeId);
+					if (!cinema.getSeat().contains(seatId))
+						cinema.getSeat().add(seatId);
+					Ticket.printAgeGroupChoice();
+					System.out.print("\nAge group for ticket " + (i+1) +": ");
+					int choice = sc.nextInt();
+					tick.setAgeGroupFromChoice(choice);
+					tick.setPrice(tick.calculatePrice());
+					price.add(tick.getPrice());
+					total += tick.getPrice();
+					CinemaDao.save();
 					TicketDao.save(tick);
+					System.out.println("Price for ticket " + (i+1) + " = " + deciformat.format(price.get(i)));
 				}
+				//System.out.print(ticketNum + " ticket(s) successfully booked for << " + movies.get(movieId).getTitle() + " >>.");
+				System.out.print("Total price is " + deciformat.format(total));
 				exit = true;
 			}
 			else if (st.equalsIgnoreCase("N"))
@@ -1506,6 +1601,25 @@ public class MainActivity {
 			else
 				exit = false;
 		} while (!exit);
+	}
+	
+	private static boolean seatInputChecking(String seatId) {
+		char c1, c2, c3;
+		int length = seatId.length();
+		if (length < 2 && length > 3)
+			return false;
+		c1 = seatId.charAt(0);
+		c2 = seatId.charAt(1);
+		if (length == 2) {
+			if (Character.isAlphabetic(c1) && Character.isDigit(c2)) 
+				return true;
+		}
+		if (length == 3) {
+			c3 = seatId.charAt(2);
+			if (Character.isAlphabetic(c1) && Character.isDigit(c2) && Character.isDigit(c3))
+				return true;
+		}
+		return false;
 	}
 	
 	private static double calculateOverallRating(int movieId) {
@@ -1717,4 +1831,5 @@ public class MainActivity {
 		  else
 			  System.out.print("No past reviews.");
 	  }
+
 }

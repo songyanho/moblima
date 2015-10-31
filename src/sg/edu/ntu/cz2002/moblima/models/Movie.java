@@ -120,7 +120,7 @@ public class Movie implements StandardData{
 	
 	public static void printMovieStatusChoice(){
 		for (MovieStatus m: MovieStatus.values()) {
-		System.out.println("\t" + (m.ordinal()+1) + ". " + m.name());
+			System.out.println("\t" + (m.ordinal()+1) + ". " + m.name());
 		}
 	}
 	
