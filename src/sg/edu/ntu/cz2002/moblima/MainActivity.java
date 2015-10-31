@@ -10,7 +10,6 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.GregorianCalendar;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
@@ -24,9 +23,7 @@ import java.util.TimeZone;
 
 import sg.edu.ntu.cz2002.moblima.dao.*;
 import sg.edu.ntu.cz2002.moblima.models.*;
-import sg.edu.ntu.cz2002.moblima.models.Cinema.CinemaClass;
 import sg.edu.ntu.cz2002.moblima.models.Showtime.MovieType;
-import sg.edu.ntu.cz2002.moblima.models.Ticket.AgeGroup;
 
 public class MainActivity {
 	protected static Scanner sc;
@@ -68,7 +65,7 @@ public class MainActivity {
 		}
 		
 		do{
-			System.out.print("\nWelcome\n For movie-goer, please press enter\nFor admin, please enter \"admin\": ");
+			System.out.print("\nWelcome\nFor movie-goer, please press enter\nFor admin, please enter \"admin\": ");
 			String action = sc.nextLine();
 			if(action.equalsIgnoreCase("exit")){
 				break;
@@ -82,11 +79,8 @@ public class MainActivity {
 	}
 
 	private static void movieGoerViewController(){
-		int choice, it, cineplex;
+		int choice, it;
 		boolean exit = false;
-		//CODE for selecting cineplex and cinema
-		System.out.println("\nPlease select a cineplex: ");
-		cineplex = selectCineplexAndReturnChoice();
 		String[] menus = {"Search movie",
 				"List movies and details", 
 				"Check seat availability", 
@@ -94,11 +88,11 @@ public class MainActivity {
 				"View booking history", 
 				"Enter review for movie",
 				"Show past reviews",
-		"Quit"};
+				"Quit"};
 		do {
 			HashMap<Integer, Movie> movies = MovieDao.getAllInHashMap();
 			exit = false;
-			choice = printMenuAndReturnChoice("Movie-goer", menus);
+			choice = printMenuAndReturnChoice("Movie-goer Panel", menus);
 			switch (choice) {
 			case 1:
 				searchMovieViewController(false);
@@ -1081,12 +1075,12 @@ public class MainActivity {
 	}
 
 	private static void addMovieViewController(){
-		int it;
+		int it, check = 0;
 		String st, name;
 		boolean exitNewMovie;
 		do{
 			exitNewMovie = false;
-			System.out.println("Adding new movie: ");
+			System.out.println("\nAdding new movie: ");
 			Movie movie = new Movie();
 			System.out.print("Movie title: ");
 			st = sc.nextLine();
@@ -1098,13 +1092,15 @@ public class MainActivity {
 			st = sc.nextLine();
 			movie.setDirector(st);
 			ArrayList<String> sat = new ArrayList<String>();
-			System.out.println("Casts (Type end to stop): ");
+			System.out.println("Casts (At least 2, type end to stop): ");
 			do{
 				System.out.print("\t- ");
 				name = sc.nextLine();
-				if(name.length()>0 && !name.equalsIgnoreCase("end"))
+				if(name.length()>0 && !name.equalsIgnoreCase("end")) {
 					sat.add(name);
-			}while (!name.equalsIgnoreCase("end"));
+					check++;
+				}
+			}while (!name.equalsIgnoreCase("end") || check < 2);
 			movie.setCasts(sat);
 			do{
 				System.out.println("Movie status: ");
@@ -1344,7 +1340,7 @@ public class MainActivity {
 	private static int selectMovie(HashMap<Integer, Movie> movies) {
 		int i = 0;
 		int choice;
-		System.out.println("Which movie you are interested in?");
+		System.out.println("\nWhich movie you are interested in?");
 		for (Movie m : movies.values()) {
 			i++;
 			System.out.println(i + ". " + m.getTitle());
@@ -1532,14 +1528,19 @@ public class MainActivity {
 		sc.nextLine();
 		Showtime showtime = ShowtimeDao.findById(showtimeId);
 		Cinema cinema = CinemaDao.findById(showtime.getCinemaId());
+		Cineplex cineplex = CineplexDao.findById(showtime.getCineplexId());
 		ArrayList<String> occupiedSeat = cinema.getSeat();
 		boolean empty = occupiedSeat.isEmpty();
+		ArrayList<Ticket> ticketList = new ArrayList<Ticket>();
+		double total = 0;
+		DecimalFormat deciformat = new DecimalFormat("#.##");
+		deciformat.setRoundingMode(RoundingMode.HALF_UP);
 		
 		System.out.print("How many ticket: ");
 		ticketNum = sc.nextInt();
 		sc.nextLine();
 		do {
-			System.out.print("Enter seat " + (i+1) + ": ");
+			System.out.print("\nEnter seat " + (i+1) + ": ");
 			seatId = sc.nextLine();
 			if (seatInputChecking(seatId)) {
 				if (!empty) {
@@ -1548,12 +1549,22 @@ public class MainActivity {
 						continue;
 					}
 					if (seat.contains(seatId)) {
-						System.out.println("You just entered this seat.");
+						System.out.println("You have just entered this seat.");
 						continue;
 					}
 				}
 				seatId = seatId.toUpperCase();
 				seat.add(seatId);
+				Ticket tick = new Ticket();
+				Ticket.printAgeGroupChoice();
+				System.out.print("\nAge group for ticket " + (i+1) +": ");
+				int choice = sc.nextInt();
+				sc.nextLine();
+				tick.setAgeGroupFromChoice(choice);
+				tick.setSeatId(seatId);
+				tick.setShowtime(showtimeId);
+				tick.setPrice(tick.calculatePrice());
+				ticketList.add(tick);
 				i++;
 			}
 			else {
@@ -1562,38 +1573,26 @@ public class MainActivity {
 			}
 		} while (i < ticketNum);
 		
-		System.out.println("Booking for seats:");
+		System.out.println("\nBooking for seats in " + cineplex.getCineplexName());
+		System.out.println("Cinema class: " + cinema.getCinemaClassString());
 		for (i = 0; i < ticketNum; i++) {
-			System.out.print(seat.get(i) + "\t");
+			double price = ticketList.get(i).getPrice();
+			System.out.println("<< " + seat.get(i) + " >>");
+			System.out.println(ticketList.get(i).getAgeGroupString() + " price: " + deciformat.format(price));
+			System.out.print("\n");
+			total += price;
 		}
+		System.out.println("Total price is " + deciformat.format(total));
 		System.out.println("\nConfirm booking (Y|N): ");
 		do {
 			st = sc.nextLine();
-			if (st.equalsIgnoreCase("Y")) {
-				ArrayList<Double> price = new ArrayList<Double>();
-				double total = 0;
-				DecimalFormat deciformat = new DecimalFormat("#.##");
-				deciformat.setRoundingMode(RoundingMode.HALF_UP);
-				
+			if (st.equalsIgnoreCase("Y")) {				
 				for (i = 0; i < ticketNum; i++) {
-					Ticket tick = new Ticket();
-					tick.setSeatId(seat.get(i));
-					tick.setShowtime(showtimeId);
-					if (!cinema.getSeat().contains(seatId))
-						cinema.getSeat().add(seatId);
-					Ticket.printAgeGroupChoice();
-					System.out.print("\nAge group for ticket " + (i+1) +": ");
-					int choice = sc.nextInt();
-					tick.setAgeGroupFromChoice(choice);
-					tick.setPrice(tick.calculatePrice());
-					price.add(tick.getPrice());
-					total += tick.getPrice();
-					CinemaDao.save();
-					TicketDao.save(tick);
-					System.out.println("Price for ticket " + (i+1) + " = " + deciformat.format(price.get(i)));
+					cinema.addSeat(seat.get(i));
+					CinemaDao.save(cinema);
+					TicketDao.save(ticketList.get(i));
 				}
 				//System.out.print(ticketNum + " ticket(s) successfully booked for << " + movies.get(movieId).getTitle() + " >>.");
-				System.out.print("Total price is " + deciformat.format(total));
 				exit = true;
 			}
 			else if (st.equalsIgnoreCase("N"))
@@ -1738,7 +1737,7 @@ public class MainActivity {
 				  System.out.println("Rating: " + r.getRating());
 				  System.out.println("Comment: " + r.getComment());
 				  String[] menus = {"Confirm to add review", "Edit entry", "Back to movie selection", "Back to main menu"};
-				  it = printMenuAndReturnChoice("Add Review", menus);
+				  it = printMenuAndReturnChoice("Movie-goer Panel > Add Review", menus);
 				  switch (it) {
 				  case 1: 
 					  ReviewDao.save(r);

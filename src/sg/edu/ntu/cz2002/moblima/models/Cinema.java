@@ -132,6 +132,19 @@ public class Cinema {
 		return cinemaClass;
 	}
 	
+	public String getCinemaClassString() {
+		return this.cinemaClass == CinemaClass.PREMIUM? "PREMIUM":
+			   this.cinemaClass == CinemaClass.PLATINUM? "PLATINUM":
+			   this.cinemaClass == CinemaClass.GOLD? "GOLD":
+				   	"NORMAL";
+	}
+	
+	public void addSeat(String seatId) {
+		if (!this.seat.contains(seatId)) {
+			this.seat.add(seatId);
+			this.numEmptySeat--;
+		}
+	}
 	/*
 	public void assign(int seatId, int ticketId) {
 		if (seat.get(seatId).ticket.getTicketId() == -1) {

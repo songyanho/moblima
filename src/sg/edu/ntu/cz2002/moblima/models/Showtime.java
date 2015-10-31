@@ -18,7 +18,7 @@ public class Showtime implements StandardData {
 	protected int cinemaId;
 	protected int movieId;
 	protected double price;
-	
+
 	public enum MovieType{
 		// TODO implement MovieType
 		BLOCKBUSTER, THREED;

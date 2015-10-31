@@ -1,5 +1,7 @@
 package sg.edu.ntu.cz2002.moblima.models;
 
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Set;
 
@@ -7,7 +9,6 @@ import org.json.simple.JSONObject;
 
 import sg.edu.ntu.cz2002.moblima.dao.*;
 import sg.edu.ntu.cz2002.moblima.models.Cinema.CinemaClass;
-import sg.edu.ntu.cz2002.moblima.models.Ticket.AgeGroup;
 
 public class Ticket implements StandardData{
 	protected int id;
@@ -18,6 +19,16 @@ public class Ticket implements StandardData{
 
 	public enum AgeGroup {
 		CHILD, ADULT, SENIOR;
+	}
+	
+	public AgeGroup getAgeGroup() {
+		return this.ageGroup;
+	}
+	
+	public String getAgeGroupString() {
+		return this.ageGroup == AgeGroup.CHILD? "CHILD":
+			   this.ageGroup == AgeGroup.ADULT? "ADULT":
+							 			 		"SENIOR";
 	}
 	
 	public static AgeGroup getAgeGroupEnumFromOrdinal(int ordinal) {
@@ -110,10 +121,21 @@ public class Ticket implements StandardData{
 				  			 cc == CinemaClass.GOLD? 3.0:
 				  			 0;
 		AgeGroup ag = ageGroup;
-		double ageGroupCharge = ag == AgeGroup.CHILD? 0.7:
+		double ageGroupCharge = ag == AgeGroup.CHILD? 0.6:
 								ag == AgeGroup.ADULT? 1.0:
-								0.7;
-		return (base + classCharge) * ageGroupCharge;
+								0.8;
+		Calendar date = ShowtimeDao.findById(showtimeId).getDate();
+		SimpleDateFormat sdf = new SimpleDateFormat("EEE");
+		String day = sdf.format(date.getTime());
+		System.out.println("Day = " + day);
+		double dayCharge;
+		if (day.equals("Wed"))
+			dayCharge = 0.8;
+		else if (day.equals("Sat") || day.equals("Sun"))
+			dayCharge = 1.2;
+		else
+			dayCharge = 1.0;
+		return (base + classCharge) * ageGroupCharge * dayCharge;
 	} 
 	
 	@SuppressWarnings("unchecked")

@@ -17,7 +17,6 @@ public class Database {
 	public static JSONObject getObject(String databaseName){
 		JSONParser parser = new JSONParser();
 		File f = new File("data/"+databaseName+".json");
-		
 		try {
 			Object obj = parser.parse(new FileReader(f.getAbsolutePath()));
 			JSONObject database = (JSONObject) obj;
@@ -33,7 +32,6 @@ public class Database {
 	public static JSONArray getArray(String databaseName){
 		JSONParser parser = new JSONParser();
 		File f = new File("data/"+databaseName+".json");
-		System.out.println("Testing 2");
 		try {
 			Object obj = parser.parse(new FileReader(f.getAbsolutePath()));
 			JSONArray database = (JSONArray) obj;
@@ -43,15 +41,12 @@ public class Database {
 			System.err.println("Database file: "+databaseName+" was not found.");
 			e.printStackTrace();
 		}
-		System.out.println("Commit Test 1");
-		System.out.println("Commit Test 2");
 		return null;
 	}
 	
 	public static boolean save(String databaseName, HashMap m){
 		JSONObject j = new JSONObject();
 		j.putAll(m);
-		System.out.println("Testing 2");
 		File f = new File("data/"+databaseName+".json");
 		FileWriter file;
 		try {
@@ -64,7 +59,6 @@ public class Database {
 			e.printStackTrace();
 			return false;
 		}
-		System.out.println("Commit Test 1");
 		return true;
 	}
 }
