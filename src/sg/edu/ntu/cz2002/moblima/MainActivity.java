@@ -1450,13 +1450,13 @@ public class MainActivity {
 						System.out.print("     ");
 					else {
 						//if available
-						Cinema cinema = CinemaDao.findById(cinemaId);
-						ArrayList<String> isOccupied = cinema.getSeat();
-						String seatId = new StringBuilder().append(c).append(j).toString();
-						if (isOccupied.contains(seatId)) // implement seat into cinema.json??
-							System.out.print("  X  ");
+						//Cinema cinema = CinemaDao.findById(cinemaId);
+						//ArrayList<String> isOccupied = cinema.getSeat();
+						//String seatId = new StringBuilder().append(c).append(j).toString();
+						//if (isOccupied.contains(seatId)) // implement seat into cinema.json??
+							//System.out.print("  X  ");
 						// Movie movie = MovieDao.findById(movieId);
-						else
+						//else
 							System.out.print(" |_| ");
 						//if not available
 					}
