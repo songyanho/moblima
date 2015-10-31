@@ -51,6 +51,7 @@ public class Database {
 	public static boolean save(String databaseName, HashMap m){
 		JSONObject j = new JSONObject();
 		j.putAll(m);
+		System.out.println("Testing 1");
 		File f = new File("data/"+databaseName+".json");
 		FileWriter file;
 		try {
