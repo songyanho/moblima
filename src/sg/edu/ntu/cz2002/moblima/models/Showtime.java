@@ -8,10 +8,7 @@ import java.util.TimeZone;
 
 import org.json.simple.JSONObject;
 
-import sg.edu.ntu.cz2002.moblima.dao.CinemaDao;
-import sg.edu.ntu.cz2002.moblima.dao.CineplexDao;
-import sg.edu.ntu.cz2002.moblima.dao.MovieDao;
-import sg.edu.ntu.cz2002.moblima.dao.ShowtimeDao;
+import sg.edu.ntu.cz2002.moblima.dao.*;
 
 public class Showtime implements StandardData {
 	protected int id;

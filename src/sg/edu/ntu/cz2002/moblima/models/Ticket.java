@@ -1,20 +1,20 @@
 package sg.edu.ntu.cz2002.moblima.models;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Set;
 
-import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 
 import sg.edu.ntu.cz2002.moblima.dao.*;
+import sg.edu.ntu.cz2002.moblima.models.Cinema.CinemaClass;
+import sg.edu.ntu.cz2002.moblima.models.Ticket.AgeGroup;
 
 public class Ticket implements StandardData{
 	protected int id;
-	protected int showTime;
+	protected int showtimeId;
 	protected AgeGroup ageGroup;
 	protected double price;
-	protected ArrayList<String> seat;
+	protected String seatId;
 
 	public enum AgeGroup {
 		CHILD, ADULT, SENIOR;
@@ -38,21 +38,35 @@ public class Ticket implements StandardData{
 				   			"SENIOR" ;
 	}
 	
-	public void printAgeGroupChoice() {
+	public void setAgeGroupFromChoice(int choice) {
+		switch (choice) {
+		case 1:
+			this.ageGroup = AgeGroup.CHILD;
+			break;
+		case 2:
+			this.ageGroup = AgeGroup.ADULT;
+			break;
+		default:
+			this.ageGroup = AgeGroup.SENIOR;
+		}
+	}
+	
+	public static void printAgeGroupChoice() {
+		System.out.println("\n<< Age Group >>");
 		for (AgeGroup a: AgeGroup.values())
-			System.out.print("\t" + (a.ordinal()+1) + ". " + a.name());
+			System.out.println("\t" + (a.ordinal()+1) + ". " + a.name());
 	}
 	
 	public Ticket() {
 		this.id = TicketDao.getLastId()+1;
 	}
 	
-	public Ticket(int id, int showTime, int ageGroup, double price, ArrayList<String> seat) {
+	public Ticket(int id, int showtimeId, int ageGroup, double price, String seatId) {
 		this.id = id;
-		this.showTime = showTime;
+		this.showtimeId = showtimeId;
 		this.ageGroup = getAgeGroupEnumFromOrdinal(ageGroup);
 		this.price = price;
-		this.seat = seat;
+		this.seatId = seatId;
 	}
 
 	public int getId() {
@@ -63,12 +77,12 @@ public class Ticket implements StandardData{
 		this.id = id;
 	}
 
-	public int getShowTime() {
-		return showTime;
+	public int getShowtime() {
+		return showtimeId;
 	}
 
-	public void setShowTime(int showTime) {
-		this.showTime = showTime;
+	public void setShowtime(int showtimeId) {
+		this.showtimeId = showtimeId;
 	}
 
 	public double getPrice() {
@@ -79,64 +93,47 @@ public class Ticket implements StandardData{
 		this.price = price;
 	}
 
-	public ArrayList<String> getSeat() {
-		return seat;
+
+	public String getSeatId() {
+		return seatId;
 	}
 
-	public void setSeat(ArrayList<String> seat) {
-		this.seat = seat;
+	public void setSeatId(String seatId) {
+		this.seatId = seatId;
 	}
 
-	@Deprecated
 	public double calculatePrice() {
-		double typePrice, classPrice, discount = 0;
-		double basePrice = 0;;
-		//Movie movie = MovieDao.findById(this.movieId);
-		//Cinema cinema = CinemaDao.findById(this.cinemaId);
-		//MovieType mType = movie.getType();
-		//if (mType.ordinal() == 1)
-			typePrice = 3.0;
-		//else if (mType.ordinal() == 2)
-			typePrice = 5.0;
-		//else
-			typePrice = 1.0;
-		
-		//String mClass = cinema.getCinemaClass();
-		classPrice = 0;
-		/* 
-		if (mClass == 1)
-			classPrice = 5.0;
-		else if (mClass == 2)
-			classPrice = 3.0;
-		else
-			classPrice = 0;
-		*/
-		return basePrice + typePrice + classPrice + discount;
+		double base = 6.0;
+		CinemaClass cc = ShowtimeDao.findById(showtimeId).getCinema().getCinemaClass();
+		double classCharge = cc == CinemaClass.PREMIUM? 7.0:
+				  			 cc == CinemaClass.PLATINUM? 5.0:
+				  			 cc == CinemaClass.GOLD? 3.0:
+				  			 0;
+		AgeGroup ag = ageGroup;
+		double ageGroupCharge = ag == AgeGroup.CHILD? 0.7:
+								ag == AgeGroup.ADULT? 1.0:
+								0.7;
+		return (base + classCharge) * ageGroupCharge;
 	} 
-	
 	
 	@SuppressWarnings("unchecked")
 	@Override
 	public JSONObject toJSONObject() {
 		JSONObject o = new JSONObject();
 		o.put("id", this.id);
-		o.put("showTime", this.showTime);
-		o.put("age", this.ageGroup);
+		o.put("showtime", this.showtimeId);
+		o.put("ageGroup", this.ageGroup.ordinal());
 		o.put("price", this.price);
-		o.put("seat", this.seat);
+		o.put("seatId", this.seatId);
 		return o;
 	}
 	
-	@SuppressWarnings("unchecked")
 	public static Ticket fromJSONObject(JSONObject o){
-		ArrayList<String> seat = new ArrayList<String>();
-		JSONArray seatsInJSON = (JSONArray) o.get("seat");
-		seat.addAll(seatsInJSON);
 		return new Ticket(Integer.parseInt(o.get("id").toString()), 
-				Integer.parseInt(o.get("showTime").toString()), 
+				Integer.parseInt(o.get("showtime").toString()), 
 				Integer.parseInt(o.get("ageGroup").toString()),
 				Double.parseDouble(o.get("price").toString()), 
-				seat);
+				(o.get("seatId").toString()));
 	}
 	
 	public static HashMap<String, JSONObject> toJSONObjects(HashMap<Integer, Ticket> o){

@@ -10,6 +10,7 @@ import org.json.simple.JSONObject;
 
 import sg.edu.ntu.cz2002.moblima.database.Database;
 import sg.edu.ntu.cz2002.moblima.models.*;
+import sg.edu.ntu.cz2002.moblima.models.Cinema.CinemaClass;
 
 public class CinemaDao {
 	protected static final String DATABASE_NAME = "cinema";
@@ -39,11 +40,11 @@ public class CinemaDao {
 		return a.get(a.size()-1);
 	}
 
-	public static HashMap<Integer, Cinema> findByClass(String cinemaClass) {
+	public static HashMap<Integer, Cinema> findByClass(CinemaClass cinemaClass) {
 		if(records == null) initialize();
 		HashMap<Integer, Cinema> c = new HashMap<Integer, Cinema>();
 		for(Cinema i: records.values()){
-			if(i.getCinemaClass().toLowerCase().contains(cinemaClass.toLowerCase()))
+			if(i.getCinemaClass().ordinal() == cinemaClass.ordinal())
 				c.put(i.getId(), i);
 		}
 		return c;

@@ -65,6 +65,10 @@ public class Review implements StandardData {
 	public void setRating (double rating) {
 		if (rating >= 1.0 && rating <= 5.0)
 			this.rating = rating;
+		else {
+			System.out.println("Enter only 1 - 5 [best].");
+			this.rating = 0;
+		}
 	}
 	
 	@SuppressWarnings("unchecked")
