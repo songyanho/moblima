@@ -24,6 +24,7 @@ import sg.edu.ntu.cz2002.moblima.dao.*;
 import sg.edu.ntu.cz2002.moblima.models.*;
 import sg.edu.ntu.cz2002.moblima.models.Showtime.MovieType;
 
+import sg.edu.ntu.cz2002.moblima.models.Ticket;
 public class MainActivity {
 	protected static Scanner sc;
 	protected static Data data;
@@ -1402,7 +1403,7 @@ public class MainActivity {
 		choice = sc.nextInt();
 		return choice;
 	}
-	
+
 	//incomplete
 	private static void showSeatsArrangement(int cinemaId, int movieId) {
 		int row = 15;
@@ -1421,15 +1422,10 @@ public class MainActivity {
 						System.out.print("   ");
 					else {
 						digit = j-1;
-						if (digit > 9) 
+						if (digit > 9)
 							System.out.print(" "+digit+"  ");
-						else 
+						else
 							System.out.print("  "+digit+"  ");
-
-						//if (j == 10 && controlSpace > 0) {
-						//	System.out.print(" ");
-						//	controlSpace--;
-						//}
 					}
 				}
 				//second row as seperated line
@@ -1442,19 +1438,22 @@ public class MainActivity {
 				//other rows
 				else {
 					//if (j > 10)
-						//System.out.print(" ");
+					//System.out.print(" ");
 					if (j == 0 || j == column - 1) {
 						c = (char) ascii;
 						System.out.print(" "+c+" ");
-						}
+					}
 					else if (j == 1 || j == column - 2)
 						System.out.print(" | ");
 					//isle
 					else if (j == 4 || j == column - 5)
 						System.out.print("     ");
 					else {
-						//if available (get occupied seat list)
-						if (c == 'B' && j >6)
+						//if available
+						Cinema cinema = CinemaDao.findById(cinemaId);
+						ArrayList<String> isOccupied = cinema.getSeat();
+						String seatId = new StringBuilder().append(c).append(j).toString();
+						if (isOccupied.contains(seatId)) // implement seat into cinema.json??
 							System.out.print("  X  ");
 						// Movie movie = MovieDao.findById(movieId);
 						else
@@ -1478,9 +1477,7 @@ public class MainActivity {
 		String st;
 		Cinema c = CinemaDao.findById(movieId);
 		ArrayList<String> seat = c.getSeat();
-		
-		//ask for movie -> cineplex and cinema
-		
+
 		System.out.print("How many ticket: ");
 		ticketNum = sc.nextInt();
 		sc.nextLine();
@@ -1498,9 +1495,9 @@ public class MainActivity {
 			st = sc.nextLine();
 			if (st.equalsIgnoreCase("Y")) {
 				for (int i = 0; i < ticketNum; i++) {
-					//Ticket tick = new Ticket();
-					//tick.setSeatId(seat.get(i));
-					//TicketDao.save(tick);
+					Ticket tick = new Ticket();
+//					tick.setSeatId(seat.get(i));
+					TicketDao.save(tick);
 				}
 				exit = true;
 			}
