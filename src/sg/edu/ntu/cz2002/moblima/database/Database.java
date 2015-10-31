@@ -27,6 +27,7 @@ public class Database {
 			System.err.println("Database file: "+databaseName+" was not found.");
 			e.printStackTrace();
 		}
+		System.out.println("Commit Test 1");
 		return null;
 	}
 	
@@ -43,6 +44,7 @@ public class Database {
 			System.err.println("Database file: "+databaseName+" was not found.");
 			e.printStackTrace();
 		}
+		System.out.println("Commit Test 1");
 		return null;
 	}
 	
@@ -61,7 +63,7 @@ public class Database {
 			e.printStackTrace();
 			return false;
 		}
-		
+		System.out.println("Commit Test 1");
 		return true;
 	}
 }
