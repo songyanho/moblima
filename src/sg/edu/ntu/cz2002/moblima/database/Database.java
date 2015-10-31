@@ -27,7 +27,6 @@ public class Database {
 			System.err.println("Database file: "+databaseName+" was not found.");
 			e.printStackTrace();
 		}
-		System.out.println("Commit Test 1");
 		return null;
 	}
 	
@@ -45,12 +44,14 @@ public class Database {
 			e.printStackTrace();
 		}
 		System.out.println("Commit Test 1");
+		System.out.println("Commit Test 2");
 		return null;
 	}
 	
 	public static boolean save(String databaseName, HashMap m){
 		JSONObject j = new JSONObject();
 		j.putAll(m);
+		System.out.println("Testing 1");
 		File f = new File("data/"+databaseName+".json");
 		FileWriter file;
 		try {
