@@ -331,8 +331,6 @@ public class Movie implements StandardData{
 		for(Integer i: s){
 			a.put(""+i, o.get(i).toJSONObject());
 		}
-		
-		
 		return a;
 	}
 	

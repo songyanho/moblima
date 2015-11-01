@@ -120,6 +120,15 @@ public class ShowtimeDao {
 		return save();
 	}
 	
+	public static boolean hasShowtime(int showtimeId) {
+		if(records == null) initialize();
+		for (Showtime s: records.values()) {
+			if (s.getId() == showtimeId)
+				return true;
+		}
+		return false;
+	}
+	
 	public static boolean save(Showtime t) {
 		if(records == null) initialize();
 		records.put(t.getId(), t);
