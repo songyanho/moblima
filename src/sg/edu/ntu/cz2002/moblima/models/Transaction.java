@@ -20,7 +20,7 @@ public class Transaction {
 	
 	public Transaction() {
 		this.id = TransactionDao.getLastId() + 1;
-		this.ticketId = TicketDao.getLastId() + 1;
+		//this.ticketId = TicketDao.getLastId() + 1;
 	}
 	
 	public Transaction(int id, String TID, String name, String email, String mobileNumber, int ticketId) {
@@ -75,6 +75,14 @@ public class Transaction {
 		this.TID = String.format("%03d", code) + formatter.format(date);
 	}
 	
+	public int getTicketId() {
+		return ticketId;
+	}
+
+	public void setTicketId(int ticketId) {
+		this.ticketId = ticketId;
+	}
+
 	public void printTransaction() {
 		System.out.println("\nTransaction ID: " + this.TID);
 		int showtimeId = TicketDao.findById(this.ticketId).getShowtime();
@@ -84,6 +92,7 @@ public class Transaction {
 		System.out.println("Customer name: " + this.name);
 		System.out.println("Customer email: " + this.email);
 		System.out.println("Customer mobile number: " + this.mobileNumber);
+		System.out.println("Transaction amount: " + TicketDao.findById(this.ticketId).calculatePrice());
 		System.out.print("\n");
 	}
 	

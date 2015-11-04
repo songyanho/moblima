@@ -1,7 +1,6 @@
 package sg.edu.ntu.cz2002.moblima.dao;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 
 import org.json.simple.JSONObject;
 
@@ -30,7 +29,7 @@ public class SettingsDao {
 		if(settings == null) initialize();
 		return Database.save(DATABASE_NAME, settings.toJSONObject());
 	}
-
+	
 	public static void initialize() {
 		// TODO Auto-generated method stub
 		JSONObject t = Database.getObject(DATABASE_NAME);

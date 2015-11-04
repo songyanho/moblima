@@ -1,9 +1,7 @@
 package sg.edu.ntu.cz2002.moblima.models;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Set;
 
-import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 
 import sg.edu.ntu.cz2002.moblima.dao.CinemaDao;
@@ -13,9 +11,7 @@ public class Cinema {
 	protected String name;
 	protected CinemaClass cinemaClass;
 	protected int cineplexId;
-	protected ArrayList<String> seat;
 	protected int seatNum;
-	protected int numEmptySeat;
 
 	public Cinema() {
 		this.id = CinemaDao.getLastId() + 1;
@@ -56,10 +52,10 @@ public class Cinema {
 	}
 	
 	public static String getCinemaClassStringFromChoice(int choice) {
-		return choice == 1? "PREMIUM":
-			   choice == 2? "PLATINUM":
-			   choice == 3? "GOLD":
-				   			"NORMAL";
+		return choice == 1? "Premium":
+			   choice == 2? "Platinum":
+			   choice == 3? "Gold":
+				   			"Normal";
 	}
 	
 	public static void printCinemaClassChoice() {
@@ -67,12 +63,12 @@ public class Cinema {
 			System.out.print("\t" + (cc.ordinal()+1) + ". " + cc.name());
 	}
 	
-	public Cinema(int id, String name, int cinemaClass, int cineplexId, ArrayList<String> seat) {
+	public Cinema(int id, String name, int cinemaClass, int cineplexId, int seatNum) {
 		this.id = id;
 		this.name = name;
 		this.cinemaClass = Cinema.getCinemaClassEnumFromOrdinal(cinemaClass);
 		this.cineplexId = cineplexId;
-		this.seat = seat;
+		this.seatNum = seatNum;
 	}
 	
 	public String getName() {
@@ -98,14 +94,6 @@ public class Cinema {
 	public void setId(int id) {
 		this.id = id;
 	}
-
-	public ArrayList<String> getSeat() {
-		return seat;
-	}
-
-	public void setSeat(ArrayList<String> seat) {
-		this.seat = seat;
-	}
 	
 	@Deprecated
 	public void setCinemaClass(CinemaClass cinemaClass) {
@@ -120,14 +108,6 @@ public class Cinema {
 		this.seatNum = seatNum;
 	}
 
-	public int getNumEmptySeat() {
-		return seatNum - seat.size();
-	}
-
-	public void setNumEmptySeat(int numEmptySeat) {
-		this.numEmptySeat = numEmptySeat;
-	}
-
 	public CinemaClass getCinemaClass() {
 		return cinemaClass;
 	}
@@ -139,12 +119,6 @@ public class Cinema {
 				   	"NORMAL";
 	}
 	
-	public void addSeat(String seatId) {
-		if (!this.seat.contains(seatId)) {
-			this.seat.add(seatId);
-			this.numEmptySeat--;
-		}
-	}
 	/*
 	public void assign(int seatId, int ticketId) {
 		if (seat.get(seatId).ticket.getTicketId() == -1) {
@@ -163,25 +137,17 @@ public class Cinema {
 		o.put("name", this.name);
 		o.put("cinemaClass", this.cinemaClass.ordinal());
 		o.put("cineplexid", this.cineplexId);
-		JSONArray a = new JSONArray();
-		a.addAll(this.seat);
-		o.put("seat", a);
-		o.put("numEmptySeat", this.numEmptySeat);
+		o.put("seatNum", this.seatNum);
 		return o;
 	}
 	
-	@SuppressWarnings("unchecked")
 	public static Cinema fromJSONObject(JSONObject o){
-		ArrayList<String> seat = new ArrayList<String>();
-		JSONArray seatInJSON = (JSONArray) o.get("seat");
-		seat.addAll(seatInJSON);
 		return new Cinema(
 				Integer.parseInt(o.get("id").toString()), 
 				o.get("name").toString(), 
 				Integer.parseInt(o.get("cinemaClass").toString()), 
 				Integer.parseInt(o.get("cineplexid").toString()),
-				seat
-//				Integer.parseInt(o.get("seatNum").toString())
+				Integer.parseInt(o.get("seatNum").toString())
 				);
 	}
 	

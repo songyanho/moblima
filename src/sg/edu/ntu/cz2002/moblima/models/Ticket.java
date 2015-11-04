@@ -1,7 +1,5 @@
 package sg.edu.ntu.cz2002.moblima.models;
 
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Set;
 
@@ -9,6 +7,8 @@ import org.json.simple.JSONObject;
 
 import sg.edu.ntu.cz2002.moblima.dao.*;
 import sg.edu.ntu.cz2002.moblima.models.Cinema.CinemaClass;
+import sg.edu.ntu.cz2002.moblima.models.Movie.MovieType;
+import sg.edu.ntu.cz2002.moblima.models.Showtime.Day;
 
 public class Ticket implements StandardData{
 	protected int id;
@@ -26,9 +26,9 @@ public class Ticket implements StandardData{
 	}
 	
 	public String getAgeGroupString() {
-		return this.ageGroup == AgeGroup.CHILD? "CHILD":
-			   this.ageGroup == AgeGroup.ADULT? "ADULT":
-							 			 		"SENIOR";
+		return this.ageGroup == AgeGroup.CHILD? "Child":
+			   this.ageGroup == AgeGroup.ADULT? "Adult":
+							 			 		"Senior";
 	}
 	
 	public static AgeGroup getAgeGroupEnumFromOrdinal(int ordinal) {
@@ -69,6 +69,7 @@ public class Ticket implements StandardData{
 	}
 	
 	public Ticket() {
+		super();
 		this.id = TicketDao.getLastId()+1;
 	}
 	
@@ -97,11 +98,11 @@ public class Ticket implements StandardData{
 	}
 
 	public double getPrice() {
-		return price;
+		return Math.round(price);
 	}
 
 	public void setPrice(double price) {
-		this.price = price;
+		this.price = Math.round(price);
 	}
 
 
@@ -112,31 +113,33 @@ public class Ticket implements StandardData{
 	public void setSeatId(String seatId) {
 		this.seatId = seatId;
 	}
-
+	
 	public double calculatePrice() {
-		double base = 6.0;
-		CinemaClass cc = ShowtimeDao.findById(showtimeId).getCinema().getCinemaClass();
-		double classCharge = cc == CinemaClass.PREMIUM? 7.0:
-				  			 cc == CinemaClass.PLATINUM? 5.0:
-				  			 cc == CinemaClass.GOLD? 3.0:
-				  			 0;
-		AgeGroup ag = ageGroup;
-		double ageGroupCharge = ag == AgeGroup.CHILD? 0.6:
-								ag == AgeGroup.ADULT? 1.0:
-								0.8;
-		Calendar date = ShowtimeDao.findById(showtimeId).getDate();
-		SimpleDateFormat sdf = new SimpleDateFormat("EEE");
-		String day = sdf.format(date.getTime());
-		System.out.println("Day = " + day);
-		double dayCharge;
-		if (day.equals("Wed"))
-			dayCharge = 0.8;
-		else if (day.equals("Sat") || day.equals("Sun"))
-			dayCharge = 1.2;
-		else
-			dayCharge = 1.0;
-		return (base + classCharge) * ageGroupCharge * dayCharge;
+		double classCharge, dayCharge, typeCharge, ageCharge, basePrice;
+		Showtime st = ShowtimeDao.findById(showtimeId);
+		Settings setting = SettingsDao.getSettings();
+		MovieType mt = st.getMovie().getType();
+		CinemaClass cc = st.getCinema().getCinemaClass();
+		Day day = st.getDayType();
+		AgeGroup ag = this.ageGroup;
+		classCharge = setting.getCinemaClassCharges().get(cc.ordinal());
+		dayCharge = setting.getDayCharges().get(day.ordinal());
+		typeCharge = setting.getMovieTypeCharges().get(mt.ordinal());
+		ageCharge = setting.getAgeGroupCharges().get(ag.ordinal());
+		basePrice = setting.getBasePrice();
+		return basePrice + classCharge + dayCharge + typeCharge + ageCharge;
 	} 
+	
+	public void printTicket() {
+		Cineplex cineplex = ShowtimeDao.findById(this.showtimeId).getCineplex();
+		Cinema cinema = ShowtimeDao.findById(this.showtimeId).getCinema();
+		System.out.println("Cineplex: " + cineplex.getCineplexName());
+		System.out.println("Cinema: " + cinema.getName() + ", Class: " + cinema.getCinemaClassString());
+		System.out.println("Seat ID: " + this.seatId);
+		System.out.println("Age group: " + this.getAgeGroupString());
+		System.out.println("Ticket price: " + Math.round(this.price));
+		System.out.print("\n");
+	}
 	
 	@SuppressWarnings("unchecked")
 	@Override

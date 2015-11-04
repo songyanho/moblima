@@ -1,5 +1,6 @@
 package sg.edu.ntu.cz2002.moblima.models;
 
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
 import java.util.HashMap;
@@ -9,6 +10,7 @@ import java.util.TimeZone;
 import org.json.simple.JSONObject;
 
 import sg.edu.ntu.cz2002.moblima.dao.*;
+import sg.edu.ntu.cz2002.moblima.models.Movie.MovieType;
 
 public class Showtime implements StandardData {
 	protected int id;
@@ -17,27 +19,47 @@ public class Showtime implements StandardData {
 	protected int cineplexId;
 	protected int cinemaId;
 	protected int movieId;
+	protected int numEmptySeat;
 	protected double price;
-
-	public enum MovieType{
-		// TODO implement MovieType
-		BLOCKBUSTER, THREED;
-		public static final MovieType values[] = values();
+	protected Day dayType;
+	
+	public enum Day {
+		WEEKDAY, WEEKEND, PUBLICHOLIDAY;
+	}
+	
+	public static Day getDayEnumFromChoice(int choice) {
+		return choice == 1? Day.WEEKDAY:
+			   choice == 2? Day.WEEKEND:
+				   			Day.PUBLICHOLIDAY;
+	}
+	
+	public static String getDayStringFromChoice(int choice) {
+		return choice == 1? "Weekday":
+			   choice == 2? "Weekend":
+				   			"Public Holiday";
+	}
+	
+	public static Day getDayEnumFromOrdinal(int ordinal){
+		return ordinal == Day.WEEKDAY.ordinal() ? Day.WEEKDAY :
+			   ordinal == Day.WEEKEND.ordinal() ? Day.WEEKEND :
+				   	Day.PUBLICHOLIDAY;
 	}
 	
 	public Showtime(){
 		this.id = ShowtimeDao.getLastId()+1;
 	}
 	
-	public Showtime(int id, int type, String date, int cineplexId, int cinemaId, int movieId){
+	public Showtime(int id, int type, int dayType, String date, int cineplexId, int cinemaId, int movieId, int numEmptySeat){
 		this.id = id;
-		this.type = MovieType.values[type];
+		this.type = Movie.getTypeEnumFromOrdinal(type);
+		this.dayType = Showtime.getDayEnumFromOrdinal(dayType);
 		String[] dateComponents = date.split(":");
 		this.date = new GregorianCalendar(Integer.parseInt(dateComponents[0]), Integer.parseInt(dateComponents[1]), Integer.parseInt(dateComponents[2]), Integer.parseInt(dateComponents[3]), Integer.parseInt(dateComponents[4]));
 		this.date.setTimeZone(TimeZone.getTimeZone("Asia/Singapore"));
 		this.cineplexId = cineplexId;
 		this.cinemaId = cinemaId;
 		this.movieId = movieId;
+		this.numEmptySeat = numEmptySeat;
 	}
 
 	public int getId() {
@@ -105,12 +127,38 @@ public class Showtime implements StandardData {
 		this.movieId = movieId;
 	}
 
+	public int getNumEmptySeat() {
+		Cinema c = this.getCinema();
+		int numOccupied = ShowtimeDao.getOccupiedSeats(this.id).size();
+		return c.getSeatNum() - numOccupied;
+	}
+
+	public void setNumEmptySeat(int numEmptySeat) {
+		this.numEmptySeat = numEmptySeat;
+	}
+	
+	public void addSeat(String seatId) {
+		ArrayList<String> seat = ShowtimeDao.getOccupiedSeats(this.id);
+		if (!seat.contains(seatId))
+			this.numEmptySeat--;
+		else
+			System.out.print("Failed adding, seat already assigned.");
+	}
+
 	public double getPrice() {
 		return price;
 	}
 
 	public void setPrice(double price) {
 		this.price = price;
+	}
+	
+	public Day getDayType() {
+		return dayType;
+	}
+
+	public void setDayType (Day day){
+		this.dayType = day;
 	}
 	
 	public void printInfo() {
@@ -123,10 +171,12 @@ public class Showtime implements StandardData {
 		JSONObject o = new JSONObject();
 		o.put("id", this.id);
 		o.put("type", this.type.ordinal());
+		o.put("dayType", this.dayType.ordinal());
 		o.put("date", ""+this.date.get(Calendar.YEAR)+":"+date.get(Calendar.MONTH)+":"+date.get(Calendar.DAY_OF_MONTH)+":"+date.get(Calendar.HOUR_OF_DAY)+":"+date.get(Calendar.MINUTE));
 		o.put("cineplexid", this.cineplexId);
 		o.put("cinemaid", this.cinemaId);
 		o.put("movieid", this.movieId);
+		o.put("numEmptySeat", this.numEmptySeat);
 		return o;
 	}
 	
@@ -134,10 +184,12 @@ public class Showtime implements StandardData {
 		return new Showtime(
 				Integer.parseInt(o.get("id").toString()), 
 				Integer.parseInt(o.get("type").toString()), 
+				Integer.parseInt(o.get("dayType").toString()), 
 				o.get("date").toString(), 
 				Integer.parseInt(o.get("cineplexid").toString()), 
 				Integer.parseInt(o.get("cinemaid").toString()), 
-				Integer.parseInt(o.get("movieid").toString()));
+				Integer.parseInt(o.get("movieid").toString()),
+				Integer.parseInt(o.get("numEmptySeat").toString()));
 	}
 	
 	public static HashMap<String, JSONObject> toJSONObjects(HashMap<Integer, Showtime> o){

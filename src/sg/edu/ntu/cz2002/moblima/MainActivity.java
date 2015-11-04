@@ -10,6 +10,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.GregorianCalendar;
 import java.util.HashMap;
+import java.util.InputMismatchException;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
@@ -23,7 +24,9 @@ import java.util.TimeZone;
 
 import sg.edu.ntu.cz2002.moblima.dao.*;
 import sg.edu.ntu.cz2002.moblima.models.*;
-import sg.edu.ntu.cz2002.moblima.models.Showtime.MovieType;
+import sg.edu.ntu.cz2002.moblima.models.Movie.MovieType;
+import sg.edu.ntu.cz2002.moblima.models.Showtime.Day;
+
 
 public class MainActivity {
 	protected static Scanner sc;
@@ -53,12 +56,10 @@ public class MainActivity {
 					Cinema c = new Cinema();
 					String name = "Cinema " + (j+1);
 					c.setName(name);
-					ArrayList<String> seat = new ArrayList<String>();
-					c.setSeat(seat);
+					c.setSeatNum(288);
 					int r = rand.nextInt(4);
 					c.setCinemaClassFromChoice(r);
-					c.setCineplexId(i);
-					c.setNumEmptySeat(300);
+					c.setCineplexId(i+1);
 					CinemaDao.save(c);
 				}
 			}
@@ -538,7 +539,7 @@ public class MainActivity {
 		System.out.println("\nYou have selected <<" + selectedCineplex.getCineplexName()+">>");
 		
 		it = 0;
-		menu = new String[MovieDao.getAllInHashMap().size()+1];
+		menu = new String[MovieDao.findActiveMovie().size()+1];
 		for(Movie m: MovieDao.findActiveMovie().values()) {
 			menu[it++] = m.getTitle();
 			movies.add(m);
@@ -744,6 +745,10 @@ public class MainActivity {
 				ns.setMovieId(selectedMovie.getId());
 				ns.setCineplexId(selectedCineplex.getId());
 				ns.setDate((Calendar) availableTimeSlot.get(choice-1).clone());
+				Day dayType = checkDayType(ns);
+				int numEmptySeat = CinemaDao.findById(ns.getCinemaId()).getSeatNum();
+				ns.setDayType(dayType);
+				ns.setNumEmptySeat(numEmptySeat);
 				ShowtimeDao.add(ns);
 				System.out.println("Showtime saved");
 			}while(true);
@@ -1321,18 +1326,216 @@ public class MainActivity {
 
 	private static void adminSystemConfigurationViewController(){
 		int choice;
-		String[] menus = {"Public Holiday Management", "Back to previous menu"};
+		String[] menus = {"Public Holiday Management", "Ticket Charges Management","Back to previous menu"};
 		do{
 			choice = printMenuAndReturnChoice("Admin Panel > System Configuration", menus);
 			switch(choice){
 			case 1:
 				runAdminHolidayManagement();
 				break;
+			case 2:
+				runAdminChargesManagement();
+				break;
 			default: return;
 			}
 		}while(true);
 	}
 
+	private static void runAdminChargesManagement() {
+		int choice;
+		String st;
+		boolean exit;
+		String[] menus = {"List all current charges",
+				"Set base price", 
+				"Set cinema class charge", 
+				"Set movie type charge", 
+				"Set age group charge", 
+				"Set day charge",
+				"Back to previous menu"};
+			do {
+				Settings settings = SettingsDao.getSettings();
+				choice = printMenuAndReturnChoice("Admin Panel > System Configuration > Ticket Charges Management", menus);
+				int select;
+				boolean exit2;
+				switch (choice) {
+				case 1:
+					printCharge();
+					exit = false;
+					break;
+				case 2:
+					Double base = settings.getBasePrice();
+					System.out.println("\nOriginal base price: " + base);
+					System.out.print("Enter new base price: ");
+					base = sc.nextDouble();
+					sc.nextLine();
+					settings.setBasePrice(base);
+					System.out.println("\nNew base price: " + base);
+					System.out.print("Confirm (Y|N): ");
+					st = sc.nextLine();
+					if (st.equalsIgnoreCase("Y")) {
+						SettingsDao.save();
+					}
+					exit = false;
+					break;
+				case 3:
+					do {
+						String[] classMenus = {"Edit for class PREMIUM", "Edit for class PLATINUM", "Edit for class GOLD",
+								"Edit for class NORMAL", "Back to previous menu"};
+						select = printMenuAndReturnChoice("Admin Panel > System Configuration > Ticket Charges Management > Cinema Class", classMenus);
+						if (select == classMenus.length) {
+							exit2 = true;
+						}
+						else {
+							setCharge("CinemaClass", select);
+							exit2 = false;
+						}
+					} while (!exit2);
+					exit = false;
+					break;
+				case 4:
+					do {
+						String[] movieTypeMenus = {"Edit for BLOCKBUSTER", "Edit for THREED", "Edit for NORMAL", "Back to previous menu"};
+						select = printMenuAndReturnChoice("Admin Panel > System Configuration > Ticket Charges Management > Movie Type", movieTypeMenus);
+						if (select == movieTypeMenus.length)
+							exit2 = true;
+						else {
+							setCharge("MovieType", select);
+							exit2 = false;
+						}
+					} while (!exit2);
+					exit = false;
+					break;
+				case 5:
+					do {
+						String[] ageGroupMenus = {"Edit for CHILD", "Edit for ADULT", "Edit for SENIOR", "Back to previous menu"};
+						select = printMenuAndReturnChoice("Admin Panel > System Configuration > Ticket Charges Management > Age Group", ageGroupMenus);
+						if (select == ageGroupMenus.length)
+							exit2 = true;
+						else {
+							setCharge("AgeGroup", select);
+							exit2 = false;
+						}
+					} while (!exit2);
+					exit = false;
+					break;
+				case 6:
+					do {
+						String[] dayMenus = {"Edit for WEEKDAY", "Edit for WEEKEND", "Edit for PUBLICHOLIDAY", "Back to previous menu"};
+						select = printMenuAndReturnChoice("Admin Panel > System Configuration > Ticket Charges Management > Day Type", dayMenus);
+						if (select == dayMenus.length)
+							exit2 = true;
+						else {
+							setCharge("Day", select);
+							exit2 = false;
+						}
+					} while (!exit2);
+					exit = false;
+					break;
+				default:
+					exit = true;
+				}
+			} while (!exit);
+	}
+	
+	private static void setCharge(String className, int choice) {
+		String st;
+		Settings settings = SettingsDao.getSettings();
+		
+		if (className == "CinemaClass") {
+			HashMap<Integer, Double> c = settings.getCinemaClassCharges();
+			System.out.println("\nOriginal charge for cinema class of " + Cinema.getCinemaClassStringFromChoice(choice) + 
+				" is " + c.get(choice-1));
+		}
+		else if (className == "MovieType") {
+			HashMap<Integer, Double> m = settings.getMovieTypeCharges();
+			System.out.println("\nOriginal charge for movie type of " + Movie.getTypeStringFromChoice(choice) + 
+					" is " + m.get(choice-1));
+		}
+		else if (className == "AgeGroup") {
+			HashMap<Integer, Double> a = settings.getAgeGroupCharges();
+			System.out.println("\nOriginal charge for age group of " + Ticket.getAgeGroupStringFromChoice(choice) + 
+					" is " + a.get(choice-1));
+		}
+		else if (className == "Day") {
+			HashMap<Integer, Double> d = settings.getDayCharges();
+			System.out.println("\nOriginal charge for day type " + Showtime.getDayStringFromChoice(choice) + 
+					" is " + d.get(choice-1));
+		}
+		else
+			return;
+		System.out.print("\nEnter new charge: ");
+		Double multiplier = sc.nextDouble();
+		sc.nextLine();
+		System.out.print("Confirm (Y|N): ");
+		st = sc.nextLine();
+		if (st.equalsIgnoreCase("Y")) {
+			SettingsDao.save();
+		}
+		else
+			return;
+		if (className == "CinemaClass") {
+			System.out.println("New cinema class charge: " + multiplier);
+			settings.setCinemaClassCharges(choice, multiplier);
+		}
+		else if (className == "MovieType") {
+			System.out.println("New movie type charge: " + multiplier);
+			settings.setMovieTypeCharges(choice, multiplier);
+		}
+		else if (className == "AgeGroup") {
+			System.out.println("New age group charge: " + multiplier);
+			settings.setAgeGroupCharges(choice, multiplier);
+		}
+		else if (className == "Day") {
+			System.out.println("New day type charge: " + multiplier);
+			settings.setDayCharges(choice, multiplier);
+		}
+		System.out.println("Change updated.");
+	}
+	
+	private static void printCharge() {
+		int i;
+		
+		Settings s = SettingsDao.getSettings();
+		Double basePrice = s.getBasePrice();
+		System.out.println("\nBase price for a ticket: " + basePrice);
+		
+		HashMap<Integer, Double> cinemaClass = s.getCinemaClassCharges();
+		System.out.println("\n<< CINEMA CLASS >>");
+		i = 0;
+		for (Double v: cinemaClass.values()) {
+			System.out.println(Cinema.getCinemaClassStringFromChoice(i+1) +
+					", Charge: " + v);
+			i++;
+		}
+		
+		HashMap<Integer, Double> movieType = s.getMovieTypeCharges();
+		System.out.println("\n<< MOVIE TYPE >>");
+		i = 0;
+		for (Double v: movieType.values()) {
+			System.out.println(Movie.getTypeStringFromChoice(i+1) +
+					", Charge: " + v);
+			i++;
+		}
+
+		HashMap<Integer, Double> ageGroup = s.getAgeGroupCharges();
+		System.out.println("\n<< AGE GROUP >>");
+		i = 0;
+		for (Double v: ageGroup.values()) {
+			System.out.println(Ticket.getAgeGroupStringFromChoice(i+1) +
+					", Charge: " + v);
+			i++;
+		}
+
+		HashMap<Integer, Double> day = s.getDayCharges();
+		System.out.println("\n<< DAY TYPE >>");
+		i = 0;
+		for (Double v: day.values()) {
+			System.out.println(Showtime.getDayStringFromChoice(i+1) +
+					", Charge: " + v);
+			i++;
+		}
+	}
+	
 	private static void runAdminHolidayManagement(){
 		String[] menus = {"Show current year calendar", 
 				"Show specific calendar of year", 
@@ -1480,22 +1683,35 @@ public class MainActivity {
 	}
 
 	private static int printMenuAndReturnChoice(String title, String[] menus){
+		int choice;
+		boolean error = true;
 		System.out.println("\n\n");
-		for(int i=0; i<68; i++)
+		for(int i=0; i<78; i++)
 			System.out.print("*");
 		System.out.println("\n"+title);
-		for(int i=0; i<68; i++)
+		for(int i=0; i<78; i++)
 			System.out.print("-");
 		System.out.println("");
 		if(menus != null && menus.length > 0){
 			for(int i=0; i<menus.length; i++)
 				System.out.println((i+1)+". "+menus[i]);
-			for(int i=0; i<68; i++)
+			for(int i=0; i<78; i++)
 				System.out.print("*");
-			System.out.print("\nChoice: ");
-			int choice = sc.nextInt();
-			sc.nextLine();
-			return choice;
+			while (error) {
+				System.out.print("\nChoice: ");
+				if (sc.hasNextInt()) {
+					choice = sc.nextInt();
+					sc.nextLine();
+					if (choice < 1 || choice > menus.length)
+						continue;
+					else
+						return choice;
+				}
+				else {
+					sc.next();
+					continue;
+				}
+			}
 		}
 		return 0;
 	}
@@ -1670,7 +1886,7 @@ public class MainActivity {
 			System.out.print("\n");
 			showtimeList = listShowtimeForBookingViewController();			
 			String[] menu = {"Enter showtime ID", "Back to cineplex and movie selection", "Back to main menu"};
-			int choice = printMenuAndReturnChoice("Movie-goer Panel> Book ticket", menu);
+			int choice = printMenuAndReturnChoice("Movie-goer Panel > Book ticket", menu);
 			switch (choice) {
 			case 1:
 				if (showtimeList.isEmpty()) {
@@ -1685,30 +1901,36 @@ public class MainActivity {
 				return;
 			}
 		} while (!exit);
-		do {
-			System.out.print("\nEnter showtime ID: ");
-			showtimeId = sc.nextInt();
-			sc.nextLine();
+
+		String[] idList = new String[showtimeList.size()];
+		for (i = 0; i < showtimeList.size(); i++) {
+			Calendar calendar = ShowtimeDao.findById(showtimeList.get(i)).getDate();
+			SimpleDateFormat formatter = new SimpleDateFormat("h:mm a, EEE, MMM d, yyyy");
+			idList[i] = "Showtime: " + formatter.format(calendar.getTime());
+		}
+		int choice = printMenuAndReturnChoice("Movie-goer Panel > Book Ticket > Enter Showtime ID", idList);
+			/*
 			if (!showtimeList.contains(showtimeId)) {
 				System.out.println("Invalid showtime ID.");
 				exit = false;
 			}
 			else
 				exit = true;
-		} while (!exit);
+			*/
+
 		
-		Showtime showtime = ShowtimeDao.findById(showtimeId);
-		Cinema cinema = CinemaDao.findById(showtime.getCinemaId());
-		Cineplex cineplex = CineplexDao.findById(showtime.getCineplexId());
-		ArrayList<String> occupiedSeat = cinema.getSeat();
+		Showtime showtime = ShowtimeDao.findById(showtimeList.get(choice-1));
+		ArrayList<String> occupiedSeat = ShowtimeDao.getOccupiedSeats(showtime.getId());
 		boolean empty = occupiedSeat.isEmpty();
 		
 		System.out.print("How many ticket: ");
 		ticketNum = sc.nextInt();
 		sc.nextLine();
+		i = 0;
 		do {
 			System.out.print("\nEnter seat " + (i+1) + ": ");
 			seatId = sc.nextLine();
+			seatId = seatId.toUpperCase();
 			if (seatInputChecking(seatId)) {
 				if (!empty) {
 					if (occupiedSeat.contains(seatId)) {
@@ -1722,17 +1944,16 @@ public class MainActivity {
 				}
 				tick = new Ticket();
 				t = new Transaction();
-				
-				seatId = seatId.toUpperCase();
+
 				seat.add(seatId);
 				Ticket.printAgeGroupChoice();
 				System.out.print("\nAge group for ticket " + (i+1) +": ");
-				int choice = sc.nextInt();
+				choice = sc.nextInt();
 				sc.nextLine();
 				tick.setAgeGroupFromChoice(choice);
 				tick.setSeatId(seatId);
-				tick.setShowtime(showtimeId);
-				tick.setPrice(tick.calculatePrice());
+				tick.setShowtime(showtime.getId());
+				tick.setPrice(Math.round(tick.calculatePrice()));
 				t.setTicket(tick);
 				ticketList.add(tick);
 				transactionList.add(t);
@@ -1744,16 +1965,12 @@ public class MainActivity {
 			}
 		} while (i < ticketNum);
 		
-		System.out.println("\nBooking for seats in " + cineplex.getCineplexName());
-		System.out.println("Cinema name: " + cinema.getName());
-		System.out.println("Cinema class: " + cinema.getCinemaClass());
 		for (i = 0; i < ticketNum; i++) {
-			double price = ticketList.get(i).getPrice();
-			System.out.println("\n<< " + seat.get(i) + " >>");
-			System.out.println(ticketList.get(i).getAgeGroupString() + " price: " + Math.round(price));
-			System.out.print("\n");
-			total += price;
+			System.out.println("\n<< Ticket " + (i+1) + " >>");
+			ticketList.get(i).printTicket();
+			total += ticketList.get(i).getPrice();
 		}
+		
 		System.out.println("Total price is " + Math.round(total));
 		System.out.println("\nConfirm booking (Y|N): ");
 		do {
@@ -1781,12 +1998,12 @@ public class MainActivity {
 				} while (!infoExit);
 				
 				for (i = 0; i < ticketNum; i++) {
-					cinema.addSeat(seat.get(i));
+					showtime.addSeat(seat.get(i));
+					ticketList.get(i).setId(TicketDao.getLastId() + 1);
 					t = transactionList.get(i);
 					t.setName(name.toUpperCase()); t.setEmail(email); t.setMobileNumber(mobileNumber);
-					t.setTID(); t.setId(TransactionDao.getLastId() + 1);
-					ticketList.get(i).setId(TicketDao.getLastId() + 1);
-					CinemaDao.save(cinema);
+					t.setTID(); t.setId(TransactionDao.getLastId() + 1); t.setTicketId(ticketList.get(i).getId());
+					ShowtimeDao.save(showtime);
 					TicketDao.save(ticketList.get(i));
 					TransactionDao.save(t);
 					
@@ -2065,5 +2282,29 @@ public class MainActivity {
 				  t.printTransaction();
 			  }
 		  }
+	  }
+	  
+	  private static Day checkDayType(Showtime s) {
+		  int check;
+		  SimpleDateFormat formatter = new SimpleDateFormat("dd/M/yyyy");
+		  Calendar cal = s.getDate();
+		  int year = Calendar.getInstance().get(Calendar.YEAR);
+		  for(String h: SettingsDao.getHolidays()){
+			  String[] holidayParts = h.split("\\/");
+			  if(Integer.parseInt(holidayParts[2]) == year) {
+				  int month = Integer.parseInt(holidayParts[1]) - 1;
+				  int date = Integer.parseInt(holidayParts[0]);
+				  Calendar other = new GregorianCalendar(year, month, date);
+				  String s1 = formatter.format(cal.getTime());
+				  String s2 = formatter.format(other.getTime());
+				  if (s1.compareTo(s2) == 0)
+					  return Day.PUBLICHOLIDAY;
+			  }
+		  }
+		  check = cal.get(Calendar.DAY_OF_WEEK);
+		  if (check == 7 || check == 1)
+			  return Day.WEEKEND;
+		  else
+			  return Day.WEEKDAY;
 	  }
 }

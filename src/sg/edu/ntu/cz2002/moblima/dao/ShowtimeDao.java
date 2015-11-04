@@ -148,6 +148,17 @@ public class ShowtimeDao {
 		return true;
 	}
 
+	public static ArrayList<String> getOccupiedSeats(int showtimeId) {
+		ArrayList<String> occupiedSeats = new ArrayList<String>();
+		HashMap<Integer, Ticket> tickets = TicketDao.getAllInHashMap();
+		for (Ticket t: tickets.values()) {
+			if (t.getShowtime() == showtimeId) {
+				occupiedSeats.add(t.getSeatId());
+			}
+		}
+		return occupiedSeats;
+	}
+	
 	public static void initialize() {
 		JSONObject t = Database.getObject(DATABASE_NAME);
 		records = Showtime.fromJSONObjects(t);
