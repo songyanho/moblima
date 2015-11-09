@@ -5,8 +5,6 @@ import java.util.Set;
 
 import org.json.simple.JSONObject;
 
-import sg.edu.ntu.cz2002.moblima.models.Showtime.Day;
-
 public class Seat implements StandardData {
 	protected int id;
 	protected int row;
@@ -18,27 +16,7 @@ public class Seat implements StandardData {
 	public enum SeatType{
 		NORMAL, COUPLE, ULTIMA, RESERVED
 	}
-
-	public static SeatType getSeatTypeEnumFromChoice(int choice) {
-		return choice == 1? SeatType.NORMAL:
-			   choice == 2? SeatType.COUPLE:
-			   choice == 3? SeatType.ULTIMA:
-				   			SeatType.RESERVED;
-	}
 	
-	public static String getSeatTypeStringFromChoice (int choice) {
-		return choice == 1? "Normal":
-			   choice == 2? "Couple":
-			   choice == 3? "Ultima":
-				   			"Reserved";
-	}
-	
-	public static SeatType getSeatTypeEnumFromOrdinal(int ordinal){
-		return ordinal == SeatType.NORMAL.ordinal()? SeatType.NORMAL:
-			   ordinal == SeatType.COUPLE.ordinal()? SeatType.COUPLE:
-			   ordinal == SeatType.ULTIMA.ordinal()? SeatType.ULTIMA:
-				   									 SeatType.RESERVED;
-	}
 	public enum SeatStatus{
 		AVAILABLE, BOOKED
 	}
