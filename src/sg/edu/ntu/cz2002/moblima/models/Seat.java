@@ -21,6 +21,13 @@ public class Seat implements StandardData {
 		AVAILABLE, BOOKED
 	}
 	
+	public static SeatType getSeatTypeEnumFromChoice(int choice) {
+		return choice == 1? SeatType.NORMAL:
+			   choice == 2? SeatType.COUPLE:
+			   choice == 3? SeatType.ULTIMA:
+				   			SeatType.RESERVED;
+	}
+	
 	public Seat(int id, int row, int column, int seatPlaneId, int seatType) {
 		this.id = id;
 		this.row = row;
