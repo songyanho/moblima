@@ -148,8 +148,8 @@ public class ShowtimeDao {
 		return true;
 	}
 
-	public static ArrayList<String> getOccupiedSeats(int showtimeId) {
-		ArrayList<String> occupiedSeats = new ArrayList<String>();
+	public static ArrayList<Integer> getOccupiedSeats(int showtimeId) {
+		ArrayList<Integer> occupiedSeats = new ArrayList<Integer>();
 		HashMap<Integer, Ticket> tickets = TicketDao.getAllInHashMap();
 		for (Ticket t: tickets.values()) {
 			if (t.getShowtime() == showtimeId) {

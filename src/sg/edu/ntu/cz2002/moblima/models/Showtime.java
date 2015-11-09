@@ -137,12 +137,13 @@ public class Showtime implements StandardData {
 		this.numEmptySeat = numEmptySeat;
 	}
 	
+	@Deprecated
 	public void addSeat(String seatId) {
-		ArrayList<String> seat = ShowtimeDao.getOccupiedSeats(this.id);
-		if (!seat.contains(seatId))
-			this.numEmptySeat--;
-		else
-			System.out.print("Failed adding, seat already assigned.");
+//		ArrayList<String> seat = ShowtimeDao.getOccupiedSeats(this.id);
+//		if (!seat.contains(seatId))
+//			this.numEmptySeat--;
+//		else
+//			System.out.print("Failed adding, seat already assigned.");
 	}
 
 	public double getPrice() {
@@ -163,6 +164,11 @@ public class Showtime implements StandardData {
 	
 	public void printInfo() {
 		
+	}
+	
+	public int[][] getSeatPlaneViewArray(){
+		HashMap<Integer, Ticket> ts = TicketDao.getTicketWithShowtime(this.id);
+		return getCinema().getSeatPlane().getSeatArray(ts);
 	}
 	
 	@SuppressWarnings("unchecked")

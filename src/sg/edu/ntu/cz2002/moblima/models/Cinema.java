@@ -5,13 +5,16 @@ import java.util.Set;
 import org.json.simple.JSONObject;
 
 import sg.edu.ntu.cz2002.moblima.dao.CinemaDao;
+import sg.edu.ntu.cz2002.moblima.dao.SeatPlaneDao;
 
 public class Cinema {
 	protected int id;
 	protected String name;
 	protected CinemaClass cinemaClass;
 	protected int cineplexId;
+	@Deprecated
 	protected int seatNum;
+	protected int seatPlaneId;
 
 	public Cinema() {
 		this.id = CinemaDao.getLastId() + 1;
@@ -63,12 +66,13 @@ public class Cinema {
 			System.out.print("\t" + (cc.ordinal()+1) + ". " + cc.name());
 	}
 	
-	public Cinema(int id, String name, int cinemaClass, int cineplexId, int seatNum) {
+	public Cinema(int id, String name, int cinemaClass, int cineplexId, int seatNum, int seatPlaneId) {
 		this.id = id;
 		this.name = name;
 		this.cinemaClass = Cinema.getCinemaClassEnumFromOrdinal(cinemaClass);
 		this.cineplexId = cineplexId;
 		this.seatNum = seatNum;
+		this.seatPlaneId = seatPlaneId;
 	}
 	
 	public String getName() {
@@ -119,6 +123,8 @@ public class Cinema {
 				   	"NORMAL";
 	}
 	
+	
+	
 	/*
 	public void assign(int seatId, int ticketId) {
 		if (seat.get(seatId).ticket.getTicketId() == -1) {
@@ -130,6 +136,18 @@ public class Cinema {
 	}
 	*/
 	
+	public int getSeatPlaneId() {
+		return seatPlaneId;
+	}
+	
+	public SeatPlane getSeatPlane(){
+		return SeatPlaneDao.findById(this.seatPlaneId);
+	}
+
+	public void setSeatPlaneId(int seatPlaneId) {
+		this.seatPlaneId = seatPlaneId;
+	}
+
 	@SuppressWarnings("unchecked")
 	public JSONObject toJSONObject() {
 		JSONObject o = new JSONObject();
@@ -138,6 +156,7 @@ public class Cinema {
 		o.put("cinemaClass", this.cinemaClass.ordinal());
 		o.put("cineplexid", this.cineplexId);
 		o.put("seatNum", this.seatNum);
+		o.put("seatplaneid", this.seatPlaneId);
 		return o;
 	}
 	
@@ -147,7 +166,8 @@ public class Cinema {
 				o.get("name").toString(), 
 				Integer.parseInt(o.get("cinemaClass").toString()), 
 				Integer.parseInt(o.get("cineplexid").toString()),
-				Integer.parseInt(o.get("seatNum").toString())
+				Integer.parseInt(o.get("seatNum").toString()),
+				Integer.parseInt(o.get("seatplaneid").toString())
 				);
 	}
 	

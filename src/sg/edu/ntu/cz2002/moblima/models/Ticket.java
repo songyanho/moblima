@@ -15,7 +15,8 @@ public class Ticket implements StandardData{
 	protected int showtimeId;
 	protected AgeGroup ageGroup;
 	protected double price;
-	protected String seatId;
+	protected int seatId;
+	protected int transactionId;
 
 	public enum AgeGroup {
 		CHILD, ADULT, SENIOR;
@@ -68,17 +69,19 @@ public class Ticket implements StandardData{
 			System.out.println("\t" + (a.ordinal()+1) + ". " + a.name());
 	}
 	
-	public Ticket() {
+	public Ticket(int transactionId) {
 		super();
 		this.id = TicketDao.getLastId()+1;
+		this.transactionId = transactionId;
 	}
 	
-	public Ticket(int id, int showtimeId, int ageGroup, double price, String seatId) {
+	public Ticket(int id, int showtimeId, int ageGroup, double price, int seatId, int transactionId) {
 		this.id = id;
 		this.showtimeId = showtimeId;
 		this.ageGroup = getAgeGroupEnumFromOrdinal(ageGroup);
 		this.price = price;
 		this.seatId = seatId;
+		this.transactionId = transactionId;
 	}
 
 	public int getId() {
@@ -106,11 +109,11 @@ public class Ticket implements StandardData{
 	}
 
 
-	public String getSeatId() {
+	public int getSeatId() {
 		return seatId;
 	}
 
-	public void setSeatId(String seatId) {
+	public void setSeatId(int seatId) {
 		this.seatId = seatId;
 	}
 	
@@ -130,6 +133,14 @@ public class Ticket implements StandardData{
 		return basePrice + classCharge + dayCharge + typeCharge + ageCharge;
 	} 
 	
+	public int getTransactionId() {
+		return transactionId;
+	}
+
+	public void setTransactionId(int transactionId) {
+		this.transactionId = transactionId;
+	}
+
 	public void printTicket() {
 		Cineplex cineplex = ShowtimeDao.findById(this.showtimeId).getCineplex();
 		Cinema cinema = ShowtimeDao.findById(this.showtimeId).getCinema();
@@ -150,6 +161,7 @@ public class Ticket implements StandardData{
 		o.put("ageGroup", this.ageGroup.ordinal());
 		o.put("price", this.price);
 		o.put("seatId", this.seatId);
+		o.put("transactionid", this.transactionId);
 		return o;
 	}
 	
@@ -158,7 +170,8 @@ public class Ticket implements StandardData{
 				Integer.parseInt(o.get("showtime").toString()), 
 				Integer.parseInt(o.get("ageGroup").toString()),
 				Double.parseDouble(o.get("price").toString()), 
-				(o.get("seatId").toString()));
+				Integer.parseInt(o.get("seatId").toString()),
+				Integer.parseInt(o.get("transactionid").toString()));
 	}
 	
 	public static HashMap<String, JSONObject> toJSONObjects(HashMap<Integer, Ticket> o){

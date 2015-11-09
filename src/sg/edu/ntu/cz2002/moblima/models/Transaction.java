@@ -15,21 +15,21 @@ public class Transaction {
 	protected String name;
 	protected String email;
 	protected String mobileNumber;
-	protected Ticket ticket;
-	protected int ticketId;
+//	protected Ticket ticket;
+//	protected int ticketId;
 	
 	public Transaction() {
 		this.id = TransactionDao.getLastId() + 1;
 		//this.ticketId = TicketDao.getLastId() + 1;
 	}
 	
-	public Transaction(int id, String TID, String name, String email, String mobileNumber, int ticketId) {
+	public Transaction(int id, String TID, String name, String email, String mobileNumber) {
 		this.id = id;
 		this.TID = TID;
 		this.name = name;
 		this.email = email;
 		this.mobileNumber = mobileNumber;
-		this.ticketId = ticketId;
+//		this.ticketId = ticketId;
 	}
 	
 	public int getId() {
@@ -60,39 +60,38 @@ public class Transaction {
 	public void setMobileNumber(String mobileNumber) {
 		this.mobileNumber = mobileNumber;
 	}
-	public Ticket getTicket() {
-		return ticket;
-	}
-	public void setTicket(Ticket ticket) {
-		this.ticket = ticket;
-	}
+//	public Ticket getTicket() {
+//		return ticket;
+//	}
+//	public void setTicket(Ticket ticket) {
+//		this.ticket = ticket;
+//	}
 	
-	public void setTID() {
+	public void setTID(Showtime showtime) {
 		SimpleDateFormat formatter = new SimpleDateFormat("yyyyMMddHHmm");
 		Date date = new Date();
-		int showtimeId = this.ticket.getShowtime();
-		int code = ShowtimeDao.findById(showtimeId).getCinemaId();
+		int code = showtime.getCinemaId();
 		this.TID = String.format("%03d", code) + formatter.format(date);
 	}
 	
-	public int getTicketId() {
-		return ticketId;
-	}
-
-	public void setTicketId(int ticketId) {
-		this.ticketId = ticketId;
-	}
+//	public int getTicketId() {
+//		return ticketId;
+//	}
+//
+//	public void setTicketId(int ticketId) {
+//		this.ticketId = ticketId;
+//	}
 
 	public void printTransaction() {
 		System.out.println("\nTransaction ID: " + this.TID);
-		int showtimeId = TicketDao.findById(this.ticketId).getShowtime();
-		String cinema = ShowtimeDao.findById(showtimeId).getCinema().getName();
-		String cineplex = ShowtimeDao.findById(showtimeId).getCineplex().getCineplexName();
-		System.out.println("For cinema << " + cinema + " >> in " + cineplex);
+//		int showtimeId = TicketDao.findById(this.ticketId).getShowtime();
+//		String cinema = ShowtimeDao.findById(showtimeId).getCinema().getName();
+//		String cineplex = ShowtimeDao.findById(showtimeId).getCineplex().getCineplexName();
+//		System.out.println("For cinema << " + cinema + " >> in " + cineplex);
 		System.out.println("Customer name: " + this.name);
 		System.out.println("Customer email: " + this.email);
 		System.out.println("Customer mobile number: " + this.mobileNumber);
-		System.out.println("Transaction amount: " + TicketDao.findById(this.ticketId).calculatePrice());
+//		System.out.println("Transaction amount: " + TicketDao.findById(this.ticketId).calculatePrice());
 		System.out.print("\n");
 	}
 	
@@ -104,7 +103,7 @@ public class Transaction {
 		o.put("name", this.name);
 		o.put("email", this.email);
 		o.put("mobileNumber", this.mobileNumber);
-		o.put("ticketId", this.ticketId);
+//		o.put("ticketId", this.ticketId);
 		return o;
 	}
 	
@@ -114,8 +113,8 @@ public class Transaction {
 				o.get("TID").toString(),
 				o.get("name").toString(),
 				o.get("email").toString(),
-				o.get("mobileNumber").toString(),
-				Integer.parseInt(o.get("ticketId").toString()));
+				o.get("mobileNumber").toString());//,
+//				Integer.parseInt(o.get("ticketId").toString()));
 	}
 	
 	public static HashMap<String, JSONObject> toJSONObjects(HashMap<Integer, Transaction> o){

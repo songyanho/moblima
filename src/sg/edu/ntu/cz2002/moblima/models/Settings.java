@@ -11,6 +11,7 @@ import org.json.simple.JSONObject;
 
 import sg.edu.ntu.cz2002.moblima.models.Cinema.CinemaClass;
 import sg.edu.ntu.cz2002.moblima.models.Movie.MovieType;
+import sg.edu.ntu.cz2002.moblima.models.Seat.SeatType;
 import sg.edu.ntu.cz2002.moblima.models.Showtime.Day;
 import sg.edu.ntu.cz2002.moblima.models.Ticket.AgeGroup;
 
@@ -21,18 +22,21 @@ public class Settings implements StandardData {
 	protected HashMap<Integer, Double> cinemaClass;
 	protected HashMap<Integer, Double> movieType;
 	protected HashMap<Integer, Double> day;
+	protected HashMap<Integer, Double> seatType;
 	protected double basePrice;
 
 	public Settings() {}
 	
 	public Settings(ArrayList<String> holidays, double basePrice, HashMap<Integer, Double> ageGroup,
-			HashMap<Integer, Double> cinemaClass, HashMap<Integer, Double> movieType, HashMap<Integer, Double> day) {
+			HashMap<Integer, Double> cinemaClass, HashMap<Integer, Double> movieType, HashMap<Integer, Double> day,
+			HashMap<Integer, Double> seatType) {
 		this.holidays = holidays;
 		this.basePrice = basePrice;
 		this.ageGroup = ageGroup;
 		this.cinemaClass = cinemaClass;
 		this.movieType = movieType;
 		this.day = day;
+		this.seatType = seatType;
 	}
 	
 	public ArrayList<String> getHolidays() {
@@ -87,6 +91,15 @@ public class Settings implements StandardData {
 		this.basePrice = basePrice;
 	}
 
+	public HashMap<Integer, Double> getSeatTypeCharges() {
+		return this.seatType;
+	}
+	
+	public void setSeatTypeCharges(int index, Double value) {
+		SeatType s = Seat.getSeatTypeEnumFromChoice(index);
+		this.seatType.replace(s.ordinal(), value);
+	}
+	
 	@SuppressWarnings("unchecked")
 	@Override
 	public JSONObject toJSONObject() {
@@ -99,6 +112,7 @@ public class Settings implements StandardData {
 		o.put("CinemaClass", this.cinemaClass);
 		o.put("MovieType", this.movieType);
 		o.put("Day", this.day);
+		o.put("SeatType", this.seatType);
 		return o;
 	}
 
@@ -146,6 +160,15 @@ public class Settings implements StandardData {
 			Map.Entry entry = (Map.Entry)it.next();
 		    dt.put(Integer.parseInt(entry.getKey().toString()), Double.parseDouble(entry.getValue().toString()));
 		}
+		JSONObject seatType = (JSONObject) jsonObj.get("SeatType");
+		HashMap<Integer, Double> st = new HashMap<Integer, Double>();
+		map = seatType;
+		set = map.entrySet();
+		it = set.iterator();
+		while (it.hasNext()) {
+			Map.Entry entry = (Map.Entry)it.next();
+		    dt.put(Integer.parseInt(entry.getKey().toString()), Double.parseDouble(entry.getValue().toString()));
+		}
 		/*
 		HashMap<Integer, Double> a = (HashMap<Integer, Double>) o.get("AgeGroup");
 		HashMap<Integer, Double> m = (HashMap<Integer, Double>) o.get("MovieType");
@@ -154,7 +177,7 @@ public class Settings implements StandardData {
 		*/
 		return new Settings(holidays,
 				Double.parseDouble(o.get("basePrice").toString()),
-				ag, cc, mt, dt);
+				ag, cc, mt, dt, st);
 	}
 	
 	

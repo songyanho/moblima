@@ -39,6 +39,16 @@ public class TicketDao {
 		return a.get(a.size()-1);
 	}
 	
+	public static HashMap<Integer, Ticket> getTicketWithShowtime(int showtimeId){
+		if(records == null) initialize();
+		HashMap<Integer, Ticket> tickets = new HashMap<Integer, Ticket>();
+		for(Ticket t: records.values()){
+			if(t.getShowtime() == showtimeId)
+				tickets.put(t.getId(), t);
+		}
+		return tickets;
+	}
+	
 	public static boolean add(Ticket t){
 		if(records == null) initialize();
 		if(records.containsKey(t.getId())) return false; 
