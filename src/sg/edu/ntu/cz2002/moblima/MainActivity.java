@@ -65,7 +65,8 @@ public class MainActivity {
 				break;
 			case 3:
 				Showtime s = showtimeMgr.selectShowtime();
-				System.out.print("Total of empty seats is " + s.getNumEmptySeat());
+				if (s != null)
+					System.out.print("Total of empty seats is " + s.getNumEmptySeat());
 				break;
 			case 4:
 				ticketApp.printView();

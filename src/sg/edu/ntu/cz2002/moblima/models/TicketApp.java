@@ -25,7 +25,7 @@ public class TicketApp {
 
 		do {
 			System.out.print("\n");
-			ticketMgr.showtimeList = showtimeMgr.listShowtimeForBookingViewController();		
+			ticketMgr.showtimeList = showtimeMgr.listShowtimeViewController("booking");		
 			String[] menu = {"Enter showtime ID", "Back to cineplex and movie selection", "Back to main menu"};
 			choice = GeneralView.printMenuAndReturnChoice("Movie-goer Panel > Book ticket", menu);
 			switch (choice) {

@@ -22,7 +22,7 @@ public class ShowtimeManager {
 	protected ArrayList<Integer> showtimeList = new ArrayList<Integer>();
 	static Scanner sc = new Scanner(System.in);
 	
-	public ArrayList<Integer> listShowtimeForBookingViewController() {
+	public ArrayList<Integer> listShowtimeViewController(String panel) {
 		int it = 0, choice;
 		int weekOffset = 0;
 		boolean repeat;
@@ -37,9 +37,12 @@ public class ShowtimeManager {
 		}
 		menu[it] = "Back to previous menu";
 		do {
-			choice = GeneralView.printMenuAndReturnChoice("Movie-goer Panel > Book ticket > Select cineplex", menu);
-			if(choice <= 0 || choice >= cineplexes.size()+1) { 
-				if (choice == 8)
+			if (panel.equals("booking"))
+					choice = GeneralView.printMenuAndReturnChoice("Movie-goer Panel > Book ticket > Select cineplex", menu);
+			else
+				choice = GeneralView.printMenuAndReturnChoice("Movie-goer Panel > Check seat availability > Select cineplex", menu);
+			if(choice <= 0 || choice >= menu.length) { 
+				if (choice == menu.length)
 					return showtimeList;
 				else
 					repeat = true;
@@ -47,6 +50,7 @@ public class ShowtimeManager {
 			else
 				repeat = false;
 		} while (repeat);
+		
 		Cineplex selectedCineplex = cineplexes.get(choice-1);
 		System.out.println("\nYou have selected <<" + selectedCineplex.getCineplexName()+">>");
 		
@@ -58,9 +62,12 @@ public class ShowtimeManager {
 		}
 		menu[it] = "Back to previous menu";
 		do {
-			choice = GeneralView.printMenuAndReturnChoice("Movie-goer Panel > Book ticket > Select movie", menu);
+			if (panel.equals("booking"))
+				choice = GeneralView.printMenuAndReturnChoice("Movie-goer Panel > Book ticket > Select movie", menu);
+			else
+				choice = GeneralView.printMenuAndReturnChoice("Movie-goer Panel > Check seat availability > Select movie", menu);
 			if(choice <= 0 || choice >= menu.length) { 
-				if (choice == 5)
+				if (choice == menu.length)
 					return showtimeList;
 				else
 					repeat = true;
@@ -73,9 +80,12 @@ public class ShowtimeManager {
 		
 		String[] weekMenu = {"Current week", "Next week", "Next 2 week", "Back to previous menu"};
 		do {
-			choice = GeneralView.printMenuAndReturnChoice("Movie-goer Panel > Book ticket > Select week", weekMenu);
+			if (panel.equals("booking"))
+				choice = GeneralView.printMenuAndReturnChoice("Movie-goer Panel > Book ticket > Select week", weekMenu);
+			else
+				choice = GeneralView.printMenuAndReturnChoice("Movie-goer Panel > Check seat availability > Select week", weekMenu);
 			if(choice <= 0 || choice >= weekMenu.length) { 
-				if (choice == 4)
+				if (choice == weekMenu.length)
 					return showtimeList;
 				else
 					repeat = true;
@@ -675,7 +685,7 @@ public class ShowtimeManager {
 
 		do {
 			System.out.print("\n");
-			showtimeList = listShowtimeForBookingViewController();		
+			showtimeList = listShowtimeViewController("seat");		
 			String[] menu = {"Enter showtime ID", "Back to cineplex and movie selection", "Back to main menu"};
 			choice = GeneralView.printMenuAndReturnChoice("Movie-goer Panel > Check seat availability", menu);
 			switch (choice) {

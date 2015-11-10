@@ -420,7 +420,7 @@ public class MovieManager {
 			sc.nextLine();
 			movie.setTypeFromChoice(it);
 			listMovieView(movie, false);
-			System.out.println("Please confirm the record:\nTo insert, type Y\nTo redo, type N\nTo exit, type E");
+			System.out.println("\nPlease confirm the record:\nTo insert, type Y\nTo redo, type N\nTo exit, type E");
 			System.out.print("Your choice: ");
 			st = sc.nextLine();
 			if(st.equalsIgnoreCase("Y")){

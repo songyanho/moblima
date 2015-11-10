@@ -26,7 +26,7 @@ public class MovieApp {
 			case 1:
 				HashMap<Integer, Movie> movies = MovieDao.findActiveMovie();
 				if(movies.size() <= 0)
-					System.out.println("No movies available");
+					System.out.println("\nNo movies available");
 				else
 					movieMgr.listMoviesView(movies, false);
 				break;
