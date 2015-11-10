@@ -60,8 +60,8 @@ public class MovieManager {
 				}
 				System.out.println("Movie selected to be modified: ");
 				listMovieView(m, true);
-				System.out.println("Please confirm the record:\nTo edit, type Y\nTo redo, type N\nTo exit, type E");
-				System.out.print("Your choice: ");
+				System.out.println("\nPlease confirm the record:\nTo edit, type Y\nTo redo, type N\nTo exit, type E");
+				System.out.print("\nYour choice: ");
 				st = sc.nextLine();
 				if(st.equalsIgnoreCase("Y")){
 					updateMovieViewController(m);
@@ -413,6 +413,11 @@ public class MovieManager {
 			it = sc.nextInt();
 			sc.nextLine();
 			movie.setDuration(it);
+			System.out.println("Movie type: ");
+			Movie.printMovieTypeChoice();
+			it = sc.nextInt();
+			sc.nextLine();
+			movie.setTypeFromChoice(it);
 			listMovieView(movie, false);
 			System.out.println("Please confirm the record:\nTo insert, type Y\nTo redo, type N\nTo exit, type E");
 			System.out.print("Your choice: ");
