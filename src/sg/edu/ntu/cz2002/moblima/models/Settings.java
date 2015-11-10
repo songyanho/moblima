@@ -2,8 +2,6 @@ package sg.edu.ntu.cz2002.moblima.models;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
 import java.util.Set;
 
 import org.json.simple.JSONArray;
@@ -18,18 +16,18 @@ import sg.edu.ntu.cz2002.moblima.models.Ticket.AgeGroup;
 public class Settings implements StandardData {
 	
 	protected ArrayList<String> holidays;
-	protected HashMap<Integer,Double> ageGroup;
-	protected HashMap<Integer, Double> cinemaClass;
-	protected HashMap<Integer, Double> movieType;
-	protected HashMap<Integer, Double> day;
-	protected HashMap<Integer, Double> seatType;
+	protected HashMap<AgeGroup,Double> ageGroup;
+	protected HashMap<CinemaClass, Double> cinemaClass;
+	protected HashMap<MovieType, Double> movieType;
+	protected HashMap<Day, Double> day;
+	protected HashMap<SeatType, Double> seatType;
 	protected double basePrice;
 
 	public Settings() {}
 	
-	public Settings(ArrayList<String> holidays, double basePrice, HashMap<Integer, Double> ageGroup,
-			HashMap<Integer, Double> cinemaClass, HashMap<Integer, Double> movieType, HashMap<Integer, Double> day,
-			HashMap<Integer, Double> seatType) {
+	public Settings(ArrayList<String> holidays, double basePrice, HashMap<AgeGroup, Double> ageGroup,
+			HashMap<CinemaClass, Double> cinemaClass, HashMap<MovieType, Double> movieType, HashMap<Day, Double> day,
+			HashMap<SeatType, Double> seatType) {
 		this.holidays = holidays;
 		this.basePrice = basePrice;
 		this.ageGroup = ageGroup;
@@ -47,40 +45,40 @@ public class Settings implements StandardData {
 		this.holidays = holidays;
 	}
 	
-	public HashMap<Integer, Double> getAgeGroupCharges() {
+	public HashMap<AgeGroup, Double> getAgeGroupCharges() {
 		return ageGroup;
 	}
 	
 	public void setAgeGroupCharges(int index, Double value) {
 		AgeGroup a = Ticket.getAgeGroupEnumFromChoice(index);
-		this.ageGroup.replace(a.ordinal(), value);
+		this.ageGroup.replace(a, value);
 	}
 	
-	public HashMap<Integer, Double> getMovieTypeCharges() {
+	public HashMap<MovieType, Double> getMovieTypeCharges() {
 		return movieType;
 	}
 	
 	public void setMovieTypeCharges(int index, Double value) {
 		MovieType m = Movie.getTypeEnumFromChoice(index);
-		this.movieType.replace(m.ordinal(), value);
+		this.movieType.replace(m, value);
 	}
 	
-	public HashMap<Integer, Double> getCinemaClassCharges() {
+	public HashMap<CinemaClass, Double> getCinemaClassCharges() {
 		return cinemaClass;
 	}
 	
 	public void setCinemaClassCharges(int index, Double value) {
 		CinemaClass c = Cinema.getCinemaClassEnumFromChoice(index);
-		this.cinemaClass.replace(c.ordinal(), value);
+		this.cinemaClass.replace(c, value);
 	}
 	
-	public HashMap<Integer, Double> getDayCharges() {
+	public HashMap<Day, Double> getDayCharges() {
 		return day;
 	}
 	
 	public void setDayCharges(int index, Double value) {
 		Day d = Showtime.getDayEnumFromChoice(index);
-		this.day.replace(d.ordinal(), value);
+		this.day.replace(d, value);
 	}
 	
 	public double getBasePrice() {
@@ -91,13 +89,13 @@ public class Settings implements StandardData {
 		this.basePrice = basePrice;
 	}
 
-	public HashMap<Integer, Double> getSeatTypeCharges() {
+	public HashMap<SeatType, Double> getSeatTypeCharges() {
 		return seatType;
 	}
 	
 	public void setSeatTypeCharges(int index, Double value) {
 		SeatType s = Seat.getSeatTypeEnumFromChoice(index);
-		this.seatType.replace(s.ordinal(), value);
+		this.seatType.replace(s, value);
 	}
 	
 	@SuppressWarnings("unchecked")
@@ -116,59 +114,90 @@ public class Settings implements StandardData {
 		return o;
 	}
 
-	@SuppressWarnings({ "unchecked", "rawtypes" })
 	public static Settings fromJSONObject(JSONObject o) {
+		// Holiday
 		ArrayList<String> holidays = new ArrayList<String>();
 		JSONArray h = (JSONArray) o.get("holidays");
 		for(int i=0; i<h.size(); i++)
 			holidays.add(h.get(i).toString());
-		Object obj = o;
-		JSONObject jsonObj = (JSONObject) obj;
-		JSONObject ageGroup = (JSONObject) jsonObj.get("AgeGroup");
-		HashMap<Integer, Double> ag = new HashMap<Integer, Double>();
-		Map<Integer, Double> map = ageGroup;
-		Set set = map.entrySet();
-		Iterator it = set.iterator();
-		while (it.hasNext()) {
-			Map.Entry entry = (Map.Entry)it.next();
-		    ag.put(Integer.parseInt(entry.getKey().toString()), Double.parseDouble(entry.getValue().toString()));
+		
+		// AgeGroup
+//		Object obj = o;
+//		JSONObject jsonObj = (JSONObject) obj;
+		JSONObject ageGroup = (JSONObject) o.get("AgeGroup");
+		HashMap<AgeGroup, Double> ag = new HashMap<AgeGroup, Double>();
+//		Map<Integer, Double> map = ageGroup;
+//		Set set = map.entrySet();
+//		Iterator it = set.iterator();
+//		while (it.hasNext()) {
+//			Map.Entry entry = (Map.Entry)it.next();
+//		AgeGroup agKeyValue[] = AgeGroup.values();
+		for(Object i: ageGroup.keySet()){
+			int key = Integer.parseInt(i.toString());
+		    ag.put(AgeGroup.values()[key], Double.parseDouble(ageGroup.get(i).toString()));
 		}
-		JSONObject movieType = (JSONObject) jsonObj.get("MovieType");
-		HashMap<Integer, Double> mt = new HashMap<Integer, Double>();
-		map = movieType;
-		set = map.entrySet();
-		it = set.iterator();
-		while (it.hasNext()) {
-			Map.Entry entry = (Map.Entry)it.next();
-		    mt.put(Integer.parseInt(entry.getKey().toString()), Double.parseDouble(entry.getValue().toString()));
+//		}
+		
+		// Movie Type
+		JSONObject movieType = (JSONObject) o.get("MovieType");
+		HashMap<MovieType, Double> mt = new HashMap<MovieType, Double>();
+//		map = movieType;
+//		set = map.entrySet();
+//		it = set.iterator();
+//		while (it.hasNext()) {
+//			Map.Entry entry = (Map.Entry)it.next();
+		for(Object i: movieType.keySet()){
+			int key = Integer.parseInt(i.toString());
+			mt.put(MovieType.values()[key], Double.parseDouble(movieType.get(i).toString()));
 		}
-		JSONObject cinemaClass = (JSONObject) jsonObj.get("CinemaClass");
-		HashMap<Integer, Double> cc = new HashMap<Integer, Double>();
-		map = cinemaClass;
-		set = map.entrySet();
-		it = set.iterator();
-		while (it.hasNext()) {
-			Map.Entry entry = (Map.Entry)it.next();
-		    cc.put(Integer.parseInt(entry.getKey().toString()), Double.parseDouble(entry.getValue().toString()));
+		    
+//		}
+		JSONObject cinemaClass = (JSONObject) o.get("CinemaClass");
+		HashMap<CinemaClass, Double> cc = new HashMap<CinemaClass, Double>();
+//		map = cinemaClass;
+//		set = map.entrySet();
+//		it = set.iterator();
+//		while (it.hasNext()) {
+//			Map.Entry entry = (Map.Entry)it.next();
+		for(Object i: cinemaClass.keySet()){
+			int key = Integer.parseInt(i.toString());
+			cc.put(CinemaClass.values()[key], Double.parseDouble(cinemaClass.get(i).toString()));
 		}
-		JSONObject dayType = (JSONObject) jsonObj.get("Day");
-		HashMap<Integer, Double> dt = new HashMap<Integer, Double>();
-		map = dayType;
-		set = map.entrySet();
-		it = set.iterator();
-		while (it.hasNext()) {
-			Map.Entry entry = (Map.Entry)it.next();
-		    dt.put(Integer.parseInt(entry.getKey().toString()), Double.parseDouble(entry.getValue().toString()));
+//		}
+		JSONObject dayType = (JSONObject) o.get("Day");
+		HashMap<Day, Double> dt = new HashMap<Day, Double>();
+//		map = dayType;
+//		set = map.entrySet();
+//		it = set.iterator();
+//		while (it.hasNext()) {
+//			Map.Entry entry = (Map.Entry)it.next();
+		for(Object i: dayType.keySet()){
+			int key = Integer.parseInt(i.toString());
+			dt.put(Day.values()[key], Double.parseDouble(dayType.get(i).toString()));
 		}
-		JSONObject seatType = (JSONObject) jsonObj.get("SeatType");
-		HashMap<Integer, Double> st = new HashMap<Integer, Double>();
-		map = seatType;
-		set = map.entrySet();
-		it = set.iterator();
-		while (it.hasNext()) {
-			Map.Entry entry = (Map.Entry)it.next();
-		    st.put(Integer.parseInt(entry.getKey().toString()), Double.parseDouble(entry.getValue().toString()));
+//		    dt.put(Integer.parseInt(entry.getKey().toString()), Double.parseDouble(entry.getValue().toString()));
+//		}
+		JSONObject seatType = (JSONObject) o.get("SeatType");
+		HashMap<SeatType, Double> st = new HashMap<SeatType, Double>();
+//		map = seatType;
+//		set = map.entrySet();
+//		it = set.iterator();
+//		while (it.hasNext()) {
+//			Map.Entry entry = (Map.Entry)it.next();
+		for(Object i: seatType.keySet()){
+			int key = Integer.parseInt(i.toString());
+			st.put(SeatType.values()[key], Double.parseDouble(seatType.get(i).toString()));
+		//JSONObject seatType = (JSONObject) jsonObj.get("SeatType");
+		//HashMap<Integer, Double> st = new HashMap<Integer, Double>();
+		//map = seatType;
+		//set = map.entrySet();
+		//it = set.iterator();
+		//while (it.hasNext()) {
+		//	Map.Entry entry = (Map.Entry)it.next();
+		//    st.put(Integer.parseInt(entry.getKey().toString()), Double.parseDouble(entry.getValue().toString()));
 		}
+//		    dt.put(Integer.parseInt(entry.getKey().toString()), Double.parseDouble(entry.getValue().toString()));
+//		}
 		/*
 		HashMap<Integer, Double> a = (HashMap<Integer, Double>) o.get("AgeGroup");
 		HashMap<Integer, Double> m = (HashMap<Integer, Double>) o.get("MovieType");

@@ -50,6 +50,12 @@ public class Ticket implements StandardData{
 				   			"SENIOR" ;
 	}
 	
+	public static String getAgeGroupStringFromAgeGroup(AgeGroup choice) {
+		return choice==AgeGroup.CHILD ? 	"CHILD" : 
+			   choice==AgeGroup.ADULT ? 	"ADULT" : 
+				   							"SENIOR";
+	}
+	
 	public void setAgeGroupFromChoice(int choice) {
 		switch (choice) {
 		case 1:
@@ -113,6 +119,10 @@ public class Ticket implements StandardData{
 		return seatId;
 	}
 
+	public Seat getSeat() {
+		return SeatDao.findById(this.seatId);
+	}
+
 	public void setSeatId(int seatId) {
 		this.seatId = seatId;
 	}
@@ -125,10 +135,10 @@ public class Ticket implements StandardData{
 		CinemaClass cc = st.getCinema().getCinemaClass();
 		Day day = st.getDayType();
 		AgeGroup ag = this.ageGroup;
-		classCharge = setting.getCinemaClassCharges().get(cc.ordinal());
-		dayCharge = setting.getDayCharges().get(day.ordinal());
-		typeCharge = setting.getMovieTypeCharges().get(mt.ordinal());
-		ageCharge = setting.getAgeGroupCharges().get(ag.ordinal());
+		classCharge = setting.getCinemaClassCharges().get(cc);
+		dayCharge = setting.getDayCharges().get(day);
+		typeCharge = setting.getMovieTypeCharges().get(mt);
+		ageCharge = setting.getAgeGroupCharges().get(ag);
 		basePrice = setting.getBasePrice();
 		return basePrice + classCharge + dayCharge + typeCharge + ageCharge;
 	} 
@@ -146,7 +156,7 @@ public class Ticket implements StandardData{
 		Cinema cinema = ShowtimeDao.findById(this.showtimeId).getCinema();
 		System.out.println("Cineplex: " + cineplex.getCineplexName());
 		System.out.println("Cinema: " + cinema.getName() + ", Class: " + cinema.getCinemaClassString());
-		System.out.println("Seat ID: " + this.seatId);
+		System.out.println("Seat ID: " + this.getSeat().getSeatName());
 		System.out.println("Age group: " + this.getAgeGroupString());
 		System.out.println("Ticket price: " + Math.round(this.price));
 		System.out.print("\n");

@@ -16,17 +16,15 @@ import java.util.Map;
 import java.util.TimeZone;
 import java.util.Map.Entry;
 import java.util.Scanner;
-import java.util.Set;
 
 import sg.edu.ntu.cz2002.moblima.CalendarView;
 import sg.edu.ntu.cz2002.moblima.Data;
-import sg.edu.ntu.cz2002.moblima.dao.AdminDao;
-import sg.edu.ntu.cz2002.moblima.dao.MovieDao;
-import sg.edu.ntu.cz2002.moblima.dao.ReviewDao;
-import sg.edu.ntu.cz2002.moblima.dao.SettingsDao;
-import sg.edu.ntu.cz2002.moblima.dao.ShowtimeDao;
-import sg.edu.ntu.cz2002.moblima.dao.TicketDao;
+import sg.edu.ntu.cz2002.moblima.dao.*;
+import sg.edu.ntu.cz2002.moblima.models.Cinema.CinemaClass;
+import sg.edu.ntu.cz2002.moblima.models.Movie.MovieType;
+import sg.edu.ntu.cz2002.moblima.models.Seat.SeatType;
 import sg.edu.ntu.cz2002.moblima.models.Showtime.Day;
+import sg.edu.ntu.cz2002.moblima.models.Ticket.AgeGroup;
 import sg.edu.ntu.cz2002.moblima.view.GeneralView;
 
 public class CineplexManager {
@@ -147,29 +145,29 @@ public class CineplexManager {
 		Settings settings = SettingsDao.getSettings();
 		
 		if (className == "CinemaClass") {
-			HashMap<Integer, Double> c = settings.getCinemaClassCharges();
+			HashMap<CinemaClass, Double> c = settings.getCinemaClassCharges();
 			System.out.println("\nOriginal charge for cinema class of " + Cinema.getCinemaClassStringFromChoice(choice) + 
-				" is " + c.get(choice-1));
+				" is " + c.get(Cinema.getCinemaClassEnumFromChoice(choice)));
 		}
 		else if (className == "MovieType") {
-			HashMap<Integer, Double> m = settings.getMovieTypeCharges();
+			HashMap<MovieType, Double> m = settings.getMovieTypeCharges();
 			System.out.println("\nOriginal charge for movie type of " + Movie.getTypeStringFromChoice(choice) + 
-					" is " + m.get(choice-1));
+					" is " + m.get(Movie.getTypeEnumFromChoice(choice)));
 		}
 		else if (className == "AgeGroup") {
-			HashMap<Integer, Double> a = settings.getAgeGroupCharges();
+			HashMap<AgeGroup, Double> a = settings.getAgeGroupCharges();
 			System.out.println("\nOriginal charge for age group of " + Ticket.getAgeGroupStringFromChoice(choice) + 
-					" is " + a.get(choice-1));
+					" is " + a.get(Ticket.getAgeGroupEnumFromChoice(choice)));
 		}
 		else if (className == "Day") {
-			HashMap<Integer, Double> d = settings.getDayCharges();
+			HashMap<Day, Double> d = settings.getDayCharges();
 			System.out.println("\nOriginal charge for day type " + Showtime.getDayStringFromChoice(choice) + 
-					" is " + d.get(choice-1));
+					" is " + d.get(Showtime.getDayEnumFromChoice(choice)));
 		}
 		else if (className == "Seat") {
-			HashMap<Integer, Double> d = settings.getSeatTypeCharges();
-			System.out.println("\nOriginal charge for seat type " + Seat.getSeatTypeEnumFromChoice(choice) + 
-					" is " + d.get(choice-1));
+			HashMap<SeatType, Double> d = settings.getSeatTypeCharges();
+			System.out.println("\nOriginal charge for seat type " + Seat.getSeatTypeStringFromChoice(choice) + 
+					" is " + d.get(Seat.getSeatTypeEnumFromChoice(choice)));
 		}
 		else
 			return;
@@ -225,55 +223,55 @@ public class CineplexManager {
 	}
 	
 	public void printCharge() {
-		int i;
+//		int i;
 		
 		Settings s = SettingsDao.getSettings();
 		Double basePrice = s.getBasePrice();
 		System.out.println("\nBase price for a ticket: " + basePrice);
 		
-		HashMap<Integer, Double> cinemaClass = s.getCinemaClassCharges();
+		HashMap<CinemaClass, Double> cinemaClass = s.getCinemaClassCharges();
 		System.out.println("\n<< CINEMA CLASS >>");
-		i = 0;
-		for (Double v: cinemaClass.values()) {
-			System.out.println(Cinema.getCinemaClassStringFromChoice(i+1) +
-					", Charge: " + v);
-			i++;
+//		i = 0;
+		for (CinemaClass v: cinemaClass.keySet()) {
+			System.out.println(Cinema.getCinemaClassStringFromCinemaClass(v) +
+					", Charge: " + cinemaClass.get(v));
+//			i++;
 		}
 		
-		HashMap<Integer, Double> movieType = s.getMovieTypeCharges();
+		HashMap<MovieType, Double> movieType = s.getMovieTypeCharges();
 		System.out.println("\n<< MOVIE TYPE >>");
-		i = 0;
-		for (Double v: movieType.values()) {
-			System.out.println(Movie.getTypeStringFromChoice(i+1) +
-					", Charge: " + v);
-			i++;
+//		i = 0;
+		for (MovieType v: movieType.keySet()) {
+			System.out.println(Movie.getTypeStringFromMovieType(v) +
+					", Charge: " + movieType.get(v));
+//			i++;
 		}
 
-		HashMap<Integer, Double> ageGroup = s.getAgeGroupCharges();
+		HashMap<AgeGroup, Double> ageGroup = s.getAgeGroupCharges();
 		System.out.println("\n<< AGE GROUP >>");
-		i = 0;
-		for (Double v: ageGroup.values()) {
-			System.out.println(Ticket.getAgeGroupStringFromChoice(i+1) +
-					", Charge: " + v);
-			i++;
+//		i = 0;
+		for (AgeGroup v: ageGroup.keySet()) {
+			System.out.println(Ticket.getAgeGroupStringFromAgeGroup(v) +
+					", Charge: " + ageGroup.get(v));
+//			i++;
 		}
 
-		HashMap<Integer, Double> day = s.getDayCharges();
+		HashMap<Day, Double> day = s.getDayCharges();
 		System.out.println("\n<< DAY TYPE >>");
-		i = 0;
-		for (Double v: day.values()) {
-			System.out.println(Showtime.getDayStringFromChoice(i+1) +
-					", Charge: " + v);
-			i++;
+//		i = 0;
+		for (Day v: day.keySet()) {
+			System.out.println(Showtime.getDayStringFromDay(v) +
+					", Charge: " + day.get(v));
+//			i++;
 		}
 		
-		HashMap<Integer, Double> seat = s.getSeatTypeCharges();
+		HashMap<SeatType, Double> seat = s.getSeatTypeCharges();
 		System.out.println("\n<< SEAT TYPE >>");
-		i = 0;
-		for (Double v: seat.values()) {
-			System.out.println(Seat.getSeatTypeEnumFromChoice(i+1) +
-					", Charge: " + v);
-			i++;
+//		i = 0;
+		for (SeatType v: seat.keySet()) {
+			System.out.println(Seat.getSeatTypeStringFromSeatType(v) +
+					", Charge: " + seat.get(v));
+//			i++;
 		}
 	}
 	

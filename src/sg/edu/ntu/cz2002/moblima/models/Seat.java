@@ -13,6 +13,8 @@ public class Seat implements StandardData {
 	protected SeatType seatType;
 	protected SeatStatus seatStatus;
 	
+	protected String seatName;
+	
 	public enum SeatType{
 		NORMAL, COUPLE, ULTIMA, RESERVED
 	}
@@ -28,13 +30,28 @@ public class Seat implements StandardData {
 				   			SeatType.RESERVED;
 	}
 	
-	public Seat(int id, int row, int column, int seatPlaneId, int seatType) {
+	public static String getSeatTypeStringFromSeatType(SeatType choice) {
+		return choice == SeatType.NORMAL ? "Normal":
+			   choice == SeatType.COUPLE ? "Couple":
+			   choice == SeatType.ULTIMA ? "Ultima":
+				   			"Reserved";
+	}
+	
+	public static String getSeatTypeStringFromChoice(int choice) {
+		return choice == 1 ? "Normal":
+			   choice == 2 ? "Couple":
+			   choice == 3 ? "Ultima":
+				   			"Reserved";
+	}
+	
+	public Seat(int id, int row, int column, int seatPlaneId, int seatType, String seatName) {
 		this.id = id;
 		this.row = row;
 		this.column = column;
 		this.seatPlaneId = seatPlaneId;
 		this.seatType = SeatType.values()[seatType];
 		this.seatStatus = SeatStatus.AVAILABLE;
+		this.seatName = seatName;
 	}
 	
 	public int getId() {
@@ -85,6 +102,14 @@ public class Seat implements StandardData {
 		this.seatStatus = seatStatus;
 	}
 
+	public String getSeatName() {
+		return seatName;
+	}
+
+	public void setSeatName(String seatName) {
+		this.seatName = seatName;
+	}
+
 	public boolean isOccupied(int showtimeId){
 		return true;
 	}
@@ -98,16 +123,20 @@ public class Seat implements StandardData {
 		o.put("column", this.column);
 		o.put("seatplaneid", this.seatPlaneId);
 		o.put("seattype", this.seatType.ordinal());
+		o.put("seatname", this.seatName);
 		return o;
 	}
 	
 	public static Seat fromJSONObject(JSONObject o){
+		if(!o.containsKey("seatname"))
+			o.put("seatname", "");
 		return new Seat(
 				Integer.parseInt(o.get("id").toString()), 
 				Integer.parseInt(o.get("row").toString()), 
 				Integer.parseInt(o.get("column").toString()), 
 				Integer.parseInt(o.get("seatplaneid").toString()), 
-				Integer.parseInt(o.get("seattype").toString()));
+				Integer.parseInt(o.get("seattype").toString()),
+				o.get("seatname").toString());
 	}
 	
 	public static HashMap<String, JSONObject> toJSONObjects(HashMap<Integer, Seat> o){

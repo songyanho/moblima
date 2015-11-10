@@ -61,6 +61,13 @@ public class Cinema {
 				   			"Normal";
 	}
 	
+	public static String getCinemaClassStringFromCinemaClass(CinemaClass choice) {
+		return choice == CinemaClass.PREMIUM? "Premium":
+			   choice == CinemaClass.PLATINUM? "Platinum":
+			   choice == CinemaClass.GOLD? "Gold":
+				   			"Normal";
+	}
+	
 	public static void printCinemaClassChoice() {
 		for (CinemaClass cc: CinemaClass.values())
 			System.out.print("\t" + (cc.ordinal()+1) + ". " + cc.name());

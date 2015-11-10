@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Scanner;
 
+import sg.edu.ntu.cz2002.moblima.dao.SeatDao;
 import sg.edu.ntu.cz2002.moblima.dao.TicketDao;
 import sg.edu.ntu.cz2002.moblima.dao.TransactionDao;
 import sg.edu.ntu.cz2002.moblima.view.SeatPlaneView;
@@ -28,7 +29,7 @@ public class TicketManager {
 		
 		do {
 			int i = 0;
-			System.out.println("To book seat, please enter any seat ID from A1 to "+seatIdAlpha.get(seatIdAlpha.size()-1));
+			System.out.println("\nTo book seat, please enter any seat ID from A1 to "+seatIdAlpha.get(seatIdAlpha.size()-1));
 			System.out.println("To end seat selection, please enter \"END\"");
 			System.out.print("\nEnter seat ID: ");
 			seatId = sc.nextLine();
@@ -56,6 +57,9 @@ public class TicketManager {
 				tick.setSeatId(seatToSeatIdMap.get(seatId));
 				tick.setShowtime(showtime.getId());
 				tick.setPrice(Math.round(tick.calculatePrice()));
+				Seat thisSeat = SeatDao.findById(tick.getSeatId());
+				thisSeat.setSeatName(seatId);
+				SeatDao.save();
 				ticketList.add(tick);
 				i++;
 			}

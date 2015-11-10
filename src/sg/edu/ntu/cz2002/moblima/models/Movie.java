@@ -148,6 +148,12 @@ public class Movie implements StandardData{
 			   choice==2 ? 	"THREED" : 
 			   				"NORMAL";
 	}
+	
+	public static String getTypeStringFromMovieType(MovieType choice){
+		return choice==MovieType.BLOCKBUSTER ? 	"BLOCKBUSTER" : 
+			   choice==MovieType.THREED ? 	"THREED" : 
+			   				"NORMAL";
+	}
 
 	public static MovieType getTypeEnumFromChoice(int choice){
 		return choice==1 ? 	MovieType.BLOCKBUSTER: 

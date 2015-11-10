@@ -39,6 +39,12 @@ public class Showtime implements StandardData {
 				   			"Public Holiday";
 	}
 	
+	public static String getDayStringFromDay(Day choice) {
+		return choice == Day.WEEKDAY? "Weekday":
+			   choice == Day.WEEKEND? "Weekend":
+				   			"Public Holiday";
+	}
+	
 	public static Day getDayEnumFromOrdinal(int ordinal){
 		return ordinal == Day.WEEKDAY.ordinal() ? Day.WEEKDAY :
 			   ordinal == Day.WEEKEND.ordinal() ? Day.WEEKEND :
