@@ -29,6 +29,7 @@ public class MovieManager {
 			System.out.print(c+"  ");
 		System.out.print("\n\tDuration in minutes: " + m.getDuration());
 		System.out.println("\n\tis "+ m.getStatusString());
+		System.out.println("\tType: "+Movie.getTypeStringFromMovieType(m.getType()));
 		System.out.println("\tSynopsis: "+m.getSynopsis());
 		double rating = 0;
 		DecimalFormat df = new DecimalFormat("#.#");
