@@ -92,7 +92,7 @@ public class Settings implements StandardData {
 	}
 
 	public HashMap<Integer, Double> getSeatTypeCharges() {
-		return this.seatType;
+		return seatType;
 	}
 	
 	public void setSeatTypeCharges(int index, Double value) {
@@ -167,7 +167,7 @@ public class Settings implements StandardData {
 		it = set.iterator();
 		while (it.hasNext()) {
 			Map.Entry entry = (Map.Entry)it.next();
-		    dt.put(Integer.parseInt(entry.getKey().toString()), Double.parseDouble(entry.getValue().toString()));
+		    st.put(Integer.parseInt(entry.getKey().toString()), Double.parseDouble(entry.getValue().toString()));
 		}
 		/*
 		HashMap<Integer, Double> a = (HashMap<Integer, Double>) o.get("AgeGroup");

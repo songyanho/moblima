@@ -42,6 +42,7 @@ public class CineplexManager {
 				"Set movie type charge", 
 				"Set age group charge", 
 				"Set day charge",
+				"Set seat charge",
 				"Back to previous menu"};
 			do {
 				Settings settings = SettingsDao.getSettings();
@@ -122,6 +123,19 @@ public class CineplexManager {
 					} while (!exit2);
 					exit = false;
 					break;
+				case 7:
+					do {
+					String[] seatMenus = {"Edit for NORMAL", "Edit for COUPLE", "Edit for ULTIMA", "Edit for RESERVED", "Back to previous menu"};
+					select = GeneralView.printMenuAndReturnChoice("Admin Panel > System Configuration > Ticket Charges Management > Seat Type", seatMenus);
+					if (select == seatMenus.length)
+						exit2 = true;
+					else {
+						setCharge("Seat", select);
+						exit2 = false;
+					}
+					} while (!exit2);
+					exit = false;
+					break;
 				default:
 					exit = true;
 				}
@@ -152,35 +166,44 @@ public class CineplexManager {
 			System.out.println("\nOriginal charge for day type " + Showtime.getDayStringFromChoice(choice) + 
 					" is " + d.get(choice-1));
 		}
+		else if (className == "Seat") {
+			HashMap<Integer, Double> d = settings.getSeatTypeCharges();
+			System.out.println("\nOriginal charge for seat type " + Seat.getSeatTypeEnumFromChoice(choice) + 
+					" is " + d.get(choice-1));
+		}
 		else
 			return;
 		System.out.print("\nEnter new charge: ");
-		Double multiplier = sc.nextDouble();
+		Double value = sc.nextDouble();
 		sc.nextLine();
 		System.out.print("Confirm (Y|N): ");
 		st = sc.nextLine();
 		if (st.equalsIgnoreCase("Y")) {
+			if (className == "CinemaClass") {
+				System.out.println("\nNew cinema class charge: " + value);
+				settings.setCinemaClassCharges(choice, value);
+			}
+			else if (className == "MovieType") {
+				System.out.println("\nNew movie type charge: " + value);
+				settings.setMovieTypeCharges(choice, value);
+			}
+			else if (className == "AgeGroup") {
+				System.out.println("\nNew age group charge: " + value);
+				settings.setAgeGroupCharges(choice, value);
+			}
+			else if (className == "Day") {
+				System.out.println("\nNew day type charge: " + value);
+				settings.setDayCharges(choice, value);
+			}
+			else {
+				System.out.println("\nNew seat type charge: " + value);
+				settings.setSeatTypeCharges(choice, value);
+			}
 			SettingsDao.save();
+			System.out.println("Change updated.");
 		}
-		else
+		else 
 			return;
-		if (className == "CinemaClass") {
-			System.out.println("New cinema class charge: " + multiplier);
-			settings.setCinemaClassCharges(choice, multiplier);
-		}
-		else if (className == "MovieType") {
-			System.out.println("New movie type charge: " + multiplier);
-			settings.setMovieTypeCharges(choice, multiplier);
-		}
-		else if (className == "AgeGroup") {
-			System.out.println("New age group charge: " + multiplier);
-			settings.setAgeGroupCharges(choice, multiplier);
-		}
-		else if (className == "Day") {
-			System.out.println("New day type charge: " + multiplier);
-			settings.setDayCharges(choice, multiplier);
-		}
-		System.out.println("Change updated.");
 	}
 	
 
@@ -240,6 +263,15 @@ public class CineplexManager {
 		i = 0;
 		for (Double v: day.values()) {
 			System.out.println(Showtime.getDayStringFromChoice(i+1) +
+					", Charge: " + v);
+			i++;
+		}
+		
+		HashMap<Integer, Double> seat = s.getSeatTypeCharges();
+		System.out.println("\n<< SEAT TYPE >>");
+		i = 0;
+		for (Double v: seat.values()) {
+			System.out.println(Seat.getSeatTypeEnumFromChoice(i+1) +
 					", Charge: " + v);
 			i++;
 		}
