@@ -104,14 +104,29 @@ public class Settings implements StandardData {
 		JSONObject o = new JSONObject();
 		JSONArray holidaysArray = new JSONArray();
 		holidaysArray.addAll(holidays);
-
+		JSONObject ago = new JSONObject();
+		for(AgeGroup ag: this.ageGroup.keySet())
+			ago.put(ag.ordinal(), this.ageGroup.get(ag));
+		JSONObject cco = new JSONObject();
+		for(CinemaClass cc: this.cinemaClass.keySet())
+			cco.put(cc.ordinal(), this.ageGroup.get(cc));
+		JSONObject mto = new JSONObject();
+		for(MovieType mt: this.movieType.keySet())
+			mto.put(mt.ordinal(), this.ageGroup.get(mt));
+		JSONObject dayo = new JSONObject();
+		for(Day day: this.day.keySet())
+			dayo.put(day.ordinal(), this.ageGroup.get(day));
+		JSONObject sto = new JSONObject();
+		for(SeatType st: this.seatType.keySet())
+			sto.put(st.ordinal(), this.ageGroup.get(st));
+		
 		o.put("holidays", holidaysArray);
 		o.put("basePrice", this.basePrice);
-		o.put("AgeGroup", this.ageGroup);
-		o.put("CinemaClass", this.cinemaClass);
-		o.put("MovieType", this.movieType);
-		o.put("Day", this.day);
-		o.put("SeatType", this.seatType);
+		o.put("AgeGroup", ago);
+		o.put("CinemaClass", cco);
+		o.put("MovieType", mto);
+		o.put("Day", dayo);
+		o.put("SeatType", sto);
 		return o;
 	}
 
@@ -123,93 +138,49 @@ public class Settings implements StandardData {
 			holidays.add(h.get(i).toString());
 		
 		// AgeGroup
-//		Object obj = o;
-//		JSONObject jsonObj = (JSONObject) obj;
 		JSONObject ageGroup = (JSONObject) o.get("AgeGroup");
 		HashMap<AgeGroup, Double> ag = new HashMap<AgeGroup, Double>();
-//		Map<Integer, Double> map = ageGroup;
-//		Set set = map.entrySet();
-//		Iterator it = set.iterator();
-//		while (it.hasNext()) {
-//			Map.Entry entry = (Map.Entry)it.next();
-//		AgeGroup agKeyValue[] = AgeGroup.values();
 		for(Object i: ageGroup.keySet()){
 			int key = Integer.parseInt(i.toString());
 		    ag.put(AgeGroup.values()[key], Double.parseDouble(ageGroup.get(i).toString()));
 		}
-//		}
 		
 		// Movie Type
 		JSONObject movieType = (JSONObject) o.get("MovieType");
 		HashMap<MovieType, Double> mt = new HashMap<MovieType, Double>();
-//		map = movieType;
-//		set = map.entrySet();
-//		it = set.iterator();
-//		while (it.hasNext()) {
-//			Map.Entry entry = (Map.Entry)it.next();
 		for(Object i: movieType.keySet()){
 			int key = Integer.parseInt(i.toString());
 			mt.put(MovieType.values()[key], Double.parseDouble(movieType.get(i).toString()));
 		}
-		    
-//		}
+		   
+		//Cinema Class
 		JSONObject cinemaClass = (JSONObject) o.get("CinemaClass");
 		HashMap<CinemaClass, Double> cc = new HashMap<CinemaClass, Double>();
-//		map = cinemaClass;
-//		set = map.entrySet();
-//		it = set.iterator();
-//		while (it.hasNext()) {
-//			Map.Entry entry = (Map.Entry)it.next();
 		for(Object i: cinemaClass.keySet()){
 			int key = Integer.parseInt(i.toString());
 			cc.put(CinemaClass.values()[key], Double.parseDouble(cinemaClass.get(i).toString()));
 		}
-//		}
+		
+		// Day
 		JSONObject dayType = (JSONObject) o.get("Day");
 		HashMap<Day, Double> dt = new HashMap<Day, Double>();
-//		map = dayType;
-//		set = map.entrySet();
-//		it = set.iterator();
-//		while (it.hasNext()) {
-//			Map.Entry entry = (Map.Entry)it.next();
 		for(Object i: dayType.keySet()){
 			int key = Integer.parseInt(i.toString());
 			dt.put(Day.values()[key], Double.parseDouble(dayType.get(i).toString()));
 		}
-//		    dt.put(Integer.parseInt(entry.getKey().toString()), Double.parseDouble(entry.getValue().toString()));
-//		}
+		
+		// Seat Type
 		JSONObject seatType = (JSONObject) o.get("SeatType");
 		HashMap<SeatType, Double> st = new HashMap<SeatType, Double>();
-//		map = seatType;
-//		set = map.entrySet();
-//		it = set.iterator();
-//		while (it.hasNext()) {
-//			Map.Entry entry = (Map.Entry)it.next();
 		for(Object i: seatType.keySet()){
 			int key = Integer.parseInt(i.toString());
 			st.put(SeatType.values()[key], Double.parseDouble(seatType.get(i).toString()));
-		//JSONObject seatType = (JSONObject) jsonObj.get("SeatType");
-		//HashMap<Integer, Double> st = new HashMap<Integer, Double>();
-		//map = seatType;
-		//set = map.entrySet();
-		//it = set.iterator();
-		//while (it.hasNext()) {
-		//	Map.Entry entry = (Map.Entry)it.next();
-		//    st.put(Integer.parseInt(entry.getKey().toString()), Double.parseDouble(entry.getValue().toString()));
 		}
-//		    dt.put(Integer.parseInt(entry.getKey().toString()), Double.parseDouble(entry.getValue().toString()));
-//		}
-		/*
-		HashMap<Integer, Double> a = (HashMap<Integer, Double>) o.get("AgeGroup");
-		HashMap<Integer, Double> m = (HashMap<Integer, Double>) o.get("MovieType");
-		HashMap<Integer, Double> c = (HashMap<Integer, Double>) o.get("CinemaClass");
-		HashMap<Integer, Double> d = (HashMap<Integer, Double>) o.get("Day");
-		*/
+
 		return new Settings(holidays,
 				Double.parseDouble(o.get("basePrice").toString()),
 				ag, cc, mt, dt, st);
 	}
-	
 	
 	public static HashMap<String, JSONObject> toJSONObjects(HashMap<Integer, Settings> o){
 		HashMap<String, JSONObject> a = new HashMap<String, JSONObject>();
@@ -219,7 +190,6 @@ public class Settings implements StandardData {
 		}
 		return a;
 	}
-	
 	
 	public static Settings fromJSONObjects(JSONObject o){
 		return Settings.fromJSONObject(o);

@@ -9,6 +9,11 @@ public class SeatPlaneView {
 	public static HashMap<String, Integer> printSeatPlane(Showtime showtime){
 		SeatPlane seatPlane= showtime.getCinema().getSeatPlane();
 		int[][] seatArray = showtime.getSeatPlaneViewArray();
+		for(int j=0; j<seatArray.length; j++){
+//			for(int i=0; i<seatArray[j].length; i++)
+//				System.out.print((seatArray[j][i]>0?"O":seatArray[j][i]==0?" ":"X")+" ");
+//			System.out.println("");
+		}
 		printScreen(seatPlane.getColumn());
 		return printSeatArrangement(seatPlane.getRow(), seatPlane.getColumn(), seatArray);
 	}

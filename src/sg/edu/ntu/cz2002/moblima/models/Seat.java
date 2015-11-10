@@ -127,7 +127,6 @@ public class Seat implements StandardData {
 		return o;
 	}
 	
-	@SuppressWarnings("unchecked")
 	public static Seat fromJSONObject(JSONObject o){
 		if(!o.containsKey("seatname"))
 			o.put("seatname", "");

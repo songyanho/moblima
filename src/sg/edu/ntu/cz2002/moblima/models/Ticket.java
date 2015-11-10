@@ -8,6 +8,7 @@ import org.json.simple.JSONObject;
 import sg.edu.ntu.cz2002.moblima.dao.*;
 import sg.edu.ntu.cz2002.moblima.models.Cinema.CinemaClass;
 import sg.edu.ntu.cz2002.moblima.models.Movie.MovieType;
+import sg.edu.ntu.cz2002.moblima.models.Seat.SeatType;
 import sg.edu.ntu.cz2002.moblima.models.Showtime.Day;
 
 public class Ticket implements StandardData{
@@ -128,19 +129,21 @@ public class Ticket implements StandardData{
 	}
 	
 	public double calculatePrice() {
-		double classCharge, dayCharge, typeCharge, ageCharge, basePrice;
+		double classCharge, dayCharge, typeCharge, ageCharge, basePrice, seatPrice;
 		Showtime st = ShowtimeDao.findById(showtimeId);
-		Settings setting = SettingsDao.getSettings();
+		Settings settings = SettingsDao.getSettings();
 		MovieType mt = st.getMovie().getType();
 		CinemaClass cc = st.getCinema().getCinemaClass();
 		Day day = st.getDayType();
 		AgeGroup ag = this.ageGroup;
-		classCharge = setting.getCinemaClassCharges().get(cc);
-		dayCharge = setting.getDayCharges().get(day);
-		typeCharge = setting.getMovieTypeCharges().get(mt);
-		ageCharge = setting.getAgeGroupCharges().get(ag);
-		basePrice = setting.getBasePrice();
-		return basePrice + classCharge + dayCharge + typeCharge + ageCharge;
+		SeatType seatType = this.getSeat().getSeatType();
+		classCharge = settings.getCinemaClassCharges().get(cc);
+		dayCharge = settings.getDayCharges().get(day);
+		typeCharge = settings.getMovieTypeCharges().get(mt);
+		ageCharge = settings.getAgeGroupCharges().get(ag);
+		basePrice = settings.getBasePrice();
+		seatPrice = settings.getSeatTypeCharges().get(seatType);
+		return basePrice + classCharge + dayCharge + typeCharge + ageCharge + seatPrice;
 	} 
 	
 	public int getTransactionId() {
@@ -156,7 +159,7 @@ public class Ticket implements StandardData{
 		Cinema cinema = ShowtimeDao.findById(this.showtimeId).getCinema();
 		System.out.println("Cineplex: " + cineplex.getCineplexName());
 		System.out.println("Cinema: " + cinema.getName() + ", Class: " + cinema.getCinemaClassString());
-		System.out.println("Seat ID: " + this.getSeat().getSeatName());
+		System.out.println("Seat ID: " + this.getSeat().getSeatName() +" <"+Seat.getSeatTypeStringFromSeatType(this.getSeat().getSeatType())+">");
 		System.out.println("Age group: " + this.getAgeGroupString());
 		System.out.println("Ticket price: " + Math.round(this.price));
 		System.out.print("\n");

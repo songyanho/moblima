@@ -1,6 +1,8 @@
 package sg.edu.ntu.cz2002.moblima.models;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Set;
 
 import org.json.simple.JSONObject;
@@ -71,12 +73,16 @@ public class SeatPlane implements StandardData {
 			for(int i=0; i<column; i++)
 				seatArray[j][i] = 0;
 		}
+		HashSet<Integer> bookSeatIds = new HashSet<Integer>();
+		for(Ticket tt: t.values()){
+			bookSeatIds.add(tt.getSeatId());
+		}
 		HashMap<Integer, Seat> seats = SeatDao.getSeatsWithPlane(this.id);
 		for(Seat seat: seats.values()){
 			int occupied = 1;
 			if(seatArray[seat.getRow()][seat.getColumn()] > 0)
 				System.out.println("Duplicated seat @ "+seat.getRow()+","+seat.getColumn());
-			if(t.containsKey(seat.getId()))
+			if(bookSeatIds.contains(seat.getId()))
 				occupied *= -1;
 			seatArray[seat.getRow()][seat.getColumn()] = occupied*seat.getId();
 			if(seat.getSeatType() == SeatType.COUPLE){
@@ -85,11 +91,6 @@ public class SeatPlane implements StandardData {
 		}
 		return seatArray;
 	}
-	
-//
-//	public void setSeatArray(int[][] seatArray) {
-//		this.seatArray = seatArray;
-//	}
 
 	@SuppressWarnings("unchecked")
 	@Override

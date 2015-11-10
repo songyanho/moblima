@@ -13,14 +13,17 @@ public class TicketManager {
 	static Scanner sc = new Scanner(System.in);
 	private Transaction t = new Transaction();
 	private double total;
-	public ArrayList<Integer> showtimeList = new ArrayList<Integer>();
-	public ArrayList<Ticket> ticketList = new ArrayList<Ticket>();
-	public ArrayList<String> seatIds = new ArrayList<String>();
+	protected ArrayList<Integer> showtimeList = new ArrayList<Integer>();
+	protected ArrayList<Ticket> ticketList = new ArrayList<Ticket>();
+	protected ArrayList<String> seatIds = new ArrayList<String>();
 	
 
 	public TicketManager() {}
 	
 	public void selectSeat(Showtime showtime) {
+		seatIds = new ArrayList<String>();
+		t = new Transaction();
+		ticketList = new ArrayList<Ticket>();
 		int choice;
 		String seatId;
 		HashMap<String, Integer> seatToSeatIdMap = SeatPlaneView.printSeatPlane(showtime);
@@ -101,6 +104,10 @@ public class TicketManager {
 	public void checkout(Showtime showtime) {
 		String st;
 		boolean exit = false;
+		if(ticketList.size()<=0){
+			System.out.println("No tickets booked. Transaction is cancelled.");
+			return;
+		}
 		System.out.println("Total price is " + Math.round(total));
 		System.out.println("\nConfirm booking (Y|N): ");
 		do {
@@ -134,7 +141,8 @@ public class TicketManager {
 					Ticket tt = ticketList.get(i);
 					tt.setId(TicketDao.getLastId() + 1);
 					TicketDao.add(tt);
-					System.out.print("\nTransaction " + (i+1));
+					System.out.print("\nTransaction ID " + t.getTID());
+					System.out.print("\n");
 					tt.printTicket();
 				}
 				exit = true;

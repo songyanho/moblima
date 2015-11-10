@@ -62,10 +62,10 @@ public class SeatPlaneDao {
 				if(i==8) continue;
 				if(j<6){
 					if(i<2) continue;
-					SeatDao.save(new Seat(SeatDao.getLastId()+1, j, i, 1, 0, ""));
+					SeatDao.save(new Seat(SeatDao.getLastId()+1, j, i, 1, 0,""));
 				}else{
 					if((i<8 && i%2==1) || (i>8 && i%2==0)) continue;
-					SeatDao.save(new Seat(SeatDao.getLastId()+1, j, i, 1, 1, ""));
+					SeatDao.save(new Seat(SeatDao.getLastId()+1, j, i, 1, 1,""));
 				}
 			}
 		}
