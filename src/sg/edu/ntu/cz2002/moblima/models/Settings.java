@@ -104,6 +104,7 @@ public class Settings implements StandardData {
 		JSONObject o = new JSONObject();
 		JSONArray holidaysArray = new JSONArray();
 		holidaysArray.addAll(holidays);
+
 		o.put("holidays", holidaysArray);
 		o.put("basePrice", this.basePrice);
 		o.put("AgeGroup", this.ageGroup);

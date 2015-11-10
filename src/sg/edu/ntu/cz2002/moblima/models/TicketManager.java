@@ -35,7 +35,11 @@ public class TicketManager {
 			seatId = sc.nextLine();
 			seatId = seatId.toUpperCase();
 			if (seatInputChecking(seatId)) {
-				if(seatIds.contains(seatId)){
+				if(seatToSeatIdMap.get(seatId) < 0){
+					System.out.println("Seat "+seatId+" is occupied.");
+					continue;
+				}
+				else if(seatIds.contains(seatId)){
 					System.out.println("You have already selected seat "+seatId);
 					continue;
 				}
@@ -43,10 +47,7 @@ public class TicketManager {
 					System.out.println("Please select valid seat");
 					continue;
 				}
-				if(seatToSeatIdMap.get(seatId) < 0){
-					System.out.println("Seat "+seatId+" is occupied.");
-					continue;
-				}
+
 				seatIds.add(seatId);
 				Ticket tick = new Ticket(t.getId());
 				Ticket.printAgeGroupChoice();
@@ -134,7 +135,7 @@ public class TicketManager {
 					tt.setId(TicketDao.getLastId() + 1);
 					TicketDao.add(tt);
 					System.out.print("\nTransaction " + (i+1));
-					t.printTransaction();
+					tt.printTicket();
 				}
 				exit = true;
 			}

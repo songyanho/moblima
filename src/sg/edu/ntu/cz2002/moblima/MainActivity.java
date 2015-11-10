@@ -37,9 +37,7 @@ public class MainActivity {
 	private static void movieGoerViewController(){
 		int choice, it;
 		boolean exit = false;
-		TicketManager ticketMgr = new TicketManager();
-		ShowtimeManager showtimeMgr = new ShowtimeManager();
-		TicketApp ticketApp = new TicketApp(ticketMgr, showtimeMgr);
+
 		MovieManager movieMgr = new MovieManager();
 		String[] menus = {"Search movie",
 				"List movies and details", 
@@ -51,6 +49,9 @@ public class MainActivity {
 				"Quit"};
 		do {
 			HashMap<Integer, Movie> movies = MovieDao.getAllInHashMap();
+			TicketManager ticketMgr = new TicketManager();
+			ShowtimeManager showtimeMgr = new ShowtimeManager();
+			TicketApp ticketApp = new TicketApp(ticketMgr, showtimeMgr);
 			exit = false;
 			choice = GeneralView.printMenuAndReturnChoice("Movie-goer Panel", menus);
 			switch (choice) {

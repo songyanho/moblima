@@ -12,8 +12,8 @@ public class TicketApp {
 	static Scanner sc = new Scanner(System.in);
 	
 	public TicketApp(TicketManager ticketMgr, ShowtimeManager showtimeMgr) {
-		this.ticketMgr = ticketMgr;
-		this.showtimeMgr = showtimeMgr;
+		TicketApp.ticketMgr = ticketMgr;
+		TicketApp.showtimeMgr = showtimeMgr;
 	}
 	
 	public void printView() {
