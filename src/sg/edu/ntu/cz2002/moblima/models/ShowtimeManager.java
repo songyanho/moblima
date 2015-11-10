@@ -1,5 +1,7 @@
 package sg.edu.ntu.cz2002.moblima.models;
 
+import java.math.RoundingMode;
+import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -17,6 +19,7 @@ import sg.edu.ntu.cz2002.moblima.view.GeneralView;
 public class ShowtimeManager {
 	public Showtime showtime;
 	CineplexManager cineplexMgr = new CineplexManager();
+	protected ArrayList<Integer> showtimeList = new ArrayList<Integer>();
 	static Scanner sc = new Scanner(System.in);
 	
 	public ArrayList<Integer> listShowtimeForBookingViewController() {
@@ -663,4 +666,46 @@ public class ShowtimeManager {
 		return timeslot;
 	}
 
+	public Showtime selectShowtime() {
+		SimpleDateFormat formatter = new SimpleDateFormat("h:mm a, EEE, MMM d, yyyy");
+		DecimalFormat deciformat = new DecimalFormat("#0.00");
+		deciformat.setRoundingMode(RoundingMode.HALF_UP);
+		int i = 0, choice;
+		boolean exit = false;
+
+		do {
+			System.out.print("\n");
+			showtimeList = listShowtimeForBookingViewController();		
+			String[] menu = {"Enter showtime ID", "Back to cineplex and movie selection", "Back to main menu"};
+			choice = GeneralView.printMenuAndReturnChoice("Movie-goer Panel > Check seat availability", menu);
+			switch (choice) {
+			case 1:
+				if (showtimeList.isEmpty()) {
+					System.out.println("\nSorry, no showtime is available for this movie in this period of time");
+					continue;
+				}
+				exit = true;
+				break;
+			case 2:
+				continue;
+			default:
+				return null;
+			}
+		} while (!exit);
+
+		String[] idList = new String[showtimeList.size()+1];
+		for (i = 0; i < showtimeList.size(); i++) {
+			Calendar calendar = ShowtimeDao.findById(showtimeList.get(i)).getDate();
+			idList[i] = "Showtime: " + formatter.format(calendar.getTime());
+		}
+		idList[i] = "Back to main menu";
+		choice = GeneralView.printMenuAndReturnChoice("Movie-goer Panel > Check seat availability > Enter Showtime ID", idList);
+		if (choice == idList.length)
+			return null;
+		return showtime = ShowtimeDao.findById(showtimeList.get(choice-1));
+	}
+	
+	public int getNumEmptySeat(Showtime showtime) {
+		return showtime.getNumEmptySeat();
+	}
 }

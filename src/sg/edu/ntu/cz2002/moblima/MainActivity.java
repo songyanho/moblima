@@ -37,7 +37,6 @@ public class MainActivity {
 	private static void movieGoerViewController(){
 		int choice, it;
 		boolean exit = false;
-
 		MovieManager movieMgr = new MovieManager();
 		String[] menus = {"Search movie",
 				"List movies and details", 
@@ -65,8 +64,8 @@ public class MainActivity {
 					movieMgr.listMoviesView(movies, false);
 				break;
 			case 3:
-				it = movieMgr.selectMovie(movies);
-				System.out.print("Total of empty seats is ");
+				Showtime s = showtimeMgr.selectShowtime();
+				System.out.print("Total of empty seats is " + s.getNumEmptySeat());
 				break;
 			case 4:
 				ticketApp.printView();
@@ -90,7 +89,8 @@ public class MainActivity {
 	private static void adminViewController(){
 		CineplexManager cineplexMgr = new CineplexManager();
 		CineplexApp cineplexApp = new CineplexApp(cineplexMgr);
-		MovieApp movieApp = new MovieApp();
+		MovieManager movieMgr = new MovieManager();
+		MovieApp movieApp = new MovieApp(movieMgr);
 		ShowtimeManager showtimeMgr = new ShowtimeManager();
 		ShowtimeApp showtimeApp = new ShowtimeApp(showtimeMgr);
 		boolean loggedIn = cineplexMgr.loginAdmin(data);

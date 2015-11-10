@@ -8,6 +8,9 @@ import sg.edu.ntu.cz2002.moblima.view.GeneralView;
 public class MovieApp {
 	public static MovieManager movieMgr;
 	
+	public MovieApp(MovieManager movieMgr) {
+		MovieApp.movieMgr = movieMgr;
+	}
 	public void printView(){
 		int choice;
 		boolean exit = false;

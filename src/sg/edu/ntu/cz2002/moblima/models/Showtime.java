@@ -1,6 +1,5 @@
 package sg.edu.ntu.cz2002.moblima.models;
 
-import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
 import java.util.HashMap;
