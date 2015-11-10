@@ -7,6 +7,7 @@ import java.util.HashMap;
 import java.util.Scanner;
 
 import sg.edu.ntu.cz2002.moblima.dao.*;
+import sg.edu.ntu.cz2002.moblima.models.Movie.MovieType;
 import sg.edu.ntu.cz2002.moblima.view.GeneralView;
 
 public class MovieManager {
@@ -30,7 +31,8 @@ public class MovieManager {
 		System.out.print("\n\tDuration in minutes: " + m.getDuration());
 		System.out.println("\n\tis "+ m.getStatusString());
 		System.out.println("\tType: "+Movie.getTypeStringFromMovieType(m.getType()));
-		System.out.println("\tSynopsis: "+m.getSynopsis());
+		System.out.println("\tSynopsis: "+m.getSynopsis().replaceAll("(.{1,57})\\s+", "$1\n\t\t  "));
+//		System.out.println("\tSynopsis: "+m.getSynopsis());
 		double rating = 0;
 		DecimalFormat df = new DecimalFormat("#.#");
 		rating = cineplexMgr.calculateOverallRating(m.getId());
@@ -91,6 +93,7 @@ public class MovieManager {
 				"Edit movie status",
 				"Edit movie synopsis",
 				"Edit movie duration",
+				"Edit movie type",
 		"Back to previous menu"};
 		do{
 			exit = false;
@@ -273,6 +276,32 @@ public class MovieManager {
 						continue;
 					}else
 						exit2 = true;
+				}while(!exit2);
+				break;
+			case 7:
+				exit2 = false;
+				do{
+					System.out.println("Current movie type: "+Movie.getTypeStringFromMovieType(m.getType()));
+					do{
+						System.out.println("Movie type: ");
+						Movie.printMovieTypeChoice();;
+						System.out.print("Update movie type to: ");
+						it = sc.nextInt();
+						sc.nextLine();
+					}while(it<1 || it>MovieType.values().length);
+					System.out.println("Movie type: "+Movie.getTypeStringFromMovieType(m.getType())+" -> "+Movie.getTypeStringFromChoice(it));
+					System.out.println("Please confirm the record:\nTo edit, type Y\nTo redo, type N\nTo exit, type E");
+					System.out.print("Your choice: ");
+					st2 = sc.nextLine();
+					if(st2.equalsIgnoreCase("Y")){
+						m.setTypeFromChoice(it);;
+						MovieDao.save();
+						exit2 = true;
+					}else if(st2.equalsIgnoreCase("N")){
+						continue;
+					}else{
+						exit2 = true;
+					}
 				}while(!exit2);
 				break;
 			default: exit = true; break;
