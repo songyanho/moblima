@@ -3,6 +3,7 @@ package sg.edu.ntu.cz2002.moblima.models;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Scanner;
 import java.util.TimeZone;
@@ -36,8 +37,10 @@ public class TicketManager {
 		int choice;
 		String seatId;
 		HashMap<String, Integer> seatToSeatIdMap = SeatPlaneView.printSeatPlane(showtime);
+		HashMap<String, ArrayList<Integer>> selectedSeats = new HashMap<String, ArrayList<Integer>>();
 		ArrayList<String> seatIdAlpha = new ArrayList<String>();
 		seatIdAlpha.addAll(seatToSeatIdMap.keySet());
+		Collections.sort(seatIdAlpha);
 
 		do {
 			int i = 0;
@@ -108,6 +111,45 @@ public class TicketManager {
 				return true;
 		}
 		return false;
+	}
+	
+	private boolean alternateSeatBooking(HashMap<String, Integer> seatToSeatId, HashMap<String, ArrayList<Integer>> selectedSeats, String nextSeat){
+		String row = nextSeat.charAt(0)+"";
+		Integer column = Integer.parseInt(nextSeat.replaceAll("[^0-9]", ""));
+		if(!selectedSeats.containsKey(row)){
+			ArrayList<Integer> columns = new ArrayList<Integer>();
+			columns.add(column);
+			selectedSeats.put(row, columns);
+			return true;
+		}
+		Seat seat = SeatDao.findById(Math.abs(seatToSeatId.get(nextSeat)));
+		if(seat.getSeatType() == SeatType.COUPLE){
+			ArrayList<Integer> columns = selectedSeats.get(row);
+			columns.add(column);
+			if(seatToSeatId.containsKey(row+(column-1)) && seatToSeatId.get(row+(column-1)) == seatToSeatId.get(row+column))
+				columns.add(column-1);
+			else
+				columns.add(column+1);
+			return true;
+		}
+		ArrayList<Integer> thisRow = (ArrayList<Integer>) selectedSeats.get(row).clone();
+		thisRow.add(column);
+		Collections.sort(thisRow);
+		int i=0;
+		for(Integer sc: thisRow){
+			if(i==0){
+				i=sc;
+				continue;
+			}
+			if(sc-i!=2){
+				i=sc;
+				continue;
+			}
+			if(seatToSeatId.get(row+(sc-1)) > 0)
+				return false;
+		}
+		selectedSeats.replace(row, thisRow);
+		return true;
 	}
 	
 	public void checkout(Showtime showtime) {
