@@ -143,7 +143,7 @@ public class Ticket implements StandardData{
 		ageCharge = settings.getAgeGroupCharges().get(ag);
 		basePrice = settings.getBasePrice();
 		seatPrice = settings.getSeatTypeCharges().get(seatType);
-		return basePrice + classCharge + dayCharge + typeCharge + ageCharge + seatPrice;
+		return (basePrice + classCharge + dayCharge + typeCharge + ageCharge) * seatPrice;
 	} 
 	
 	public int getTransactionId() {

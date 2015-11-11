@@ -13,11 +13,9 @@ public class TicketManager {
 	static Scanner sc = new Scanner(System.in);
 	private Transaction t = new Transaction();
 	private double total;
-	protected ArrayList<Integer> showtimeList = new ArrayList<Integer>();
 	protected ArrayList<Ticket> ticketList = new ArrayList<Ticket>();
 	protected ArrayList<String> seatIds = new ArrayList<String>();
 	
-
 	public TicketManager() {}
 	
 	public void selectSeat(Showtime showtime) {
@@ -29,7 +27,7 @@ public class TicketManager {
 		HashMap<String, Integer> seatToSeatIdMap = SeatPlaneView.printSeatPlane(showtime);
 		ArrayList<String> seatIdAlpha = new ArrayList<String>();
 		seatIdAlpha.addAll(seatToSeatIdMap.keySet());
-		
+
 		do {
 			int i = 0;
 			System.out.println("\nTo book seat, please enter any seat ID from A1 to "+seatIdAlpha.get(seatIdAlpha.size()-1));

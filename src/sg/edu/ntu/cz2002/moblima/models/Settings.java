@@ -51,7 +51,7 @@ public class Settings implements StandardData {
 	
 	public void setAgeGroupCharges(int index, Double value) {
 		AgeGroup a = Ticket.getAgeGroupEnumFromChoice(index);
-		this.ageGroup.replace(a, value);
+		this.ageGroup.put(a, value);
 	}
 	
 	public HashMap<MovieType, Double> getMovieTypeCharges() {
@@ -60,7 +60,7 @@ public class Settings implements StandardData {
 	
 	public void setMovieTypeCharges(int index, Double value) {
 		MovieType m = Movie.getTypeEnumFromChoice(index);
-		this.movieType.replace(m, value);
+		this.movieType.put(m, value);
 	}
 	
 	public HashMap<CinemaClass, Double> getCinemaClassCharges() {
@@ -69,7 +69,7 @@ public class Settings implements StandardData {
 	
 	public void setCinemaClassCharges(int index, Double value) {
 		CinemaClass c = Cinema.getCinemaClassEnumFromChoice(index);
-		this.cinemaClass.replace(c, value);
+		this.cinemaClass.put(c, value);
 	}
 	
 	public HashMap<Day, Double> getDayCharges() {
@@ -78,7 +78,7 @@ public class Settings implements StandardData {
 	
 	public void setDayCharges(int index, Double value) {
 		Day d = Showtime.getDayEnumFromChoice(index);
-		this.day.replace(d, value);
+		this.day.put(d, value);
 	}
 	
 	public double getBasePrice() {
@@ -95,7 +95,7 @@ public class Settings implements StandardData {
 	
 	public void setSeatTypeCharges(int index, Double value) {
 		SeatType s = Seat.getSeatTypeEnumFromChoice(index);
-		this.seatType.replace(s, value);
+		this.seatType.put(s, value);
 	}
 	
 	@SuppressWarnings("unchecked")
@@ -109,16 +109,16 @@ public class Settings implements StandardData {
 			ago.put(ag.ordinal(), this.ageGroup.get(ag));
 		JSONObject cco = new JSONObject();
 		for(CinemaClass cc: this.cinemaClass.keySet())
-			cco.put(cc.ordinal(), this.ageGroup.get(cc));
+			cco.put(cc.ordinal(), this.cinemaClass.get(cc));
 		JSONObject mto = new JSONObject();
 		for(MovieType mt: this.movieType.keySet())
-			mto.put(mt.ordinal(), this.ageGroup.get(mt));
+			mto.put(mt.ordinal(), this.movieType.get(mt));
 		JSONObject dayo = new JSONObject();
 		for(Day day: this.day.keySet())
-			dayo.put(day.ordinal(), this.ageGroup.get(day));
+			dayo.put(day.ordinal(), this.day.get(day));
 		JSONObject sto = new JSONObject();
 		for(SeatType st: this.seatType.keySet())
-			sto.put(st.ordinal(), this.ageGroup.get(st));
+			sto.put(st.ordinal(), this.seatType.get(st));
 		
 		o.put("holidays", holidaysArray);
 		o.put("basePrice", this.basePrice);

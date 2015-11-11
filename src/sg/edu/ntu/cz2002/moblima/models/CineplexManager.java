@@ -166,12 +166,12 @@ public class CineplexManager {
 		}
 		else if (className == "Seat") {
 			HashMap<SeatType, Double> d = settings.getSeatTypeCharges();
-			System.out.println("\nOriginal charge for seat type " + Seat.getSeatTypeStringFromChoice(choice) + 
+			System.out.println("\nOriginal multiplier for seat type " + Seat.getSeatTypeStringFromChoice(choice) + 
 					" is " + d.get(Seat.getSeatTypeEnumFromChoice(choice)));
 		}
 		else
 			return;
-		System.out.print("\nEnter new charge: ");
+		System.out.print("\nEnter new value: ");
 		Double value = sc.nextDouble();
 		sc.nextLine();
 		System.out.print("Confirm (Y|N): ");
@@ -194,7 +194,7 @@ public class CineplexManager {
 				settings.setDayCharges(choice, value);
 			}
 			else {
-				System.out.println("\nNew seat type charge: " + value);
+				System.out.println("\nNew seat type multiplier: " + value);
 				settings.setSeatTypeCharges(choice, value);
 			}
 			SettingsDao.save();
@@ -270,7 +270,7 @@ public class CineplexManager {
 //		i = 0;
 		for (SeatType v: seat.keySet()) {
 			System.out.println(Seat.getSeatTypeStringFromSeatType(v) +
-					", Charge: " + seat.get(v));
+					", Multiplier: " + seat.get(v));
 //			i++;
 		}
 	}

@@ -64,9 +64,9 @@ public class MainActivity {
 					movieMgr.listMoviesView(movies, false);
 				break;
 			case 3:
-				Showtime s = showtimeMgr.selectShowtime();
-				if (s != null)
-					System.out.print("Total of empty seats is " + s.getNumEmptySeat());
+				showtimeMgr.selectShowtime("seat");
+				if (showtimeMgr.getShowtime() != null)
+					System.out.print("Total of empty seats is " + showtimeMgr.getShowtime().getNumEmptySeat());
 				break;
 			case 4:
 				ticketApp.printView();

@@ -11,7 +11,7 @@ import sg.edu.ntu.cz2002.moblima.dao.TicketDao;
 import sg.edu.ntu.cz2002.moblima.view.GeneralView;
 
 public class CineplexApp {
-	CineplexManager cineplexMgr = new CineplexManager();
+	CineplexManager cineplexMgr;
 	
 	public CineplexApp(CineplexManager cineplexMgr){
 		this.cineplexMgr = cineplexMgr;

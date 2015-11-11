@@ -372,6 +372,7 @@ public class ShowtimeManager {
 		}
 	}
 	
+	/*
 	public void listShowtimeViewController(boolean cineplex, boolean showId){
 		int it = 0, choice;
 		int weekOffset = 0;
@@ -440,6 +441,7 @@ public class ShowtimeManager {
 			}
 		}
 	}
+	*/
 	
 	public void showtimeOfTheDayView(Cineplex cineplex, ArrayList<Showtime> st, Movie movie, String date, boolean showId){
 		System.out.println("\n\n");
@@ -676,7 +678,7 @@ public class ShowtimeManager {
 		return timeslot;
 	}
 
-	public Showtime selectShowtime() {
+	public void selectShowtime(String panel) {
 		SimpleDateFormat formatter = new SimpleDateFormat("h:mm a, EEE, MMM d, yyyy");
 		DecimalFormat deciformat = new DecimalFormat("#0.00");
 		deciformat.setRoundingMode(RoundingMode.HALF_UP);
@@ -685,9 +687,12 @@ public class ShowtimeManager {
 
 		do {
 			System.out.print("\n");
-			showtimeList = listShowtimeViewController("seat");		
+			showtimeList = listShowtimeViewController("seat");	
 			String[] menu = {"Enter showtime ID", "Back to cineplex and movie selection", "Back to main menu"};
-			choice = GeneralView.printMenuAndReturnChoice("Movie-goer Panel > Check seat availability", menu);
+			if (panel.equals("booking"))
+				choice = GeneralView.printMenuAndReturnChoice("Movie-goer Panel > Book Ticket", menu);
+			else
+				choice = GeneralView.printMenuAndReturnChoice("Movie-goer Panel > Check seat availability", menu);
 			switch (choice) {
 			case 1:
 				if (showtimeList.isEmpty()) {
@@ -699,7 +704,7 @@ public class ShowtimeManager {
 			case 2:
 				continue;
 			default:
-				return null;
+				return;
 			}
 		} while (!exit);
 
@@ -709,13 +714,24 @@ public class ShowtimeManager {
 			idList[i] = "Showtime: " + formatter.format(calendar.getTime());
 		}
 		idList[i] = "Back to main menu";
-		choice = GeneralView.printMenuAndReturnChoice("Movie-goer Panel > Check seat availability > Enter Showtime ID", idList);
+		if (panel.equals("booking"))
+			choice = GeneralView.printMenuAndReturnChoice("Movie-goer Panel > Book Ticket > Enter Showtime ID", idList);
+		else
+			choice = GeneralView.printMenuAndReturnChoice("Movie-goer Panel > Check seat availability > Enter Showtime ID", idList);	
 		if (choice == idList.length)
-			return null;
-		return showtime = ShowtimeDao.findById(showtimeList.get(choice-1));
+			return;
+		this.showtime = ShowtimeDao.findById(showtimeList.get(choice-1));
 	}
 	
 	public int getNumEmptySeat(Showtime showtime) {
 		return showtime.getNumEmptySeat();
+	}
+
+	public Showtime getShowtime() {
+		return showtime;
+	}
+
+	public void setShowtime(Showtime showtime) {
+		this.showtime = showtime;
 	}
 }
