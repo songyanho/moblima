@@ -54,7 +54,7 @@ public class MainActivity {
 			choice = GeneralView.printMenuAndReturnChoice("Movie-goer Panel", menus);
 			switch (choice) {
 			case 1:
-				movieMgr.searchMovieViewController(false);
+				movieMgr.searchMovieViewController(false, "visitor");
 				break;
 			case 2:
 				if(movies.size() <= 0)

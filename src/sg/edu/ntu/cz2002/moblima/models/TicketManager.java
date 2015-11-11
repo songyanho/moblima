@@ -94,7 +94,7 @@ public class TicketManager {
 	private boolean seatInputChecking(String seatId) {
 		char c1, c2, c3;
 		int length = seatId.length();
-		if (length < 2 && length > 3)
+		if (length < 2 || length > 3)
 			return false;
 		c1 = seatId.charAt(0);
 		c2 = seatId.charAt(1);

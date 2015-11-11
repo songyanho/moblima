@@ -31,7 +31,7 @@ public class MovieApp {
 					movieMgr.listMoviesView(movies, false);
 				break;
 			case 2:
-				movieMgr.searchMovieViewController(false);
+				movieMgr.searchMovieViewController(false, "admin");
 				break;
 			case 3:
 				movieMgr.addMovieViewController();

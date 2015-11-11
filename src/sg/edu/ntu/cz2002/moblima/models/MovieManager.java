@@ -74,7 +74,7 @@ public class MovieManager {
 				}
 				break;
 			case 2:
-				searchMovieViewController(true);
+				searchMovieViewController(true, "admin");
 				break;
 			default: exit = true; break;
 			}
@@ -343,14 +343,14 @@ public class MovieManager {
 				}
 				break;
 			case 2:
-				searchMovieViewController(true);
+				searchMovieViewController(true, "admin");
 				break;
 			default: exit = true; break;
 			}
 		}while(!exit);
 	}
 
-	public void searchMovieViewController(boolean showId){
+	public void searchMovieViewController(boolean showId, String panel){
 		int choice, it;
 		String st;
 		HashMap<Integer, Movie> results;
@@ -362,7 +362,10 @@ public class MovieManager {
 		boolean exit = false;
 		do{
 			exit = false;
-			choice = GeneralView.printMenuAndReturnChoice("Admin Panel > Movie Listing Management > Search movie\nSearch by", menu);
+			if (panel == "admin")
+				choice = GeneralView.printMenuAndReturnChoice("Admin Panel > Movie Listing Management > Search movie by", menu);
+			else
+				choice = GeneralView.printMenuAndReturnChoice("Movie-goer Panel > List movies and details > Search movie by", menu);
 			switch(choice){
 			case 1: case 2:
 				System.out.print("Enter the keyword here: ");
