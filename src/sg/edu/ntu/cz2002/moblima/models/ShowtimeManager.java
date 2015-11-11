@@ -37,7 +37,7 @@ public class ShowtimeManager {
 		}
 		menu[it] = "Back to previous menu";
 		do {
-			if (panel.equals("booking"))
+			if (panel == "booking")
 					choice = GeneralView.printMenuAndReturnChoice("Movie-goer Panel > Book ticket > Select cineplex", menu);
 			else
 				choice = GeneralView.printMenuAndReturnChoice("Movie-goer Panel > Check seat availability > Select cineplex", menu);
@@ -62,7 +62,7 @@ public class ShowtimeManager {
 		}
 		menu[it] = "Back to previous menu";
 		do {
-			if (panel.equals("booking"))
+			if (panel == "booking")
 				choice = GeneralView.printMenuAndReturnChoice("Movie-goer Panel > Book ticket > Select movie", menu);
 			else
 				choice = GeneralView.printMenuAndReturnChoice("Movie-goer Panel > Check seat availability > Select movie", menu);
@@ -80,7 +80,7 @@ public class ShowtimeManager {
 		
 		String[] weekMenu = {"Current week", "Next week", "Next 2 week", "Back to previous menu"};
 		do {
-			if (panel.equals("booking"))
+			if (panel == "booking")
 				choice = GeneralView.printMenuAndReturnChoice("Movie-goer Panel > Book ticket > Select week", weekMenu);
 			else
 				choice = GeneralView.printMenuAndReturnChoice("Movie-goer Panel > Check seat availability > Select week", weekMenu);
@@ -687,9 +687,9 @@ public class ShowtimeManager {
 
 		do {
 			System.out.print("\n");
-			showtimeList = listShowtimeViewController("seat");	
+			showtimeList = listShowtimeViewController(panel);	
 			String[] menu = {"Enter showtime ID", "Back to cineplex and movie selection", "Back to main menu"};
-			if (panel.equals("booking"))
+			if (panel == "booking")
 				choice = GeneralView.printMenuAndReturnChoice("Movie-goer Panel > Book Ticket", menu);
 			else
 				choice = GeneralView.printMenuAndReturnChoice("Movie-goer Panel > Check seat availability", menu);
@@ -714,7 +714,7 @@ public class ShowtimeManager {
 			idList[i] = "Showtime: " + formatter.format(calendar.getTime());
 		}
 		idList[i] = "Back to main menu";
-		if (panel.equals("booking"))
+		if (panel == "booking")
 			choice = GeneralView.printMenuAndReturnChoice("Movie-goer Panel > Book Ticket > Enter Showtime ID", idList);
 		else
 			choice = GeneralView.printMenuAndReturnChoice("Movie-goer Panel > Check seat availability > Enter Showtime ID", idList);	

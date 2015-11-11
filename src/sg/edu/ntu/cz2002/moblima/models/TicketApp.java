@@ -13,7 +13,8 @@ public class TicketApp {
 	}
 	
 	public void printView() {
-		showtimeMgr.selectShowtime("booking");
+		String panel = "booking";
+		showtimeMgr.selectShowtime(panel);
 		ticketMgr.selectSeat(showtimeMgr.getShowtime());
 		ticketMgr.checkout(showtimeMgr.getShowtime());
 	}

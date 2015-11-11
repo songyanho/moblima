@@ -144,7 +144,7 @@ public class TicketManager {
 					}
 				} while (!infoExit);
 				t.setName(name.toUpperCase()); t.setEmail(email); t.setMobileNumber(mobileNumber);
-				t.setTID(showtime);
+				t.setTID(showtime); t.setTotal(total);
 				TransactionDao.add(t);
 				for (int i = 0; i < seatIds.size(); i++) {
 					Ticket tt = ticketList.get(i);
@@ -234,13 +234,12 @@ public class TicketManager {
 			Cinema cinema = ShowtimeDao.findById(t.getShowtime()).getCinema();
 			Showtime s = ShowtimeDao.findById(t.getShowtime());
 			Movie m = MovieDao.findById(s.getMovieId());
-			System.out.println("Cineplex: " + cineplex.getCineplexName());
-			System.out.println("Cinema: " + cinema.getName() + ", Class: " + cinema.getCinemaClassString());
-			System.out.println("Seat ID: " + t.getSeat().getSeatName() +" <"+Seat.getSeatTypeStringFromSeatType(t.getSeat().getSeatType())+">");
+			System.out.println("Cineplex: " + cineplex.getCineplexName() + ", " + cinema.getName() + " <" + cinema.getCinemaClassString() + ">");
+			System.out.println("Movie: " + m.getTitle() + " <" + Movie.getTypeStringFromMovieType(m.getType()) + ">");
 			System.out.println("Age group: " + t.getAgeGroupString());
-			System.out.println("Ticket price: " + Math.round(t.getPrice()));
 			System.out.println("Day type: " + Showtime.getDayStringFromDay(s.getDayType()));
-			System.out.println("Movie type: " + Movie.getTypeStringFromMovieType(m.getType()));
+			System.out.println("Seat ID: " + t.getSeat().getSeatName() +" <"+Seat.getSeatTypeStringFromSeatType(t.getSeat().getSeatType())+">");
+			System.out.println("Ticket price: " + Math.round(t.getPrice()));
 			System.out.print("\n");
 		}
 }

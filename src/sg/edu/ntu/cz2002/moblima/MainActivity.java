@@ -50,7 +50,6 @@ public class MainActivity {
 			HashMap<Integer, Movie> movies = MovieDao.findActiveMovie();
 			TicketManager ticketMgr = new TicketManager();
 			ShowtimeManager showtimeMgr = new ShowtimeManager();
-			TicketApp ticketApp = new TicketApp(ticketMgr, showtimeMgr);
 			exit = false;
 			choice = GeneralView.printMenuAndReturnChoice("Movie-goer Panel", menus);
 			switch (choice) {
@@ -69,7 +68,11 @@ public class MainActivity {
 					System.out.print("Total of empty seats is " + showtimeMgr.getShowtime().getNumEmptySeat());
 				break;
 			case 4:
-				ticketApp.printView();
+				showtimeMgr.selectShowtime("booking");
+				if (showtimeMgr.getShowtime() != null) {
+					ticketMgr.selectSeat(showtimeMgr.getShowtime());
+					ticketMgr.checkout(showtimeMgr.getShowtime());
+				}
 				break;
 			case 5:
 				ticketMgr.viewBookingHistory();

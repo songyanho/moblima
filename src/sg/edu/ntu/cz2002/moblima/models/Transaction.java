@@ -80,12 +80,24 @@ public class Transaction {
 		System.out.println("Customer name: " + this.name);
 		System.out.println("Customer email: " + this.email);
 		System.out.println("Customer mobile number: " + this.mobileNumber);
+		System.out.println("\n");
+		int i = 1;
 		for(Ticket t: this.getTickets().values()){
+			System.out.println("<< Ticket " + i + " >>");
 			ticketMgr.printTicket(t);
+			i++;
 		}
 		System.out.print("\n");
 	}
 	
+	public Double getTotal() {
+		return total;
+	}
+
+	public void setTotal(Double total) {
+		this.total = total;
+	}
+
 	@SuppressWarnings("unchecked")
 	public JSONObject toJSONObject() {
 		JSONObject o = new JSONObject();
