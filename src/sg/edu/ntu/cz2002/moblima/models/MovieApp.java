@@ -24,7 +24,7 @@ public class MovieApp {
 			choice = GeneralView.printMenuAndReturnChoice("Admin Panel > Movie Listing Management", menu);
 			switch (choice) {
 			case 1:
-				HashMap<Integer, Movie> movies = MovieDao.findActiveMovie();
+				HashMap<Integer, Movie> movies = MovieDao.getAllInHashMap();
 				if(movies.size() <= 0)
 					System.out.println("\nNo movies available");
 				else

@@ -583,7 +583,7 @@ public class ShowtimeManager {
 				ns.setMovieId(selectedMovie.getId());
 				ns.setCineplexId(selectedCineplex.getId());
 				ns.setDate((Calendar) availableTimeSlot.get(choice-1).clone());
-				Day dayType = cineplexMgr.checkDayType(ns);
+				Day dayType = TicketManager.checkDayType(ns);
 				int numEmptySeat = CinemaDao.findById(ns.getCinemaId()).getSeatNum();
 				ns.setDayType(dayType);
 				ns.setNumEmptySeat(numEmptySeat);

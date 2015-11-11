@@ -1,5 +1,8 @@
 package sg.edu.ntu.cz2002.moblima.models;
 
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.Set;
 
@@ -128,41 +131,12 @@ public class Ticket implements StandardData{
 		this.seatId = seatId;
 	}
 	
-	public double calculatePrice() {
-		double classCharge, dayCharge, typeCharge, ageCharge, basePrice, seatPrice;
-		Showtime st = ShowtimeDao.findById(showtimeId);
-		Settings settings = SettingsDao.getSettings();
-		MovieType mt = st.getMovie().getType();
-		CinemaClass cc = st.getCinema().getCinemaClass();
-		Day day = st.getDayType();
-		AgeGroup ag = this.ageGroup;
-		SeatType seatType = this.getSeat().getSeatType();
-		classCharge = settings.getCinemaClassCharges().get(cc);
-		dayCharge = settings.getDayCharges().get(day);
-		typeCharge = settings.getMovieTypeCharges().get(mt);
-		ageCharge = settings.getAgeGroupCharges().get(ag);
-		basePrice = settings.getBasePrice();
-		seatPrice = settings.getSeatTypeCharges().get(seatType);
-		return (basePrice + classCharge + dayCharge + typeCharge + ageCharge) * seatPrice;
-	} 
-	
 	public int getTransactionId() {
 		return transactionId;
 	}
 
 	public void setTransactionId(int transactionId) {
 		this.transactionId = transactionId;
-	}
-
-	public void printTicket() {
-		Cineplex cineplex = ShowtimeDao.findById(this.showtimeId).getCineplex();
-		Cinema cinema = ShowtimeDao.findById(this.showtimeId).getCinema();
-		System.out.println("Cineplex: " + cineplex.getCineplexName());
-		System.out.println("Cinema: " + cinema.getName() + ", Class: " + cinema.getCinemaClassString());
-		System.out.println("Seat ID: " + this.getSeat().getSeatName() +" <"+Seat.getSeatTypeStringFromSeatType(this.getSeat().getSeatType())+">");
-		System.out.println("Age group: " + this.getAgeGroupString());
-		System.out.println("Ticket price: " + Math.round(this.price));
-		System.out.print("\n");
 	}
 	
 	@SuppressWarnings("unchecked")

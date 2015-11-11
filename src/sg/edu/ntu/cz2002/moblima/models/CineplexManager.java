@@ -339,6 +339,7 @@ public class CineplexManager {
 						month = sc.nextInt();
 						sc.nextLine();
 					}while(month<1 || month>12);
+//					month--;
 					c = new GregorianCalendar(year, month-1, 1);
 					c.setTimeZone(TimeZone.getTimeZone("Asia/Singapore"));
 					do{
@@ -346,7 +347,10 @@ public class CineplexManager {
 						day = sc.nextInt();
 						sc.nextLine();
 					}while(day<1 || day>c.getActualMaximum(Calendar.DAY_OF_MONTH));
+					System.out.println("debug month before= " + month);
 					date = day+"/"+month+"/"+year;
+					System.out.println("debug month after= " + month);
+					System.out.println("debug date = " + date);
 					System.out.println("Please confirm the record:\n"+date+"\nTo insert, type Y\nTo redo, type N\nTo exit, type E");
 					System.out.print("Your choice: ");
 					st = sc.nextLine();
@@ -458,29 +462,4 @@ public class CineplexManager {
 	       } 
 	       return sortedHashMap;
 	  }
-	
-	  public Day checkDayType(Showtime s) {
-		  int check;
-		  SimpleDateFormat formatter = new SimpleDateFormat("dd/M/yyyy");
-		  Calendar cal = s.getDate();
-		  int year = Calendar.getInstance().get(Calendar.YEAR);
-		  for(String h: SettingsDao.getHolidays()){
-			  String[] holidayParts = h.split("\\/");
-			  if(Integer.parseInt(holidayParts[2]) == year) {
-				  int month = Integer.parseInt(holidayParts[1]) - 1;
-				  int date = Integer.parseInt(holidayParts[0]);
-				  Calendar other = new GregorianCalendar(year, month, date);
-				  String s1 = formatter.format(cal.getTime());
-				  String s2 = formatter.format(other.getTime());
-				  if (s1.compareTo(s2) == 0)
-					  return Day.PUBLICHOLIDAY;
-			  }
-		  }
-		  check = cal.get(Calendar.DAY_OF_WEEK);
-		  if (check == 7 || check == 1)
-			  return Day.WEEKEND;
-		  else
-			  return Day.WEEKDAY;
-	  }
-
 }

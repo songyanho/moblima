@@ -15,6 +15,7 @@ public class Transaction {
 	protected String name;
 	protected String email;
 	protected String mobileNumber;
+	protected Double total;
 //	protected Ticket ticket;
 //	protected int ticketId;
 	
@@ -23,12 +24,13 @@ public class Transaction {
 		//this.ticketId = TicketDao.getLastId() + 1;
 	}
 	
-	public Transaction(int id, String TID, String name, String email, String mobileNumber) {
+	public Transaction(int id, String TID, String name, String email, String mobileNumber, Double total) {
 		this.id = id;
 		this.TID = TID;
 		this.name = name;
 		this.email = email;
 		this.mobileNumber = mobileNumber;
+		this.total = total;
 //		this.ticketId = ticketId;
 	}
 	
@@ -60,12 +62,10 @@ public class Transaction {
 	public void setMobileNumber(String mobileNumber) {
 		this.mobileNumber = mobileNumber;
 	}
-//	public Ticket getTicket() {
-//		return ticket;
-//	}
-//	public void setTicket(Ticket ticket) {
-//		this.ticket = ticket;
-//	}
+	
+	public HashMap<Integer, Ticket> getTickets() {
+		return TicketDao.findTicketsByTransactionId(this.id);
+	}
 	
 	public void setTID(Showtime showtime) {
 		SimpleDateFormat formatter = new SimpleDateFormat("yyyyMMddHHmm");
@@ -73,25 +73,16 @@ public class Transaction {
 		int code = showtime.getCinemaId();
 		this.TID = String.format("%03d", code) + formatter.format(date);
 	}
-	
-//	public int getTicketId() {
-//		return ticketId;
-//	}
-//
-//	public void setTicketId(int ticketId) {
-//		this.ticketId = ticketId;
-//	}
 
 	public void printTransaction() {
+		TicketManager ticketMgr = new TicketManager();
 		System.out.println("\nTransaction ID: " + this.TID);
-//		int showtimeId = TicketDao.findById(this.ticketId).getShowtime();
-//		String cinema = ShowtimeDao.findById(showtimeId).getCinema().getName();
-//		String cineplex = ShowtimeDao.findById(showtimeId).getCineplex().getCineplexName();
-//		System.out.println("For cinema << " + cinema + " >> in " + cineplex);
 		System.out.println("Customer name: " + this.name);
 		System.out.println("Customer email: " + this.email);
 		System.out.println("Customer mobile number: " + this.mobileNumber);
-//		System.out.println("Transaction amount: " + TicketDao.findById(this.ticketId).calculatePrice());
+		for(Ticket t: this.getTickets().values()){
+			ticketMgr.printTicket(t);
+		}
 		System.out.print("\n");
 	}
 	
@@ -103,7 +94,7 @@ public class Transaction {
 		o.put("name", this.name);
 		o.put("email", this.email);
 		o.put("mobileNumber", this.mobileNumber);
-//		o.put("ticketId", this.ticketId);
+		o.put("total", this.total);
 		return o;
 	}
 	
@@ -113,8 +104,8 @@ public class Transaction {
 				o.get("TID").toString(),
 				o.get("name").toString(),
 				o.get("email").toString(),
-				o.get("mobileNumber").toString());//,
-//				Integer.parseInt(o.get("ticketId").toString()));
+				o.get("mobileNumber").toString(),
+				Double.parseDouble(o.get("total").toString()));
 	}
 	
 	public static HashMap<String, JSONObject> toJSONObjects(HashMap<Integer, Transaction> o){

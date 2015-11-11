@@ -159,6 +159,7 @@ public class Showtime implements StandardData {
 		this.price = price;
 	}
 	
+	
 	public Day getDayType() {
 		return dayType;
 	}

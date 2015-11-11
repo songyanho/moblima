@@ -28,6 +28,25 @@ public class TicketDao {
 		return null;
 	}
 	
+	public static HashMap<Integer, Ticket> findTicketsByTransactionId(int txid){
+		if(records == null) initialize();
+		HashMap<Integer, Ticket> ts = new HashMap<Integer, Ticket>();
+		for(Ticket t: records.values()){
+			if(t.getTransactionId() == txid)
+				ts.put(t.getId(), t);
+		}
+		return ts;
+	}
+	
+	public static Ticket findByShowtimeId(int showtimeId) {
+		if(records == null) initialize();
+		for (Ticket t: records.values()) {
+			if (t.getShowtime() == showtimeId)
+				return records.get(t);
+		}
+		return null;
+	}
+	
 	public static int getLastId(){
 		if(records == null) initialize();
 		Set<Integer> ids = records.keySet();

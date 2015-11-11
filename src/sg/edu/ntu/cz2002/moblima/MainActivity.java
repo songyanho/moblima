@@ -47,7 +47,7 @@ public class MainActivity {
 				"Show past reviews",
 				"Quit"};
 		do {
-			HashMap<Integer, Movie> movies = MovieDao.getAllInHashMap();
+			HashMap<Integer, Movie> movies = MovieDao.findActiveMovie();
 			TicketManager ticketMgr = new TicketManager();
 			ShowtimeManager showtimeMgr = new ShowtimeManager();
 			TicketApp ticketApp = new TicketApp(ticketMgr, showtimeMgr);

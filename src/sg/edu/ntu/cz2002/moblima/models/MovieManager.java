@@ -32,7 +32,6 @@ public class MovieManager {
 		System.out.println("\n\tis "+ m.getStatusString());
 		System.out.println("\tType: "+Movie.getTypeStringFromMovieType(m.getType()));
 		System.out.println("\tSynopsis: "+m.getSynopsis().replaceAll("(.{1,57})\\s+", "$1\n\t\t  "));
-//		System.out.println("\tSynopsis: "+m.getSynopsis());
 		double rating = 0;
 		DecimalFormat df = new DecimalFormat("#.#");
 		rating = cineplexMgr.calculateOverallRating(m.getId());
