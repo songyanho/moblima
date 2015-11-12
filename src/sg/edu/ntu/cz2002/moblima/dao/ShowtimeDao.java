@@ -13,6 +13,7 @@ import org.json.simple.JSONObject;
 import sg.edu.ntu.cz2002.moblima.CalendarView;
 import sg.edu.ntu.cz2002.moblima.database.Database;
 import sg.edu.ntu.cz2002.moblima.models.*;
+import sg.edu.ntu.cz2002.moblima.models.Movie.MovieStatus;
 
 public class ShowtimeDao {
 	protected static final String DATABASE_NAME = "showtime";
@@ -53,7 +54,7 @@ public class ShowtimeDao {
 		HashMap<Movie, ArrayList<Showtime>> movieWithShowtime = new HashMap<Movie, ArrayList<Showtime>>();
 		HashMap<Movie, HashMap<Long, Showtime>> m = new HashMap<Movie, HashMap<Long, Showtime>>();
 		for(Showtime s: records.values()){
-			if(CalendarView.sameDay(c, s.getDate()) && cineplex.getId() == s.getCineplexId()){
+			if(CalendarView.sameDay(c, s.getDate()) && cineplex.getId() == s.getCineplexId() && s.getMovie().getStatus()!=MovieStatus.ENDOFSHOWING){
 				if(!m.containsKey(s.getMovie())){
 					movieWithShowtime.put(s.getMovie(), new ArrayList<Showtime>());
 					m.put(s.getMovie(), new HashMap<Long, Showtime>());
@@ -75,7 +76,7 @@ public class ShowtimeDao {
 		HashMap<Cineplex, ArrayList<Showtime>> movieWithShowtime = new HashMap<Cineplex, ArrayList<Showtime>>();
 		HashMap<Cineplex, HashMap<Long, Showtime>> m = new HashMap<Cineplex, HashMap<Long, Showtime>>();
 		for(Showtime s: records.values()){
-			if(CalendarView.sameDay(c, s.getDate()) && movie.getId() == s.getMovieId()){
+			if(CalendarView.sameDay(c, s.getDate()) && movie.getId() == s.getMovieId() && s.getMovie().getStatus()!=MovieStatus.ENDOFSHOWING){
 				if(!m.containsKey(s.getCineplex())){
 					movieWithShowtime.put(s.getCineplex(), new ArrayList<Showtime>());
 					m.put(s.getCineplex(), new HashMap<Long, Showtime>());
@@ -96,7 +97,7 @@ public class ShowtimeDao {
 		if(records == null) initialize();
 		ArrayList<Showtime> t = new ArrayList<Showtime>();
 		for(Showtime s: records.values()){
-			if(s.getCinemaId() == cnm.getId() && CalendarView.sameDay(c, s.getDate())){
+			if(s.getCinemaId() == cnm.getId() && CalendarView.sameDay(c, s.getDate()) && s.getMovie().getStatus()!=MovieStatus.ENDOFSHOWING){
 				t.add(s);
 			}
 		}
@@ -106,7 +107,6 @@ public class ShowtimeDao {
 	public static boolean deleteShowtimeWithId(int id){
 		if(records == null) initialize();
 		if(!records.containsKey(id)) return false;
-		//TODO remove related Ticket sold
 		records.remove(id);
 		return save();
 	}

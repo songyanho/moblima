@@ -175,7 +175,7 @@ public class CalendarView {
 					System.out.flush();
 					System.err.print(p+"\t");
 					try {
-						Thread.sleep(1);
+						Thread.sleep(10);
 					} catch (InterruptedException e) {
 						e.printStackTrace();
 					}
