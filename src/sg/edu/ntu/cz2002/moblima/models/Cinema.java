@@ -110,8 +110,9 @@ public class Cinema {
 	 * Print all the available choices in CinemaClass
 	 */
 	public static void printCinemaClassChoice() {
+		System.out.print("\n");
 		for (CinemaClass cc: CinemaClass.values())
-			System.out.print("\t" + (cc.ordinal()+1) + ". " + cc.name());
+			System.out.println("\t" + (cc.ordinal()+1) + ". " + cc.name());
 	}
 
 	public String getName() {

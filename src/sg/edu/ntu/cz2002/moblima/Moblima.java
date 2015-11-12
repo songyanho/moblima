@@ -121,7 +121,7 @@ public class Moblima {
 		}
 		System.out.println("Welcome, "+data.getAdmin().getUsername());
 		do{
-			String[] menus = {"Movie Listing Management", "Showtime Management", "System configuration", "List top 5 ranking", "Logout"};
+			String[] menus = {"Movie Listing Management", "Showtime Management", "Cineplex Management", "System configuration", "List top 5 ranking", "Logout"};
 			choice = GeneralView.printMenuAndReturnChoice("Admin Panel", menus);
 			switch(choice){
 			case 1:
@@ -131,9 +131,12 @@ public class Moblima {
 				showtimeApp.printView();
 				break;
 			case 3:
-				cineplexApp.printView();
+				cineplexMgr.runAdminCineplexManagement();
 				break;
 			case 4:
+				cineplexApp.printView();
+				break;
+			case 5:
 				cineplexApp.listRanking();
 				break;
 			default: 

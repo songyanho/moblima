@@ -103,7 +103,7 @@ public class TicketManager {
 			}
 		} while (!seatId.equalsIgnoreCase("end"));
 		total = 0;
-		for (int i = 0; i < seatIds.size(); i++) {
+		for (int i = 0; i < ticketList.size(); i++) {
 			System.out.println("\n<< Ticket " + (i+1) + " >>");
 			printTicket(ticketList.get(i));
 			total += ticketList.get(i).getPrice();

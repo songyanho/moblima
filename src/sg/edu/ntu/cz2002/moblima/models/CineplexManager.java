@@ -506,11 +506,120 @@ public class CineplexManager {
 	public void listCineplexView(Cineplex c, boolean showId){
 		if (showId)
 			System.out.println("Cineplex ID: " + c.getId());
-		System.out.println("Cineplex name: " + c.getCineplexName());
+		System.out.println("\nCineplex name: " + c.getCineplexName());
 		System.out.println("Cinema number: " + c.getCinemaNum());
-		System.out.print("\n");
 	}
 	
-
+	public void runAdminCineplexManagement() {
+		int it;
+		String[] menus = {"List cineplex details",
+				"Edit cinema details",
+				"Back to main menu"
+		}; 
+		it = GeneralView.printMenuAndReturnChoice("Admin panel > Cineplex Management", menus);
+		switch (it) {
+		case 1:
+			listCineplexesView(CineplexDao.getAllInHashMap(), false);
+			break;
+		case 2:
+			int choice;
+			int index = 0;
+			boolean repeat;
+			ArrayList<Cineplex> cineplexes = new ArrayList<Cineplex>();
+			String[] menu =new String[CineplexDao.getAllInHashMap().size()+1];
+			for(Cineplex c: CineplexDao.getAllInHashMap().values()){
+				menu[index++] = c.getCineplexName();
+				cineplexes.add(c);
+			}
+			menu[index] = "Back to previous menu";
+			do {
+				choice = GeneralView.printMenuAndReturnChoice("Admin Panel > Cineplex Management > Select cineplex", menu);
+				if(choice <= 0 || choice >= menu.length) { 
+					if (choice == menu.length)
+						return;
+					else
+						repeat = true;
+				}
+				else
+					repeat = false;
+			} while (repeat);
+			Cineplex selectedCineplex = cineplexes.get(choice-1);
+			System.out.println("\nYou have selected <<" + selectedCineplex.getCineplexName()+">>");
+			editCinema(selectedCineplex);
+			break;
+		default:
+			break;
+		}
+	}
 	
+	public void editCinema(Cineplex c) {
+		int it = 0;
+		int choice;
+		boolean repeat;
+		ArrayList<Cinema> cinemas = new ArrayList<Cinema>();
+		String[] menu =new String[c.getCinemas().size()+1];
+		for (Cinema cinema: c.getCinemas().values()) {
+			if (cinema.getName() != null) {
+				menu[it++] = cinema.getName() + ", Class: " + Cinema.getCinemaClassStringFromCinemaClass(cinema.getCinemaClass());
+				cinemas.add(cinema);
+			}
+		}
+		menu[it] = "Back to previous menu";
+		do {
+			choice = GeneralView.printMenuAndReturnChoice("Admin Panel > Cineplex Management > Select cinema", menu);					
+			if(choice <= 0 || choice >= menu.length) { 
+				if (choice == menu.length)
+					return;
+				else
+					repeat = true;
+			}
+			else
+				repeat = false;
+		} while (repeat);
+		Cinema selectedCinema = cinemas.get(choice-1);
+		System.out.println("\nYou have selected <<" + selectedCinema.getName()+">>");
+
+		String[] cinemaMenu = {"Edit name", "Edit class", "Back to previous menu"};
+		choice = GeneralView.printMenuAndReturnChoice("Admin Panel > Cineplex Management > Edit cinema", cinemaMenu);
+		switch (choice) {
+		case 1:
+			String name, st;
+			System.out.print("\nNew cinema name: ");
+			name = sc.nextLine();
+			System.out.println("Changing from \"" + selectedCinema.getName() + "\" to \"" + name + "\"");
+			System.out.print("Confirm (Y|N): ");
+			st = sc.nextLine();
+			if (st.equalsIgnoreCase("Y")) {
+				selectedCinema.setName(name);
+				CinemaDao.save();
+				System.out.println("Record saved.");
+			}
+			else
+				return;
+			break;
+		case 2:
+			int classEnum;
+			String st2;
+			Cinema.printCinemaClassChoice();
+			System.out.print("\nNew cinema class: ");
+			classEnum = sc.nextInt();
+			sc.nextLine();
+			System.out.println("Changing from \"" + Cinema.getCinemaClassStringFromCinemaClass(selectedCinema.getCinemaClass()) + "\" to \"" + 
+					Cinema.getCinemaClassStringFromChoice(classEnum) + "\"");
+			System.out.print("Confirm (Y|N): ");
+			st2 = sc.nextLine();
+			if (st2.equalsIgnoreCase("Y")) {
+				selectedCinema.setCinemaClassFromChoice(classEnum);
+				CinemaDao.save();
+				System.out.println("Record saved.");
+			}
+			else
+				return;
+			break;
+		default:
+			break;
+		}
+
+
+	}
 }
