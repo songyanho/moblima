@@ -39,8 +39,8 @@ public class Cinema {
 	}
 
 	/**
-	 * Assign enum of CinemaClass from user choice
-	 * @param choice
+	 * Set the respective CinameClass based on user input
+	 * @param choice Integer from 1 to 4
 	 */
 	public void setCinemaClassFromChoice(int choice) {
 		switch (choice) {
@@ -59,9 +59,9 @@ public class Cinema {
 	}
 
 	/**
-	 * Return ordinal value of enum CinemaClass from user choice
-	 * @param choice
-	 * @return
+	 * Get the CinemaClass based on user input
+	 * @param choice Integer from 1 to 4
+	 * @return Respective CinemaClass based on user input
 	 */
 	public static CinemaClass getCinemaClassEnumFromChoice(int choice) {
 		return choice == 1? CinemaClass.PREMIUM:
@@ -138,6 +138,11 @@ public class Cinema {
 		this.id = id;
 	}
 
+
+	/**
+	 * Only reset CinemaClass during initialization
+	 * @param cinemaClass CinemaClass enumeration
+	 */
 	@Deprecated
 	public void setCinemaClass(CinemaClass cinemaClass) {
 		this.cinemaClass = cinemaClass;
@@ -148,8 +153,8 @@ public class Cinema {
 	}
 
 	/**
-	 * Return the name of CinemaClass in this class
-	 * @return
+	 * Get Presentable String of respective CinemaClass
+	 * @return Presentable String of CinemaClass
 	 */
 	public String getCinemaClassString() {
 		return this.cinemaClass == CinemaClass.PREMIUM? "Premium":
@@ -163,8 +168,8 @@ public class Cinema {
 	}
 
 	/**
-	 * Return SeatPlane object from SeatPlaneDao
-	 * @return
+	 * Retrieve respective SeatPlane based on the seatPlaneId
+	 * @return SeatPlane of this cinema
 	 */
 	public SeatPlane getSeatPlane(){
 		return SeatPlaneDao.findById(this.seatPlaneId);

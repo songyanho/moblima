@@ -16,30 +16,6 @@ public class CineplexApp {
 	public CineplexApp(CineplexManager cineplexMgr){
 		this.cineplexMgr = cineplexMgr;
 	}
-	
-	/**
-	 * List all the cineplexes details in database
-	 * @param cineplexes
-	 * @param showId
-	 */
-	public void listCineplexesView(HashMap<Integer, Cineplex> cineplexes, boolean showId){
-		for (Cineplex c: cineplexes.values()) {
-			listCineplexView(c, showId);
-		}
-	}
-
-	/**
-	 * List the specific cineplex detail
-	 * @param c
-	 * @param showId
-	 */
-	public void listCineplexView(Cineplex c, boolean showId){
-		if (showId)
-			System.out.println("Cineplex ID: " + c.getId());
-		System.out.println("Cineplex name: " + c.getCineplexName());
-		System.out.println("Cinema number: " + c.getCinemaNum());
-		System.out.print("\n");
-	}
 
 	/**
 	 * Main interface of admin

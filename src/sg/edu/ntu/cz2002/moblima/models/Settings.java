@@ -1,8 +1,12 @@
 package sg.edu.ntu.cz2002.moblima.models;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Set;
+import java.util.TimeZone;
 
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
@@ -15,7 +19,7 @@ import sg.edu.ntu.cz2002.moblima.models.Ticket.AgeGroup;
 
 public class Settings implements StandardData {
 	
-	protected ArrayList<String> holidays;
+	protected ArrayList<Calendar> holidays;
 	protected HashMap<AgeGroup,Double> ageGroup;
 	protected HashMap<CinemaClass, Double> cinemaClass;
 	protected HashMap<MovieType, Double> movieType;
@@ -25,7 +29,7 @@ public class Settings implements StandardData {
 
 	public Settings() {}
 	
-	public Settings(ArrayList<String> holidays, double basePrice, HashMap<AgeGroup, Double> ageGroup,
+	public Settings(ArrayList<Calendar> holidays, double basePrice, HashMap<AgeGroup, Double> ageGroup,
 			HashMap<CinemaClass, Double> cinemaClass, HashMap<MovieType, Double> movieType, HashMap<Day, Double> day,
 			HashMap<SeatType, Double> seatType) {
 		this.holidays = holidays;
@@ -37,11 +41,11 @@ public class Settings implements StandardData {
 		this.seatType = seatType;
 	}
 	
-	public ArrayList<String> getHolidays() {
+	public ArrayList<Calendar> getHolidays() {
 		return holidays;
 	}
 
-	public void setHolidays(ArrayList<String> holidays) {
+	public void setHolidays(ArrayList<Calendar> holidays) {
 		this.holidays = holidays;
 	}
 	
@@ -102,8 +106,11 @@ public class Settings implements StandardData {
 	@Override
 	public JSONObject toJSONObject() {
 		JSONObject o = new JSONObject();
+
+		SimpleDateFormat df = new SimpleDateFormat("d/M/yyyy");
 		JSONArray holidaysArray = new JSONArray();
-		holidaysArray.addAll(holidays);
+		for(Calendar holiday: holidays)
+			holidaysArray.add(df.format(holiday.getTime()));
 		JSONObject ago = new JSONObject();
 		for(AgeGroup ag: this.ageGroup.keySet())
 			ago.put(ag.ordinal(), this.ageGroup.get(ag));
@@ -132,10 +139,20 @@ public class Settings implements StandardData {
 
 	public static Settings fromJSONObject(JSONObject o) {
 		// Holiday
-		ArrayList<String> holidays = new ArrayList<String>();
+		SimpleDateFormat df = new SimpleDateFormat("d/M/yyyy");
+		ArrayList<Calendar> holidays = new ArrayList<Calendar>();
 		JSONArray h = (JSONArray) o.get("holidays");
-		for(int i=0; i<h.size(); i++)
-			holidays.add(h.get(i).toString());
+		for(int i=0; i<h.size(); i++){
+			try {
+				Calendar cal = Calendar.getInstance();
+				cal.setTime(df.parse(h.get(i).toString()));
+				cal.setTimeZone(TimeZone.getTimeZone("Asia/Singapore"));
+				holidays.add(cal);
+			} catch (ParseException e) {
+//				e.printStackTrace();
+				System.out.println("Invalid conversion: "+h.get(i).toString());
+			}
+		}
 		
 		// AgeGroup
 		JSONObject ageGroup = (JSONObject) o.get("AgeGroup");

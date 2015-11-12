@@ -3,7 +3,14 @@ package sg.edu.ntu.cz2002.moblima.view;
 import java.util.Scanner;
 
 public class GeneralView {
-	static Scanner sc = new Scanner(System.in); 
+	private static Scanner sc = new Scanner(System.in); 
+	
+	/**
+	 * Print Menu and accept input from user
+	 * @param title Title of menu
+	 * @param menus Array of menu string for selection
+	 * @return The choice entered by user
+	 */
 	public static int printMenuAndReturnChoice(String title, String[] menus){
 		int choice;
 		String st;

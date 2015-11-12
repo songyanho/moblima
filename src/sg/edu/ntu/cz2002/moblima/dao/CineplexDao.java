@@ -57,20 +57,17 @@ public class CineplexDao {
 	}
 	
 	public static boolean save(Cineplex t) {
-		// TODO Auto-generated method stub
 		if(records == null) initialize();
 		records.put(t.getId(), t);
 		return save();
 	}
 
 	public static boolean save() {
-		// TODO Auto-generated method stub
 		if(records == null) initialize();
 		return Database.save(DATABASE_NAME, Cineplex.toJSONObjects(records));
 	}
 
 	public static void initialize() {
-		// TODO Auto-generated method stub
 		JSONObject t = Database.getObject(DATABASE_NAME);
 		records = Cineplex.fromJSONObjects(t);
 	}
@@ -86,7 +83,7 @@ public class CineplexDao {
 							 "Cathay Cineplex Jem"};
 		records = new HashMap<Integer, Cineplex>();
 		for(int i=0; i<cineplex.length; i++){
-			records.put((i+1), new Cineplex((i+1), cineplex[i], 3));
+			records.put((i+1), new Cineplex((i+1), cineplex[i]));
 		}
 		save();
 	}

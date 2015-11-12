@@ -1,6 +1,7 @@
 package sg.edu.ntu.cz2002.moblima.dao;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 
 import org.json.simple.JSONObject;
 
@@ -19,7 +20,7 @@ public class SettingsDao {
 		return settings;
 	}
 	
-	public static ArrayList<String> getHolidays(){
+	public static ArrayList<Calendar> getHolidays(){
 		if(settings == null) initialize();
 		return settings.getHolidays();
 	}

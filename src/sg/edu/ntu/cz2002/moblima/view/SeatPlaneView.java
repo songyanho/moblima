@@ -6,19 +6,27 @@ import sg.edu.ntu.cz2002.moblima.models.SeatPlane;
 import sg.edu.ntu.cz2002.moblima.models.Showtime;
 
 public class SeatPlaneView {
+	
+	/**
+	 * Print Seat Plane of the selected showtime with occupied seats
+	 * @param showtime Showtime of the selected movie at selected cinema
+	 * @return HashMap of SeatAID (A1-I16) to SeatId
+	 */
 	public static HashMap<String, Integer> printSeatPlane(Showtime showtime){
-		
+
 		SeatPlane seatPlane= showtime.getCinema().getSeatPlane();
 		int[][] seatArray = showtime.getSeatPlaneViewArray();
-		for(int j=0; j<seatArray.length; j++){
-//			for(int i=0; i<seatArray[j].length; i++)
-//			System.out.print((seatArray[j][i]>0?"O":seatArray[j][i]==0?" ":"X")+" ");
-//			System.out.println("");
-		}
 		printScreen(seatPlane.getColumn());
 		return printSeatArrangement(seatPlane.getRow(), seatPlane.getColumn(), seatArray);
 	}
-	
+
+	/**
+	 * Print seat arrangement in console
+	 * @param row number of available rows
+	 * @param column number of available columns
+	 * @param seatArray 2D array with seat and non-seat
+	 * @return
+	 */
 	private static HashMap<String, Integer> printSeatArrangement(int row, int column, int[][] seatArray){
 		HashMap<String, Integer> seatToId = new HashMap<String, Integer>();
 		String character = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
@@ -102,7 +110,11 @@ public class SeatPlaneView {
 		}
 		return seatToId;
 	}
-	
+
+	/**
+	 * Prints screen with width provided
+	 * @param width Width/Total number of columns in cinema
+	 */
 	private static void printScreen(int width){
 		System.out.print("\n");	
 		System.out.print("   ");

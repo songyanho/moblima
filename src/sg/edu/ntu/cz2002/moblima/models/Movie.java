@@ -80,8 +80,8 @@ public class Movie implements StandardData{
 	}
 	
 	/**
-	 * Get name of MovieStatus from the Enum MovieStatus class itself
-	 * @return
+	 * Get Presentable String of Screening Status of this movie
+	 * @return MovieStatus of this movie
 	 */
 	public String getStatusString(){
 		return this.status == MovieStatus.COMINGSOON ? 	"Coming soon" : 
@@ -91,8 +91,8 @@ public class Movie implements StandardData{
 	}
 
 	/**
-	 * Set the Enum MovieStatus from user choice
-	 * @param choice
+	 * Set the Movie Status based on user input
+	 * @param choice Integer from 1 to 4
 	 */
 	public void setStatusFromChoice(int choice){
 		switch(choice){
@@ -112,9 +112,9 @@ public class Movie implements StandardData{
 	}
 
 	/**
-	 * Get Enum MovieStatus from user choice
-	 * @param choice
-	 * @return
+	 * Get the MovieStatus enumeration based on user input
+	 * @param choice Integer from 1 to 4
+	 * @return MovieStatus based on user input
 	 */
 	public static MovieStatus getStatusEnumFromChoice(int choice){
 		return choice==1 ? 	MovieStatus.COMINGSOON : 
@@ -124,9 +124,9 @@ public class Movie implements StandardData{
 	}
 	
 	/**
-	 * Get Enum MovieStatus from its ordinal value
-	 * @param ordinal
-	 * @return
+	 * Get the MovieStatus enumeration based on enumeration ordinal
+	 * @param ordinal Integer from 0 to 3
+	 * @return MovieStatus based on its ordinal
 	 */
 	public static MovieStatus getStatusEnumFromOrdinal(int ordinal){
 		return ordinal == MovieStatus.COMINGSOON.ordinal() ? MovieStatus.COMINGSOON :
@@ -136,9 +136,9 @@ public class Movie implements StandardData{
 	}
 	
 	/**
-	 * Get the name of Enum MovieStatus from user choice
-	 * @param choice
-	 * @return
+	 * Get presentable string of MovieStatus based on user input
+	 * @param choice Integer from 1 to 4
+	 * @return Presentable string of MovieStatus based on user input
 	 */
 	public static String getStatusStringFromChoice(int choice){
 		return choice==1 ? 	"Coming soon" : 
@@ -161,8 +161,8 @@ public class Movie implements StandardData{
 	}
 	
 	/**
-	 * Set Enum MovieType from user choice
-	 * @param choice
+	 * Set the MovieType based on user input
+	 * @param choice Integer from 1 to 3
 	 */
 	public void setTypeFromChoice(int choice) {
 		switch(choice){

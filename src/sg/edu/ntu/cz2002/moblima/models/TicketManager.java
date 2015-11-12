@@ -71,6 +71,18 @@ public class TicketManager {
 					continue;
 				}
 				seatIds.add(seatId);
+				int seatIdd = Math.abs(seatToSeatIdMap.get(seatId));
+				Seat thisSeat = SeatDao.findById(seatIdd);
+				if(thisSeat.getSeatType()==SeatType.COUPLE){
+					String row = seatId.charAt(0)+"";
+					Integer column = Integer.parseInt(seatId.replaceAll("[^0-9]", ""));
+					if(seatToSeatIdMap.containsKey(row+(column-1)) && Math.abs(seatToSeatIdMap.get(row+(column-1)))==seatIdd){
+						seatIds.add(row+(column-1));
+					}
+					if(seatToSeatIdMap.containsKey(row+(column+1)) && Math.abs(seatToSeatIdMap.get(row+(column+1)))==seatIdd){
+						seatIds.add(row+(column+1));
+					}
+				}
 				Ticket tick = new Ticket(t.getId());
 				Ticket.printAgeGroupChoice();
 				System.out.print("\nAge group for ticket " + (i+1) +": ");

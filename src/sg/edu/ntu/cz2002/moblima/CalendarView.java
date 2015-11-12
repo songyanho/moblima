@@ -154,7 +154,7 @@ public class CalendarView {
 	 * @param year Year of Calendar
 	 * @param holidays List of String represent holidays in format "d/M/yyyy"
 	 */
-	public static void printCalendar(int year, List<String> holidays){
+	public static void printCalendar(int year, ArrayList<Calendar> holidays){
 		for (int m=0; m<12; m++){
 			String monthName = new DateFormatSymbols().getMonths()[m];
 			Calendar c = new GregorianCalendar(year, m, 1);
@@ -169,7 +169,9 @@ public class CalendarView {
 			{	
 				if (weekDay%7==0 && weekDay!=0)
 					System.out.println();
-				if(holidays.contains(p+"/"+(m+1)+"/"+year)){
+				Calendar today = new GregorianCalendar(year,m,p);
+				today.setTimeZone(TimeZone.getTimeZone("Asia/Singapore"));
+				if(holidays.contains(today)){
 					System.out.flush();
 					System.err.print(p+"\t");
 					try {

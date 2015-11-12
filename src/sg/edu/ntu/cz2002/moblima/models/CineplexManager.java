@@ -1,6 +1,5 @@
 package sg.edu.ntu.cz2002.moblima.models;
 
-import java.text.DateFormatSymbols;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -47,88 +46,88 @@ public class CineplexManager {
 				"Set age group charge", 
 				"Set day charge",
 				"Set seat charge",
-				"Back to previous menu"};
-			do {
-				Settings settings = SettingsDao.getSettings();
-				choice = GeneralView.printMenuAndReturnChoice("Admin Panel > System Configuration > Ticket Charges Management", menus);
-				int select;
-				boolean exit2;
-				switch (choice) {
-				case 1:
-					printCharge();
-					exit = false;
-					break;
-				case 2:
-					Double base = settings.getBasePrice();
-					System.out.println("\nOriginal base price: " + base);
-					System.out.print("Enter new base price: ");
-					base = sc.nextDouble();
-					sc.nextLine();
-					settings.setBasePrice(base);
-					System.out.println("\nNew base price: " + base);
-					System.out.print("Confirm (Y|N): ");
-					st = sc.nextLine();
-					if (st.equalsIgnoreCase("Y")) {
-						SettingsDao.save();
+		"Back to main menu"};
+		do {
+			Settings settings = SettingsDao.getSettings();
+			choice = GeneralView.printMenuAndReturnChoice("Admin Panel > System Configuration > Ticket Charges Management", menus);
+			int select;
+			boolean exit2;
+			switch (choice) {
+			case 1:
+				printCharge();
+				exit = false;
+				break;
+			case 2:
+				Double base = settings.getBasePrice();
+				System.out.println("\nOriginal base price: " + base);
+				System.out.print("Enter new base price: ");
+				base = sc.nextDouble();
+				sc.nextLine();
+				settings.setBasePrice(base);
+				System.out.println("\nNew base price: " + base);
+				System.out.print("Confirm (Y|N): ");
+				st = sc.nextLine();
+				if (st.equalsIgnoreCase("Y")) {
+					SettingsDao.save();
+				}
+				exit = false;
+				break;
+			case 3:
+				do {
+					String[] classMenus = {"Edit for class PREMIUM", "Edit for class PLATINUM", "Edit for class GOLD",
+							"Edit for class NORMAL", "Back to previous menu"};
+					select = GeneralView.printMenuAndReturnChoice("Admin Panel > System Configuration > Ticket Charges Management > Cinema Class", classMenus);
+					if (select == classMenus.length) {
+						exit2 = true;
 					}
-					exit = false;
-					break;
-				case 3:
-					do {
-						String[] classMenus = {"Edit for class PREMIUM", "Edit for class PLATINUM", "Edit for class GOLD",
-								"Edit for class NORMAL", "Back to previous menu"};
-						select = GeneralView.printMenuAndReturnChoice("Admin Panel > System Configuration > Ticket Charges Management > Cinema Class", classMenus);
-						if (select == classMenus.length) {
-							exit2 = true;
-						}
-						else {
-							setCharge("CinemaClass", select);
-							exit2 = false;
-						}
-					} while (!exit2);
-					exit = false;
-					break;
-				case 4:
-					do {
-						String[] movieTypeMenus = {"Edit for BLOCKBUSTER", "Edit for THREED", "Edit for NORMAL", "Back to previous menu"};
-						select = GeneralView.printMenuAndReturnChoice("Admin Panel > System Configuration > Ticket Charges Management > Movie Type", movieTypeMenus);
-						if (select == movieTypeMenus.length)
-							exit2 = true;
-						else {
-							setCharge("MovieType", select);
-							exit2 = false;
-						}
-					} while (!exit2);
-					exit = false;
-					break;
-				case 5:
-					do {
-						String[] ageGroupMenus = {"Edit for CHILD", "Edit for ADULT", "Edit for SENIOR", "Back to previous menu"};
-						select = GeneralView.printMenuAndReturnChoice("Admin Panel > System Configuration > Ticket Charges Management > Age Group", ageGroupMenus);
-						if (select == ageGroupMenus.length)
-							exit2 = true;
-						else {
-							setCharge("AgeGroup", select);
-							exit2 = false;
-						}
-					} while (!exit2);
-					exit = false;
-					break;
-				case 6:
-					do {
-						String[] dayMenus = {"Edit for WEEKDAY", "Edit for WEEKEND", "Edit for PUBLICHOLIDAY", "Back to previous menu"};
-						select = GeneralView.printMenuAndReturnChoice("Admin Panel > System Configuration > Ticket Charges Management > Day Type", dayMenus);
-						if (select == dayMenus.length)
-							exit2 = true;
-						else {
-							setCharge("Day", select);
-							exit2 = false;
-						}
-					} while (!exit2);
-					exit = false;
-					break;
-				case 7:
-					do {
+					else {
+						setCharge(CinemaClass.class, select);
+						exit2 = false;
+					}
+				} while (!exit2);
+				exit = false;
+				break;
+			case 4:
+				do {
+					String[] movieTypeMenus = {"Edit for BLOCKBUSTER", "Edit for THREED", "Edit for NORMAL", "Back to previous menu"};
+					select = GeneralView.printMenuAndReturnChoice("Admin Panel > System Configuration > Ticket Charges Management > Movie Type", movieTypeMenus);
+					if (select == movieTypeMenus.length)
+						exit2 = true;
+					else {
+						setCharge(MovieType.class, select);
+						exit2 = false;
+					}
+				} while (!exit2);
+				exit = false;
+				break;
+			case 5:
+				do {
+					String[] ageGroupMenus = {"Edit for CHILD", "Edit for ADULT", "Edit for SENIOR", "Back to previous menu"};
+					select = GeneralView.printMenuAndReturnChoice("Admin Panel > System Configuration > Ticket Charges Management > Age Group", ageGroupMenus);
+					if (select == ageGroupMenus.length)
+						exit2 = true;
+					else {
+						setCharge(AgeGroup.class, select);
+						exit2 = false;
+					}
+				} while (!exit2);
+				exit = false;
+				break;
+			case 6:
+				do {
+					String[] dayMenus = {"Edit for WEEKDAY", "Edit for WEEKEND", "Edit for PUBLICHOLIDAY", "Back to previous menu"};
+					select = GeneralView.printMenuAndReturnChoice("Admin Panel > System Configuration > Ticket Charges Management > Day Type", dayMenus);
+					if (select == dayMenus.length)
+						exit2 = true;
+					else {
+						setCharge(Day.class, select);
+						exit2 = false;
+					}
+				} while (!exit2);
+				exit = false;
+				break;
+			case 7:
+				do {
 					String[] seatMenus = {"Edit for NORMAL", "Edit for COUPLE", "Edit for ULTIMA", "Edit for RESERVED", "Back to previous menu"};
 					select = GeneralView.printMenuAndReturnChoice("Admin Panel > System Configuration > Ticket Charges Management > Seat Type", seatMenus);
 					if (select == seatMenus.length)
@@ -145,7 +144,7 @@ public class CineplexManager {
 			}
 		} while (!exit);
 	}
-	
+
 	/**
 	 * Prompt user to set new charges to respective type
 	 * @param classType Class of respective type
@@ -283,6 +282,7 @@ public class CineplexManager {
 		String st, date;
 		boolean exit = false, jump = false;
 		Calendar c;
+		SimpleDateFormat df = new SimpleDateFormat("dd MMM yyyy");
 		do{
 			jump = false;
 			choice = GeneralView.printMenuAndReturnChoice("Admin Panel > System Configuration > Public Holiday Management", menus);
@@ -291,43 +291,38 @@ public class CineplexManager {
 				CalendarView.printCalendar(Calendar.getInstance().get(Calendar.YEAR), SettingsDao.getHolidays());
 				break;
 			case 2:
-				System.out.print("Enter the year(eg. "+Calendar.getInstance().get(Calendar.YEAR)+"): ");
+				System.out.print("\nEnter the year(eg. "+Calendar.getInstance().get(Calendar.YEAR)+"): ");
 				year = sc.nextInt();
 				sc.nextLine();
 				CalendarView.printCalendar(year, SettingsDao.getHolidays());
 				break;
 			case 3: 
 				t = 0;
-				ArrayList<String> sorted = new ArrayList<String>();
 				year = Calendar.getInstance().get(Calendar.YEAR);
-				System.out.println("List of Holidays in Current Year("+year+")");
-				for(String h: SettingsDao.getHolidays()){
-					String[] holidayParts = h.split("\\/");
-					if(Integer.parseInt(holidayParts[2]) == year) {
-						sorted.add(holidayParts[0]+" "+new DateFormatSymbols().getMonths()[Integer.parseInt(holidayParts[1])-1]+" "+year);
-						System.out.println((++t)+". "+holidayParts[0]+" "+new DateFormatSymbols().getMonths()[Integer.parseInt(holidayParts[1])-1]+" "+year);
-					}
+				System.out.println("\nList of Holidays in Current Year("+year+")");
+				for(Calendar holiday: sortedDates()){
+					if(holiday.get(Calendar.YEAR) == year)
+						System.out.println((++t)+". "+df.format(holiday.getTime()));
 				}
 				if(t==0)
 					System.out.println("No record found");
 				break;
 			case 4:
 				t = 0;
-				System.out.print("Enter the year(eg. "+Calendar.getInstance().get(Calendar.YEAR)+"): ");
+				System.out.print("\nEnter the year(eg. "+Calendar.getInstance().get(Calendar.YEAR)+"): ");
 				year = sc.nextInt();
 				sc.nextLine();
-				System.out.println("List of Holidays in Year "+year);
-				for(String h: SettingsDao.getHolidays()){
-					String[] holidayParts = h.split("\\/");
-					if(Integer.parseInt(holidayParts[2]) == year)
-						System.out.println((++t)+". "+holidayParts[0]+" "+new DateFormatSymbols().getMonths()[Integer.parseInt(holidayParts[1])-1]+" "+year);
+				System.out.println("\nList of Holidays in Year "+year);
+				for(Calendar holiday: sortedDates()){
+					if(holiday.get(Calendar.YEAR) == year)
+						System.out.println((++t)+". "+df.format(holiday.getTime()));
 				}
 				if(t==0)
 					System.out.println("No record found");
 				break;
 			case 5:
 				do{
-					System.out.println("New Holiday Record");
+					System.out.println("\nNew Holiday Record");
 					do{
 						System.out.print("Enter year: ");
 						year = sc.nextInt();
@@ -345,16 +340,19 @@ public class CineplexManager {
 						day = sc.nextInt();
 						sc.nextLine();
 					}while(day<1 || day>c.getActualMaximum(Calendar.DAY_OF_MONTH));
-					System.out.println("debug month before= " + month);
 					date = day+"/"+month+"/"+year;
-					System.out.println("debug month after= " + month);
-					System.out.println("debug date = " + date);
-					System.out.println("Please confirm the record:\n"+date+"\nTo insert, type Y\nTo redo, type N\nTo exit, type E");
+					System.out.println("\nPlease confirm the record:\n"+date+"\nTo insert, type Y\nTo redo, type N\nTo exit, type E");
 					System.out.print("Your choice: ");
 					st = sc.nextLine();
 					if(st.equalsIgnoreCase("Y")){
-						ArrayList<String> th = SettingsDao.getHolidays();
-						th.add(date);
+						Calendar newHoliday = new GregorianCalendar(year, month-1, day);
+						newHoliday.setTimeZone(TimeZone.getTimeZone("Asia/Singapore"));
+						ArrayList<Calendar> th = SettingsDao.getHolidays();
+						if (th.contains(newHoliday)) {
+							System.out.println("This record is already saved.");
+							continue;
+						}
+						th.add(newHoliday);
 						SettingsDao.save();
 						System.out.println("One record was added");
 						jump = true;
@@ -368,19 +366,15 @@ public class CineplexManager {
 				break;
 			case 6:
 				t = 0;
-				System.out.print("Enter the year(eg. "+Calendar.getInstance().get(Calendar.YEAR)+"): ");
+				System.out.print("\nEnter the year(eg. "+Calendar.getInstance().get(Calendar.YEAR)+"): ");
 				year = sc.nextInt();
 				sc.nextLine();
 				do{
 					t = 0;
-					System.out.println("List of Holidays in Year "+year);
-					ArrayList<String> holidays = new ArrayList<String>();
-					for(String h: SettingsDao.getHolidays()){
-						String[] holidayParts = h.split("\\/");
-						if(Integer.parseInt(holidayParts[2]) == year){
-							holidays.add(h);
-							System.out.println((++t)+". "+holidayParts[0]+" "+new DateFormatSymbols().getMonths()[Integer.parseInt(holidayParts[1])-1]+" "+year);
-						}
+					System.out.println("\nList of Holidays in Year "+year);
+					for(Calendar holiday: SettingsDao.getHolidays()){
+						if(holiday.get(Calendar.YEAR) == year)
+							System.out.println((++t)+". "+df.format(holiday.getTime()));
 					}
 					if(t==0){
 						System.out.println("No record found");
@@ -393,22 +387,22 @@ public class CineplexManager {
 					sc.nextLine();
 					if(t == 0)
 						jump = true;
-					if(t > holidays.size()){
-						System.out.println("Please enter valid row number (1 to "+holidays.size()+")");
+					if(t > SettingsDao.getHolidays().size()){
+						System.out.println("Please enter valid row number (1 to "+SettingsDao.getHolidays().size()+")");
 						continue;
 					}
-					date = holidays.get(t-1);
-					System.out.println("Please confirm the record:\n"+date+"\nTo remove, type Y\nTo reselect, type N\nTo exit, type E");
+					date = df.format(SettingsDao.getHolidays().get(t-1).getTime());
+					System.out.println("\nPlease confirm the record:\n"+date+"\nTo remove, type Y\nTo reselect, type N\nTo exit, type E");
 					System.out.print("Your choice: ");
 					st = sc.nextLine();
 					if(st.equalsIgnoreCase("Y")){
-						ArrayList<String>th = SettingsDao.getHolidays();
-						boolean success = th.remove(date);
-						SettingsDao.save();
-						if(success)
-							System.out.println("One record was removed");
-						else
+						if(t<=0 || t>SettingsDao.getHolidays().size())
 							System.out.println("Zero record was removed. Record is not found");
+						else{
+							SettingsDao.getHolidays().remove(t-1);
+							SettingsDao.save();
+							System.out.println("One record was removed");
+						}
 						jump = true;
 					}else if(st.equalsIgnoreCase("N")){
 						continue;
@@ -447,12 +441,7 @@ public class CineplexManager {
 		else
 			return 0;
 	}
-	
-	/**
-	 * Sort a hash map by its value
-	 * @param map
-	 * @return
-	 */
+
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	public HashMap sortByValues(HashMap map) { 
 		List l = new LinkedList(map.entrySet());
@@ -489,4 +478,39 @@ public class CineplexManager {
 			return getDateTime().compareTo(o.getDateTime());
 		}
 	}
+	
+	public ArrayList<Calendar> sortedDates() {
+		Collections.sort(SettingsDao.getHolidays());
+		if (SettingsDao.save())
+			return SettingsDao.getHolidays();
+		else
+			return null;
+	}
+	
+	/**
+	 * List all the cineplexes details in database
+	 * @param cineplexes
+	 * @param showId
+	 */
+	public void listCineplexesView(HashMap<Integer, Cineplex> cineplexes, boolean showId){
+		for (Cineplex c: cineplexes.values()) {
+			listCineplexView(c, showId);
+		}
+	}
+
+	/**
+	 * List the specific cineplex detail
+	 * @param c
+	 * @param showId
+	 */
+	public void listCineplexView(Cineplex c, boolean showId){
+		if (showId)
+			System.out.println("Cineplex ID: " + c.getId());
+		System.out.println("Cineplex name: " + c.getCineplexName());
+		System.out.println("Cinema number: " + c.getCinemaNum());
+		System.out.print("\n");
+	}
+	
+
+	
 }

@@ -11,16 +11,19 @@ import sg.edu.ntu.cz2002.moblima.dao.CineplexDao;
 public class Cineplex {
 	protected int id;
 	protected String name;
-	protected int cinemaNum;
 	
 	public Cineplex() {
 		this.id = CineplexDao.getLastId() + 1;
 	}
 	
-	public Cineplex(int id, String name, int cinemaNum) {
+	/**
+	 * Constructor strictly for Database Initialization
+	 * @param id Unique ID of Cineplex
+	 * @param name Name of Cineplex
+	 */
+	public Cineplex(int id, String name) {
 		this.id = id;
 		this.name = name;
-		this.cinemaNum = cinemaNum;
 	}
 	
 	public String getCineplexName() {
@@ -31,12 +34,20 @@ public class Cineplex {
 		return id;
 	}
 	
+	/**
+	 * Get a HashMap of Cinemas in this Cineplex
+	 * @return HashMap of ID of cinema and the respective cinema
+	 */
 	public HashMap<Integer, Cinema> getCinemas() {
 		return CinemaDao.findByCineplex(this.id);
 	}
 	
+	/**
+	 * Count the number of cinemas in this cinplex
+	 * @return
+	 */
 	public int getCinemaNum() {
-		return cinemaNum;
+		return CinemaDao.findByCineplex(this.id).values().size();
 	}
 	
 	public void setCineplexName(String cineplex_Name) {
@@ -47,26 +58,16 @@ public class Cineplex {
 		this.id = id;
 	}
 
-	public void setCinemaNum(int num) {
-		if (num < 3) {
-			this.cinemaNum = 3;
-			System.out.println("At least three cinemas.");
-		}
-		else
-			this.cinemaNum = num;
-	}
-
 	@SuppressWarnings("unchecked")
 	public JSONObject toJSONObject() {
 		JSONObject o = new JSONObject();
 		o.put("id", this.id);
 		o.put("name", this.name);
-		o.put("cinemaNum", this.cinemaNum);
 		return o;
 	}
 	
 	public static Cineplex fromJSONObject(JSONObject o){
-		return new Cineplex(Integer.parseInt(o.get("id").toString()), o.get("name").toString(), Integer.parseInt(o.get("cinemaNum").toString()));
+		return new Cineplex(Integer.parseInt(o.get("id").toString()), o.get("name").toString());
 	}
 	
 	public static HashMap<String, JSONObject> toJSONObjects(HashMap<Integer, Cineplex> o){
