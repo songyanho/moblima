@@ -553,7 +553,7 @@ public class ShowtimeManager {
 					break;
 				Showtime ns = new Showtime();
 				ns.setCinemaId(selectedCinema.getId());
-				ns.setType(MovieType.BLOCKBUSTER);
+				ns.setType(selectedMovie.getType());
 				ns.setMovieId(selectedMovie.getId());
 				ns.setCineplexId(selectedCineplex.getId());
 				ns.setDate((Calendar) availableTimeSlot.get(choice-1).clone());
@@ -573,7 +573,7 @@ public class ShowtimeManager {
 	 * @param show
 	 * @return
 	 */
-	public int[][][] cinemaTimetableView(Cinema c, int weekOffset, Showtime excludeShowtime, boolean show){
+	private int[][][] cinemaTimetableView(Cinema c, int weekOffset, Showtime excludeShowtime, boolean show){
 		SimpleDateFormat df = new SimpleDateFormat("MMM dd,yyyy");
 		ArrayList<Calendar> calendars = CalendarView.getWeekCalendars(weekOffset);
 		Calendar calendar = Calendar.getInstance();
@@ -611,28 +611,16 @@ public class ShowtimeManager {
 				for(int h=startHour; h<=endHour; h++){
 					if(h==startHour){
 						if(startMinute == 0){
-							if(timeslot[i][h-10][0] == 1)
-								System.out.println("Overlap liao"+s.getId());
 							timeslot[i][h-10][0] = 1;
 						}
-						if(timeslot[i][h-10][1] == 1)
-							System.out.println("Overlap liao"+s.getId());
 						timeslot[i][h-10][1] = 1;
 					}else if(h==endHour){
-						if(timeslot[i][h-10][0] == 1)
-							System.out.println("Overlap liao"+s.getId());
 						timeslot[i][h-10][0] = 1;
 						if(endMinute == 30){
-							if(timeslot[i][h-10][1] == 1)
-								System.out.println("Overlap liao"+s.getId());
 							timeslot[i][h-10][1] = 1;
 						}
 					}else{
-						if(timeslot[i][h-10][0] == 1)
-							System.out.println("Overlap liao"+s.getId());
 						timeslot[i][h-10][0] = 1;
-						if(timeslot[i][h-10][1] == 1)
-							System.out.println("Overlap liao"+s.getId());
 						timeslot[i][h-10][1] = 1;
 					}
 				}
