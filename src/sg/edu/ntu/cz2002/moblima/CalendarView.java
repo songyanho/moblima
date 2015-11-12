@@ -10,6 +10,13 @@ import java.util.TimeZone;
 
 public class CalendarView {
 	
+	/**
+	 * Provides primitive array of strings with Day name
+	 * @param back True to have "Back to previous" in array
+	 * @param weekOffset indicates whether current week's days of week are required
+	 * @param all True to get all days of week
+	 * @return Primitive array of string for menu printing
+	 */
 	public static final String[] dayOfWeek(boolean back, int weekOffset, boolean all){ 
 		String[] a;
 		if(back)
@@ -22,6 +29,12 @@ public class CalendarView {
 		return a;
 	}
 	
+	/**
+	 * Provides a primitive array of timeslot strings
+	 * @param c ArrayList of Calendar
+	 * @param back True to have "Back to previous" string, for menu printing only
+	 * @return Primitive array of string for menu printing
+	 */
 	public static String[] timeslotInString(ArrayList<Calendar> c, boolean back){
 		String[] menu = new String[c.size()+(back?1:0)];
 		int i = 0;
@@ -33,6 +46,15 @@ public class CalendarView {
 		return menu;
 	}
 	
+	/**
+	 * Provides ArrayList of Calendar of available timeslot
+	 * @param back True to have "Back to previous" string, for menu printing only
+	 * @param timeslot 2D matrix to show the occupancy of timeslot
+	 * @param duration Duration of movie
+	 * @param dayOfWeek Day of week, 0-Sunday, 6-Saturday
+	 * @param weekOffset 0=Current week
+	 * @return ArrayList of Calendar with available timeslot
+	 */
 	public static ArrayList<Calendar> timeslot(boolean back, int[][] timeslot, int duration, int dayOfWeek, int weekOffset){
 		Calendar current = (Calendar) getWeekCalendars(weekOffset).get(dayOfWeek).clone();
 		ArrayList<Calendar> a = new ArrayList<Calendar>();
@@ -86,6 +108,11 @@ public class CalendarView {
 		return a;
 	}
 	
+	/**
+	 * Provide ArrayList of Calendar of every day of week for respective week
+	 * @param weekOffset 0=Current week
+	 * @return ArrayList of Calendar of every day of week for respective week
+	 */
 	public static ArrayList<Calendar> getWeekCalendars(int weekOffset){
 		Calendar calendar = Calendar.getInstance();
 		calendar.setTimeZone(TimeZone.getTimeZone("Asia/Singapore"));
@@ -108,6 +135,12 @@ public class CalendarView {
 		return calendars;
 	}
 	
+	/**
+	 * Checks whether both calendars are on the same day
+	 * @param cal1 Calendar 1
+	 * @param cal2 Calendar 2
+	 * @return True if they are on same day
+	 */
 	public static boolean sameDay(Calendar cal1, Calendar cal2){
 		if (cal1 == null || cal2 == null)
 	        return false;
@@ -116,6 +149,11 @@ public class CalendarView {
 	            && cal1.get(Calendar.DAY_OF_YEAR) == cal2.get(Calendar.DAY_OF_YEAR));
 	}
 	
+	/**
+	 * Print the calendar of respective year with highlighted holidays
+	 * @param year Year of Calendar
+	 * @param holidays List of String represent holidays in format "d/M/yyyy"
+	 */
 	public static void printCalendar(int year, List<String> holidays){
 		for (int m=0; m<12; m++){
 			String monthName = new DateFormatSymbols().getMonths()[m];

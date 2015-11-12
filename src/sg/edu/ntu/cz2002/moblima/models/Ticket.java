@@ -1,18 +1,11 @@
 package sg.edu.ntu.cz2002.moblima.models;
 
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
-import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.Set;
 
 import org.json.simple.JSONObject;
 
 import sg.edu.ntu.cz2002.moblima.dao.*;
-import sg.edu.ntu.cz2002.moblima.models.Cinema.CinemaClass;
-import sg.edu.ntu.cz2002.moblima.models.Movie.MovieType;
-import sg.edu.ntu.cz2002.moblima.models.Seat.SeatType;
-import sg.edu.ntu.cz2002.moblima.models.Showtime.Day;
 
 public class Ticket implements StandardData{
 	protected int id;
@@ -25,41 +18,69 @@ public class Ticket implements StandardData{
 	public enum AgeGroup {
 		CHILD, ADULT, SENIOR;
 	}
-	
+
 	public AgeGroup getAgeGroup() {
 		return this.ageGroup;
 	}
-	
+
+	/**
+	 * Print the name for each of enum AgeGroup
+	 * @return
+	 */
 	public String getAgeGroupString() {
 		return this.ageGroup == AgeGroup.CHILD? "Child":
-			   this.ageGroup == AgeGroup.ADULT? "Adult":
-							 			 		"Senior";
+			this.ageGroup == AgeGroup.ADULT? "Adult":
+				"Senior";
 	}
-	
+
+	/**
+	 * Get enum AgeGroup from its ordinal value
+	 * @param ordinal
+	 * @return
+	 */
 	public static AgeGroup getAgeGroupEnumFromOrdinal(int ordinal) {
 		return ordinal == AgeGroup.CHILD.ordinal()? AgeGroup.CHILD:
-				ordinal == AgeGroup.ADULT.ordinal()? AgeGroup.ADULT:
-							AgeGroup.SENIOR;
+			ordinal == AgeGroup.ADULT.ordinal()? AgeGroup.ADULT:
+				AgeGroup.SENIOR;
 	}		
-	
+
+	/**
+	 * Get the ordinal value of enum AgeGroup from user choice
+	 * @param choice
+	 * @return
+	 */
 	public static AgeGroup getAgeGroupEnumFromChoice(int choice) {
 		return choice==1 ? 	AgeGroup.CHILD : 
-			   choice==2 ? 	AgeGroup.ADULT : 
-				   			AgeGroup.SENIOR;
+			choice==2 ? 	AgeGroup.ADULT : 
+				AgeGroup.SENIOR;
 	}
-	
+
+	/**
+	 * Print the name of enum AgeGroup from user choice
+	 * @param choice
+	 * @return
+	 */
 	public static String getAgeGroupStringFromChoice(int choice) {
 		return choice==1 ? 	"CHILD" : 
-			   choice==2 ? 	"ADULT" : 
-				   			"SENIOR" ;
+			choice==2 ? 	"ADULT" : 
+				"SENIOR" ;
 	}
-	
+
+	/**
+	 * Print the name of enum AgeGroup from AgeGroup itself
+	 * @param choice
+	 * @return
+	 */
 	public static String getAgeGroupStringFromAgeGroup(AgeGroup choice) {
 		return choice==AgeGroup.CHILD ? 	"CHILD" : 
-			   choice==AgeGroup.ADULT ? 	"ADULT" : 
-				   							"SENIOR";
+			choice==AgeGroup.ADULT ? 	"ADULT" : 
+				"SENIOR";
 	}
-	
+
+	/**
+	 * Set enum AgeGroup from user choice
+	 * @param choice
+	 */
 	public void setAgeGroupFromChoice(int choice) {
 		switch (choice) {
 		case 1:
@@ -72,19 +93,22 @@ public class Ticket implements StandardData{
 			this.ageGroup = AgeGroup.SENIOR;
 		}
 	}
-	
+
+	/**
+	 * Print the name for each of the enum AgeGroup
+	 */
 	public static void printAgeGroupChoice() {
 		System.out.println("\n<< Age Group >>");
 		for (AgeGroup a: AgeGroup.values())
 			System.out.println("\t" + (a.ordinal()+1) + ". " + a.name());
 	}
-	
+
 	public Ticket(int transactionId) {
 		super();
 		this.id = TicketDao.getLastId()+1;
 		this.transactionId = transactionId;
 	}
-	
+
 	public Ticket(int id, int showtimeId, int ageGroup, double price, int seatId, int transactionId) {
 		this.id = id;
 		this.showtimeId = showtimeId;
@@ -130,7 +154,7 @@ public class Ticket implements StandardData{
 	public void setSeatId(int seatId) {
 		this.seatId = seatId;
 	}
-	
+
 	public int getTransactionId() {
 		return transactionId;
 	}
@@ -138,7 +162,7 @@ public class Ticket implements StandardData{
 	public void setTransactionId(int transactionId) {
 		this.transactionId = transactionId;
 	}
-	
+
 	@SuppressWarnings("unchecked")
 	@Override
 	public JSONObject toJSONObject() {
@@ -151,7 +175,7 @@ public class Ticket implements StandardData{
 		o.put("transactionid", this.transactionId);
 		return o;
 	}
-	
+
 	public static Ticket fromJSONObject(JSONObject o){
 		return new Ticket(Integer.parseInt(o.get("id").toString()), 
 				Integer.parseInt(o.get("showtime").toString()), 
@@ -160,7 +184,7 @@ public class Ticket implements StandardData{
 				Integer.parseInt(o.get("seatId").toString()),
 				Integer.parseInt(o.get("transactionid").toString()));
 	}
-	
+
 	public static HashMap<String, JSONObject> toJSONObjects(HashMap<Integer, Ticket> o){
 		HashMap<String, JSONObject> a = new HashMap<String, JSONObject>();
 		Set<Integer> s = o.keySet();
@@ -169,7 +193,7 @@ public class Ticket implements StandardData{
 		}
 		return a;
 	}
-	
+
 	@SuppressWarnings("unchecked")
 	public static HashMap<Integer, Ticket> fromJSONObjects(JSONObject o){
 		HashMap<Integer, Ticket> a = new HashMap<Integer, Ticket>();

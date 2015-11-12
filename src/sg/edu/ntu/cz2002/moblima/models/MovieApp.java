@@ -11,6 +11,10 @@ public class MovieApp {
 	public MovieApp(MovieManager movieMgr) {
 		MovieApp.movieMgr = movieMgr;
 	}
+	
+	/**
+	 * Main interface for listing, searching, adding, updating and removing movie
+	 */
 	public void printView(){
 		int choice;
 		boolean exit = false;

@@ -20,12 +20,10 @@ public class Movie implements StandardData{
 	protected MovieType type;
 	
 	public enum MovieType{
-		// TODO implement MovieType
 		BLOCKBUSTER, THREED, NORMAL;
 	}
 	
 	public enum MovieRating{
-		// TODO implement MovieRating
 		GENERAL, PG, PG13, M18, R21, UNRATED
 	}
 	
@@ -37,6 +35,18 @@ public class Movie implements StandardData{
 		this.id = MovieDao.getLastId()+1;
 	}
 
+	/**
+	 * Constructor strictly for Database Initialization
+	 * @param id Unique ID of Movie
+	 * @param title Title of Movie
+	 * @param status Status of ID in ordinal
+	 * @param director Director of Movie
+	 * @param synopsis Synopsis of Movie
+	 * @param casts Casts in ArrayList<String>
+	 * @param rating Movie Rating in ordinal
+	 * @param duration Duration of Movie
+	 * @param type Movie Type in ordinal
+	 */
 	public Movie(int id, String title, int status, String director, String synopsis, ArrayList<String> casts, int rating, int duration, int type) {
 		this.id = id;
 		this.title = title;
@@ -69,6 +79,10 @@ public class Movie implements StandardData{
 		return status;
 	}
 	
+	/**
+	 * Get name of MovieStatus from the Enum MovieStatus class itself
+	 * @return
+	 */
 	public String getStatusString(){
 		return this.status == MovieStatus.COMINGSOON ? 	"Coming soon" : 
 			   this.status == MovieStatus.PREVIEW ? 	"Preview" : 
@@ -76,11 +90,10 @@ public class Movie implements StandardData{
 			   											"End of Showing";
 	}
 
-	@Deprecated
-	public void setStatus(MovieStatus status) {
-		this.status = status;
-	}
-	
+	/**
+	 * Set the Enum MovieStatus from user choice
+	 * @param choice
+	 */
 	public void setStatusFromChoice(int choice){
 		switch(choice){
 		case 1:
@@ -97,7 +110,12 @@ public class Movie implements StandardData{
 			break;
 		}
 	}
-	
+
+	/**
+	 * Get Enum MovieStatus from user choice
+	 * @param choice
+	 * @return
+	 */
 	public static MovieStatus getStatusEnumFromChoice(int choice){
 		return choice==1 ? 	MovieStatus.COMINGSOON : 
 			   choice==2 ? 	MovieStatus.PREVIEW : 
@@ -105,6 +123,11 @@ public class Movie implements StandardData{
 			   				MovieStatus.ENDOFSHOWING;
 	}
 	
+	/**
+	 * Get Enum MovieStatus from its ordinal value
+	 * @param ordinal
+	 * @return
+	 */
 	public static MovieStatus getStatusEnumFromOrdinal(int ordinal){
 		return ordinal == MovieStatus.COMINGSOON.ordinal() ? MovieStatus.COMINGSOON :
 			   ordinal == MovieStatus.PREVIEW.ordinal() ? MovieStatus.PREVIEW :
@@ -112,6 +135,11 @@ public class Movie implements StandardData{
 				   	MovieStatus.ENDOFSHOWING;
 	}
 	
+	/**
+	 * Get the name of Enum MovieStatus from user choice
+	 * @param choice
+	 * @return
+	 */
 	public static String getStatusStringFromChoice(int choice){
 		return choice==1 ? 	"Coming soon" : 
 			   choice==2 ? 	"Preview" : 
@@ -119,6 +147,9 @@ public class Movie implements StandardData{
 			   				"End of Showing";
 	}
 	
+	/**
+	 * Print the name of each Enum MovieStatus
+	 */
 	public static void printMovieStatusChoice(){
 		for (MovieStatus m: MovieStatus.values()) {
 			System.out.println("\t" + (m.ordinal()+1) + ". " + m.name());
@@ -129,6 +160,10 @@ public class Movie implements StandardData{
 		return type;
 	}
 	
+	/**
+	 * Set Enum MovieType from user choice
+	 * @param choice
+	 */
 	public void setTypeFromChoice(int choice) {
 		switch(choice){
 		case 1:
@@ -143,30 +178,53 @@ public class Movie implements StandardData{
 		}
 	}
 	
+	/**
+	 * Get name of Enum MovieType from user choice
+	 * @param choice
+	 * @return
+	 */
 	public static String getTypeStringFromChoice(int choice){
 		return choice==1 ? 	"BLOCKBUSTER" : 
 			   choice==2 ? 	"THREED" : 
 			   				"NORMAL";
 	}
 	
+	/**
+	 * Get name of Enum MovieType from the class itself
+	 * @param choice
+	 * @return
+	 */
 	public static String getTypeStringFromMovieType(MovieType choice){
 		return choice==MovieType.BLOCKBUSTER ? 	"BLOCKBUSTER" : 
 			   choice==MovieType.THREED ? 	"THREED" : 
 			   				"NORMAL";
 	}
-
+	
+	/**
+	 * Get Enum MovieType from user choice
+	 * @param choice
+	 * @return
+	 */
 	public static MovieType getTypeEnumFromChoice(int choice){
 		return choice==1 ? 	MovieType.BLOCKBUSTER: 
 			   choice==2 ? 	MovieType.THREED : 
 				   			MovieType.NORMAL ; 
 	}
 
+	/**
+	 * Get Enum MovieType from its ordinal value
+	 * @param ordinal
+	 * @return
+	 */
 	public static MovieType getTypeEnumFromOrdinal(int ordinal){
 		return ordinal == MovieType.BLOCKBUSTER.ordinal() ? MovieType.BLOCKBUSTER :
 			   ordinal == MovieType.THREED.ordinal() ? MovieType.THREED :
 				   MovieType.NORMAL;
 	}
 	
+	/**
+	 * Print  the name for each of Enum MovieType
+	 */
 	public static void printMovieTypeChoice(){
 		for (MovieType m: MovieType.values()) {
 			System.out.println("\t" + (m.ordinal()+1) + ". " + m.name());
@@ -177,6 +235,10 @@ public class Movie implements StandardData{
 		return rating;
 	}
 	
+	/**
+	 * Get the name of Enum MovieRating of this movie
+	 * @return
+	 */
 	public String getRatingString(){
 		return this.rating == MovieRating.GENERAL ? "General" : 
 			   this.rating == MovieRating.PG ? 		"PG" : 
@@ -190,6 +252,10 @@ public class Movie implements StandardData{
 		this.rating = rating;
 	}
 	
+	/**
+	 * Set the Enum MovieRating from user choice
+	 * @param choice
+	 */
 	public void setRatingFromChoice(int choice){
 		switch(choice){
 		case 1:
@@ -213,6 +279,11 @@ public class Movie implements StandardData{
 		}
 	}
 	
+	/**
+	 * Get the name of Enum MovieRating from user choice
+	 * @param choice
+	 * @return
+	 */
 	public static String getRatingStringFromChoice(int choice){
 		return choice==1 ? 	"General" : 
 			   choice==2 ? 	"PG" : 
@@ -222,6 +293,11 @@ public class Movie implements StandardData{
 			   				"Unrated";
 	}
 	
+	/**
+	 * Get the ordinal value of Enum MovieRating from user choice
+	 * @param choice
+	 * @return
+	 */
 	public static MovieRating getRatingEnumFromChoice(int choice){
 		return choice==1 ? 	MovieRating.GENERAL : 
 			   choice==2 ? 	MovieRating.PG : 
@@ -231,6 +307,11 @@ public class Movie implements StandardData{
 				   			MovieRating.UNRATED;
 	}
 	
+	/**
+	 * Get Enum MovieRating from its ordinal value
+	 * @param ordinal
+	 * @return
+	 */
 	public static MovieRating getRatingEnumFromOrdinal(int ordinal){
 		return ordinal == MovieRating.GENERAL.ordinal() ? MovieRating.GENERAL :
 			   ordinal == MovieRating.PG.ordinal() ? MovieRating.PG :
@@ -240,6 +321,9 @@ public class Movie implements StandardData{
 				   			MovieRating.UNRATED;
 	}
 	
+	/**
+	 * Print the name for each of Enum MovieRating 
+	 */
 	public static void printMovieRatingChoice(){
 		for (MovieRating m: MovieRating.values()) {
 		System.out.println("\t" + (m.ordinal()+1) + ". " + m.name());

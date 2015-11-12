@@ -15,13 +15,19 @@ import sg.edu.ntu.cz2002.moblima.dao.*;
 import sg.edu.ntu.cz2002.moblima.models.Movie.MovieType;
 import sg.edu.ntu.cz2002.moblima.models.Showtime.Day;
 import sg.edu.ntu.cz2002.moblima.view.GeneralView;
+import sg.edu.ntu.cz2002.moblima.view.SeatPlaneView;
 
 public class ShowtimeManager {
 	public Showtime showtime;
 	CineplexManager cineplexMgr = new CineplexManager();
 	protected ArrayList<Integer> showtimeList = new ArrayList<Integer>();
 	static Scanner sc = new Scanner(System.in);
-	
+
+	/**
+	 * Return a list of showtime available from user selected cineplex, cinema and movie
+	 * @param panel
+	 * @return
+	 */
 	public ArrayList<Integer> listShowtimeViewController(String panel) {
 		int it = 0, choice;
 		int weekOffset = 0;
@@ -30,7 +36,7 @@ public class ShowtimeManager {
 		ArrayList<Movie> movies = new ArrayList<Movie>();
 		ArrayList<Integer> showtimeList = new ArrayList<Integer>();
 		String[] menu =new String[CineplexDao.getAllInHashMap().size()+1];
-		
+
 		for(Cineplex c: CineplexDao.getAllInHashMap().values()){
 			menu[it++] = c.getCineplexName();
 			cineplexes.add(c);
@@ -38,7 +44,7 @@ public class ShowtimeManager {
 		menu[it] = "Back to previous menu";
 		do {
 			if (panel == "booking")
-					choice = GeneralView.printMenuAndReturnChoice("Movie-goer Panel > Book ticket > Select cineplex", menu);
+				choice = GeneralView.printMenuAndReturnChoice("Movie-goer Panel > Book ticket > Select cineplex", menu);
 			else
 				choice = GeneralView.printMenuAndReturnChoice("Movie-goer Panel > Check seat availability > Select cineplex", menu);
 			if(choice <= 0 || choice >= menu.length) { 
@@ -50,10 +56,10 @@ public class ShowtimeManager {
 			else
 				repeat = false;
 		} while (repeat);
-		
+
 		Cineplex selectedCineplex = cineplexes.get(choice-1);
 		System.out.println("\nYou have selected <<" + selectedCineplex.getCineplexName()+">>");
-		
+
 		it = 0;
 		menu = new String[MovieDao.findActiveMovie().size()+1];
 		for(Movie m: MovieDao.findActiveMovie().values()) {
@@ -77,7 +83,7 @@ public class ShowtimeManager {
 		} while (repeat);
 		Movie selectedMovie = movies.get(choice-1);
 		System.out.println("\nYou have selected <<" + selectedMovie.getTitle() + ">>");
-		
+
 		String[] weekMenu = {"Current week", "Next week", "Next 2 week", "Back to previous menu"};
 		do {
 			if (panel == "booking")
@@ -94,7 +100,7 @@ public class ShowtimeManager {
 				repeat = false;
 		} while (repeat);
 		weekOffset = choice-1;
-		
+
 		Calendar cal = new GregorianCalendar();
 		cal.setTimeZone(TimeZone.getTimeZone("Asia/Singapore"));
 		cal.add(Calendar.WEEK_OF_YEAR, weekOffset);
@@ -126,7 +132,10 @@ public class ShowtimeManager {
 		}
 		return showtimeList;
 	}
-	
+
+	/**
+	 * Interface for user to edit showtime detail
+	 */
 	public void updateShowtimeViewController(){
 		String st;
 		int it,choice;
@@ -211,7 +220,7 @@ public class ShowtimeManager {
 						}
 						break;
 					case 2:
-						
+
 						break;
 					default:
 						exit2 = true;
@@ -228,7 +237,10 @@ public class ShowtimeManager {
 			}
 		}while(!exit);
 	}
-	
+
+	/**
+	 * Interface for user to remove a showtime
+	 */
 	public void removeShowtimeViewController(){
 		String st;
 		int it,choice;
@@ -264,7 +276,11 @@ public class ShowtimeManager {
 			}
 		}while(!exit);
 	}
-	
+
+	/**
+	 * Print the detail of a specific showtime
+	 * @param s
+	 */
 	public void printShowtimeInformationView(Showtime s){
 		SimpleDateFormat df = new SimpleDateFormat("dd-MM-yyyy hh:mm aaa");
 		System.out.println("\n\nShowtime ID: "+s.getId());
@@ -273,6 +289,9 @@ public class ShowtimeManager {
 		System.out.println("Showtime: "+df.format(s.getDate().getTime()));
 	}
 
+	/**
+	 * Interface to search a showtime by cineplex or movie
+	 */
 	public void searchShowtimeViewController(){
 		int choice;
 		boolean exit = false;
@@ -292,7 +311,11 @@ public class ShowtimeManager {
 			}
 		}while(!exit);
 	}
-	
+
+	/**
+	 * List all the available showtime for a movie
+	 * @param showId
+	 */
 	public void listShowtimeByMovieViewController(boolean showId){
 		int it, choice;
 		int weekOffset = 0;
@@ -338,6 +361,10 @@ public class ShowtimeManager {
 		}
 	}
 
+	/**
+	 * List all the available showtime in this cineplex
+	 * @param showId
+	 */
 	public void listShowtimeViewController(boolean showId){
 		int it, choice;
 		int weekOffset = 0;
@@ -360,7 +387,7 @@ public class ShowtimeManager {
 		if(choice<=0 || choice >= weekMenu.length)
 			return;
 		weekOffset = choice-3;
-		
+
 		Calendar c = new GregorianCalendar();
 		c.setTimeZone(TimeZone.getTimeZone("Asia/Singapore"));
 		c.add(Calendar.WEEK_OF_YEAR, weekOffset);
@@ -371,7 +398,7 @@ public class ShowtimeManager {
 			showtimeOfTheDayView(selectedCineplex, sortedShowtimes, df.format(c.getTime()), showId);
 		}
 	}
-	
+
 	/*
 	public void listShowtimeViewController(boolean cineplex, boolean showId){
 		int it = 0, choice;
@@ -379,7 +406,7 @@ public class ShowtimeManager {
 		ArrayList<Cineplex> cineplexes = new ArrayList<Cineplex>();
 		ArrayList<Movie> movies = new ArrayList<Movie>();
 		String[] menu = cineplex == true? new String[CineplexDao.getAllInHashMap().size()+1]:  new String[MovieDao.getAllInHashMap().size()+1];
-		
+
 		if (cineplex) {
 			for(Cineplex c: CineplexDao.getAllInHashMap().values()){
 				menu[it++] = c.getCineplexName();
@@ -405,13 +432,13 @@ public class ShowtimeManager {
 			Movie selectedMovie = movies.get(choice-1);
 			System.out.print(selectedMovie.getTitle() + " >>\n");
 		}
-		
+
 		String[] weekMenu = {"Last 2 week", "Last week", "Current week", "Next week", "Next 2 week", "Back to previous menu"};
 		int choice2 = GeneralView.printMenuAndReturnChoice("Admin Panel > Movie Showtime Management > Select week", weekMenu);
 		if(choice2<=0 || choice2 >= weekMenu.length)
 			return;
 		weekOffset = choice2-3;
-		
+
 		Calendar c = new GregorianCalendar();
 		c.setTimeZone(TimeZone.getTimeZone("Asia/Singapore"));
 		c.add(Calendar.WEEK_OF_YEAR, weekOffset);
@@ -441,8 +468,16 @@ public class ShowtimeManager {
 			}
 		}
 	}
-	*/
-	
+	 */
+
+	/**
+	 * Method to display all the available showtime for a movie in a cineplex
+	 * @param cineplex
+	 * @param st
+	 * @param movie
+	 * @param date
+	 * @param showId
+	 */
 	public void showtimeOfTheDayView(Cineplex cineplex, ArrayList<Showtime> st, Movie movie, String date, boolean showId){
 		System.out.println("\n\n");
 		for(int i=0; i<68; i++)
@@ -467,6 +502,13 @@ public class ShowtimeManager {
 		System.out.println("\n");
 	}
 
+	/**
+	 * Method to display all the available showtime from every movie in a cineplex
+	 * @param cineplex
+	 * @param showtimes
+	 * @param date
+	 * @param showId
+	 */
 	public void showtimeOfTheDayView(Cineplex cineplex, HashMap<Movie, ArrayList<Showtime>> showtimes, String date, boolean showId){
 		System.out.println("\n\n");
 		for(int i=0; i<68; i++)
@@ -494,6 +536,9 @@ public class ShowtimeManager {
 		}
 	}
 
+	/**
+	 * Interface to add a new showtime for a movie of particular cineplex and cinema
+	 */
 	public void addNewShowtimeViewController(){
 		String st;
 		int it, choice;
@@ -507,7 +552,7 @@ public class ShowtimeManager {
 		}
 		do{
 			exit = false;
-			System.out.print("Your choice: Movie ID -> ");
+			System.out.print("\nYour choice: Movie ID -> ");
 			it = sc.nextInt();
 			sc.nextLine();
 			if(movies.keySet().contains(it)){
@@ -584,15 +629,21 @@ public class ShowtimeManager {
 				ns.setCineplexId(selectedCineplex.getId());
 				ns.setDate((Calendar) availableTimeSlot.get(choice-1).clone());
 				Day dayType = TicketManager.checkDayType(ns);
-				int numEmptySeat = CinemaDao.findById(ns.getCinemaId()).getSeatNum();
 				ns.setDayType(dayType);
-				ns.setNumEmptySeat(numEmptySeat);
 				ShowtimeDao.add(ns);
 				System.out.println("Showtime saved");
 			}while(true);
 		}while(true);
 	}
 
+	/**
+	 * Method to display the timetable for showtime of a movie in a cinema
+	 * @param c
+	 * @param weekOffset
+	 * @param excludeShowtime
+	 * @param show
+	 * @return
+	 */
 	public int[][][] cinemaTimetableView(Cinema c, int weekOffset, Showtime excludeShowtime, boolean show){
 		SimpleDateFormat df = new SimpleDateFormat("MMM dd,yyyy");
 		ArrayList<Calendar> calendars = CalendarView.getWeekCalendars(weekOffset);
@@ -678,6 +729,10 @@ public class ShowtimeManager {
 		return timeslot;
 	}
 
+	/**
+	 * Prompt the user to select a showtime for a movie in a cineplex and cinema
+	 * @param panel
+	 */
 	public void selectShowtime(String panel) {
 		SimpleDateFormat formatter = new SimpleDateFormat("h:mm a, EEE, MMM d, yyyy");
 		DecimalFormat deciformat = new DecimalFormat("#0.00");
@@ -710,8 +765,10 @@ public class ShowtimeManager {
 
 		String[] idList = new String[showtimeList.size()+1];
 		for (i = 0; i < showtimeList.size(); i++) {
-			Calendar calendar = ShowtimeDao.findById(showtimeList.get(i)).getDate();
-			idList[i] = "Showtime: " + formatter.format(calendar.getTime());
+			Showtime s = ShowtimeDao.findById(showtimeList.get(i));
+			Calendar calendar = s.getDate();
+			idList[i] = formatter.format(calendar.getTime()) + 
+					", Cinema class: " + Cinema.getCinemaClassStringFromCinemaClass(s.getCinema().getCinemaClass());
 		}
 		idList[i] = "Back to main menu";
 		if (panel == "booking")
@@ -722,7 +779,7 @@ public class ShowtimeManager {
 			return;
 		this.showtime = ShowtimeDao.findById(showtimeList.get(choice-1));
 	}
-	
+
 	public int getNumEmptySeat(Showtime showtime) {
 		return showtime.getNumEmptySeat();
 	}
@@ -733,5 +790,12 @@ public class ShowtimeManager {
 
 	public void setShowtime(Showtime showtime) {
 		this.showtime = showtime;
+	}
+	
+	public void showSeatAvailability(Showtime showtime) {
+		if (showtime != null) {
+			SeatPlaneView.printSeatPlane(showtime);
+			System.out.print("\nTotal of empty seats is " + showtime.getNumEmptySeat());
+		}
 	}
 }

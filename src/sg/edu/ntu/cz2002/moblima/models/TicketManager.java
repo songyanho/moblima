@@ -27,9 +27,13 @@ public class TicketManager {
 	private double total;
 	protected ArrayList<Ticket> ticketList = new ArrayList<Ticket>();
 	protected ArrayList<String> seatIds = new ArrayList<String>();
-	
+
 	public TicketManager() {}
-	
+
+	/**
+	 * Select seat for a specific showtime and check for correct style of seat input format
+	 * @param showtime
+	 */
 	public void selectSeat(Showtime showtime) {
 		seatIds = new ArrayList<String>();
 		t = new Transaction();
@@ -62,7 +66,10 @@ public class TicketManager {
 					System.out.println("Please select valid seat");
 					continue;
 				}
-
+				if(!alternateSeatBooking(seatToSeatIdMap, selectedSeats, seatId)){
+					System.out.println("Please do not leave a single unoccupied seat between selected seat.");
+					continue;
+				}
 				seatIds.add(seatId);
 				Ticket tick = new Ticket(t.getId());
 				Ticket.printAgeGroupChoice();
@@ -73,9 +80,6 @@ public class TicketManager {
 				tick.setSeatId(seatToSeatIdMap.get(seatId));
 				tick.setShowtime(showtime.getId());
 				tick.setPrice(Math.round(calculatePrice(tick)));
-				Seat thisSeat = SeatDao.findById(tick.getSeatId());
-				thisSeat.setSeatName(seatId);
-				SeatDao.save();
 				ticketList.add(tick);
 				i++;
 			}
@@ -93,7 +97,12 @@ public class TicketManager {
 			total += ticketList.get(i).getPrice();
 		}
 	}
-	
+
+	/**
+	 * Method to validate whether a seat ID inputed is valid or not
+	 * @param seatId
+	 * @return
+	 */
 	private boolean seatInputChecking(String seatId) {
 		char c1, c2, c3;
 		int length = seatId.length();
@@ -112,7 +121,15 @@ public class TicketManager {
 		}
 		return false;
 	}
-	
+
+	/**
+	 * Method to check and prevent the user from leaving a single unoccupied seat between selected seat
+	 * @param seatToSeatId
+	 * @param selectedSeats
+	 * @param nextSeat
+	 * @return
+	 */
+	@SuppressWarnings("unchecked")
 	private boolean alternateSeatBooking(HashMap<String, Integer> seatToSeatId, HashMap<String, ArrayList<Integer>> selectedSeats, String nextSeat){
 		String row = nextSeat.charAt(0)+"";
 		Integer column = Integer.parseInt(nextSeat.replaceAll("[^0-9]", ""));
@@ -151,7 +168,12 @@ public class TicketManager {
 		selectedSeats.replace(row, thisRow);
 		return true;
 	}
-	
+
+	/**
+	 * Interface to get confirmation of booking of tickets from user. After capturing user's name, email and mobile number
+	 * A transaction and ticket info will be printed
+	 * @param showtime
+	 */
 	public void checkout(Showtime showtime) {
 		String st;
 		boolean exit = false;
@@ -204,7 +226,10 @@ public class TicketManager {
 				exit = false;
 		} while (!exit);
 	}
-	
+
+	/**
+	 * Interface to allow the user to check his booking history
+	 */
 	public void viewBookingHistory() {
 		String name;
 		HashMap <Integer, Transaction> trans;
@@ -219,69 +244,70 @@ public class TicketManager {
 			}
 		}
 	}
-	
-	  public static Day checkDayType(Showtime s) {
-		  int check;
-		  SimpleDateFormat formatter = new SimpleDateFormat("d/M/yyyy");
-		  Calendar cal = s.getDate();
-		  cal.setTimeZone(TimeZone.getTimeZone("Asia/Singapore"));
-		  String showtimeDateString = formatter.format(cal.getTime());
-		  if(SettingsDao.getHolidays().contains(showtimeDateString))
-			  return Day.PUBLICHOLIDAY;
-//		  int year = Calendar.getInstance().get(Calendar.YEAR);
-//		  for(String h: SettingsDao.getHolidays()){
-//			  String[] holidayParts = h.split("\\/");
-//			  if(Integer.parseInt(holidayParts[2]) == year) {
-//				  int month = Integer.parseInt(holidayParts[1]);
-//				  int date = Integer.parseInt(holidayParts[0]);
-//				  Calendar other = new GregorianCalendar(year, month, date);
-//				  String s1 = formatter.format(cal.getTime());
-//				  String s2 = formatter.format(other.getTime());
-//				  if (s1.compareTo(s2) == 0)
-//					  return Day.PUBLICHOLIDAY;
-//			  }
-//		  }
-		  check = cal.get(Calendar.DAY_OF_WEEK);
-		  if (check == 7 || check == 1)
-			  return Day.WEEKEND;
-		  else
-			  return Day.WEEKDAY;
-	  }
-	  
-		public double calculatePrice(Ticket t) {
-			double classCharge, dayCharge, typeCharge, ageCharge, basePrice, seatPrice;
-			Showtime st = ShowtimeDao.findById(t.getShowtime());
-			Settings settings = SettingsDao.getSettings();
-			//Ticket t = TicketDao.findByShowtimeId(showtimeId);
-			MovieType mt = st.getMovie().getType();
-			CinemaClass cc = st.getCinema().getCinemaClass();
-			Day day = checkDayType(st);
-			if (day != st.getDayType()) {
-				st.setDayType(day);
-				ShowtimeDao.save();
-			}
-			AgeGroup ag = t.getAgeGroup();
-			SeatType seatType = t.getSeat().getSeatType();
-			classCharge = settings.getCinemaClassCharges().get(cc);
-			dayCharge = settings.getDayCharges().get(day);
-			typeCharge = settings.getMovieTypeCharges().get(mt);
-			ageCharge = settings.getAgeGroupCharges().get(ag);
-			basePrice = settings.getBasePrice();
-			seatPrice = settings.getSeatTypeCharges().get(seatType);
-			return (basePrice + classCharge + dayCharge + typeCharge + ageCharge) * seatPrice;
-		} 
-		
-		public void printTicket(Ticket t) {
-			Cineplex cineplex = ShowtimeDao.findById(t.getShowtime()).getCineplex();
-			Cinema cinema = ShowtimeDao.findById(t.getShowtime()).getCinema();
-			Showtime s = ShowtimeDao.findById(t.getShowtime());
-			Movie m = MovieDao.findById(s.getMovieId());
-			System.out.println("Cineplex: " + cineplex.getCineplexName() + ", " + cinema.getName() + " <" + cinema.getCinemaClassString() + ">");
-			System.out.println("Movie: " + m.getTitle() + " <" + Movie.getTypeStringFromMovieType(m.getType()) + ">");
-			System.out.println("Age group: " + t.getAgeGroupString());
-			System.out.println("Day type: " + Showtime.getDayStringFromDay(s.getDayType()));
-			System.out.println("Seat ID: " + t.getSeat().getSeatName() +" <"+Seat.getSeatTypeStringFromSeatType(t.getSeat().getSeatType())+">");
-			System.out.println("Ticket price: " + Math.round(t.getPrice()));
-			System.out.print("\n");
+
+	/**
+	 * Method to check for the date of showtime belongs to which category of Enum Day, such as public holiday, weekday and weekend
+	 * @param s
+	 * @return
+	 */
+	public static Day checkDayType(Showtime s) {
+		int check;
+		SimpleDateFormat formatter = new SimpleDateFormat("d/M/yyyy");
+		Calendar cal = s.getDate();
+		cal.setTimeZone(TimeZone.getTimeZone("Asia/Singapore"));
+		String showtimeDateString = formatter.format(cal.getTime());
+		if(SettingsDao.getHolidays().contains(showtimeDateString))
+			return Day.PUBLICHOLIDAY;
+		check = cal.get(Calendar.DAY_OF_WEEK);
+		if (check == 7 || check == 1)
+			return Day.WEEKEND;
+		else
+			return Day.WEEKDAY;
+	}
+
+	/**
+	 * Method to calculate the price of a ticket based on cinema class, day type, movie type, age group, seat type and base price
+	 * @param t
+	 * @return
+	 */
+	public double calculatePrice(Ticket t) {
+		double classCharge, dayCharge, typeCharge, ageCharge, basePrice, seatPrice;
+		Showtime st = ShowtimeDao.findById(t.getShowtime());
+		Settings settings = SettingsDao.getSettings();
+		//Ticket t = TicketDao.findByShowtimeId(showtimeId);
+		MovieType mt = st.getMovie().getType();
+		CinemaClass cc = st.getCinema().getCinemaClass();
+		Day day = checkDayType(st);
+		if (day != st.getDayType()) {
+			st.setDayType(day);
+			ShowtimeDao.save();
 		}
+		AgeGroup ag = t.getAgeGroup();
+		SeatType seatType = t.getSeat().getSeatType();
+		classCharge = settings.getCinemaClassCharges().get(cc);
+		dayCharge = settings.getDayCharges().get(day);
+		typeCharge = settings.getMovieTypeCharges().get(mt);
+		ageCharge = settings.getAgeGroupCharges().get(ag);
+		basePrice = settings.getBasePrice();
+		seatPrice = settings.getSeatTypeCharges().get(seatType);
+		return (basePrice + classCharge + dayCharge + typeCharge + ageCharge) * seatPrice;
+	} 
+
+	/**
+	 * Method to print the ticket information such as cineplex, cinema, movie, age group, day type, seat Id and its price
+	 * @param t
+	 */
+	public void printTicket(Ticket t) {
+		Cineplex cineplex = ShowtimeDao.findById(t.getShowtime()).getCineplex();
+		Cinema cinema = ShowtimeDao.findById(t.getShowtime()).getCinema();
+		Showtime s = ShowtimeDao.findById(t.getShowtime());
+		Movie m = MovieDao.findById(s.getMovieId());
+		System.out.println("Cineplex: " + cineplex.getCineplexName() + ", " + cinema.getName() + " <" + cinema.getCinemaClassString() + ">");
+		System.out.println("Movie: " + m.getTitle() + " <" + Movie.getTypeStringFromMovieType(m.getType()) + ">");
+		System.out.println("Age group: " + t.getAgeGroupString());
+		System.out.println("Day type: " + Showtime.getDayStringFromDay(s.getDayType()));
+		System.out.println("Seat ID: " + t.getSeat().getSeatName() +" <"+Seat.getSeatTypeStringFromSeatType(t.getSeat().getSeatType())+">");
+		System.out.println("Ticket price: " + Math.round(t.getPrice()));
+		System.out.print("\n");
+	}
 }

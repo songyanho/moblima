@@ -79,20 +79,17 @@ public class CinemaDao {
 	}
 
 	public static boolean save(Cinema t) {
-		// TODO Auto-generated method stub
 		if(records == null) initialize();
 		records.put(t.getId(), t);
 		return save();
 	}
 
 	public static boolean save() {
-		// TODO Auto-generated method stub
 		if(records == null) initialize();
 		return Database.save(DATABASE_NAME, Cinema.toJSONObjects(records));
 	}
 
 	public static void initialize() {
-		// TODO Auto-generated method stub
 		JSONObject t = Database.getObject(DATABASE_NAME);
 		records = Cinema.fromJSONObjects(t);
 	}
@@ -105,11 +102,8 @@ public class CinemaDao {
 			for(int i=0; i<cp1.getCinemaNum(); i++){
 				Cinema c = new Cinema();
 				c.setName("Cinema "+(i+1));
-				// TODO set class
 				c.setCinemaClass(CinemaClass.NORMAL);
 				c.setCineplexId(cp1.getId());
-				// TODO set seat number
-				c.setSeatNum(109);
 				c.setSeatPlaneId(1);
 				records.put(c.getId(), c);
 			}

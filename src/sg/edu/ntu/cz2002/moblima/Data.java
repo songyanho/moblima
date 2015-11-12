@@ -20,6 +20,10 @@ public class Data {
 
 	protected int adminId;
 
+	/**
+	 * Get current admin
+	 * @return Logged Admin
+	 */
 	public Admin getAdmin(){
 		return AdminDao.findById(adminId);
 	}
@@ -28,6 +32,10 @@ public class Data {
 		return adminId;
 	}
 
+	/**
+	 * Set only after admin has successfully logged in
+	 * @param adminId Unique id of admin in database record
+	 */
 	public void setAdminId(int adminId) {
 		this.adminId = adminId;
 	}

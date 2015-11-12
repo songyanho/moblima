@@ -18,7 +18,6 @@ public class Showtime implements StandardData {
 	protected int cineplexId;
 	protected int cinemaId;
 	protected int movieId;
-	protected int numEmptySeat;
 	protected double price;
 	protected Day dayType;
 	
@@ -26,35 +25,11 @@ public class Showtime implements StandardData {
 		WEEKDAY, WEEKEND, PUBLICHOLIDAY;
 	}
 	
-	public static Day getDayEnumFromChoice(int choice) {
-		return choice == 1? Day.WEEKDAY:
-			   choice == 2? Day.WEEKEND:
-				   			Day.PUBLICHOLIDAY;
-	}
-	
-	public static String getDayStringFromChoice(int choice) {
-		return choice == 1? "Weekday":
-			   choice == 2? "Weekend":
-				   			"Public Holiday";
-	}
-	
-	public static String getDayStringFromDay(Day choice) {
-		return choice == Day.WEEKDAY? "Weekday":
-			   choice == Day.WEEKEND? "Weekend":
-				   			"Public Holiday";
-	}
-	
-	public static Day getDayEnumFromOrdinal(int ordinal){
-		return ordinal == Day.WEEKDAY.ordinal() ? Day.WEEKDAY :
-			   ordinal == Day.WEEKEND.ordinal() ? Day.WEEKEND :
-				   	Day.PUBLICHOLIDAY;
-	}
-	
 	public Showtime(){
 		this.id = ShowtimeDao.getLastId()+1;
 	}
 	
-	public Showtime(int id, int type, int dayType, String date, int cineplexId, int cinemaId, int movieId, int numEmptySeat){
+	public Showtime(int id, int type, int dayType, String date, int cineplexId, int cinemaId, int movieId){
 		this.id = id;
 		this.type = Movie.getTypeEnumFromOrdinal(type);
 		this.dayType = Showtime.getDayEnumFromOrdinal(dayType);
@@ -64,7 +39,50 @@ public class Showtime implements StandardData {
 		this.cineplexId = cineplexId;
 		this.cinemaId = cinemaId;
 		this.movieId = movieId;
-		this.numEmptySeat = numEmptySeat;
+	}
+	
+	/**
+	 * Get the ordinal value of enum Day from user choice
+	 * @param choice
+	 * @return
+	 */
+	public static Day getDayEnumFromChoice(int choice) {
+		return choice == 1? Day.WEEKDAY:
+			   choice == 2? Day.WEEKEND:
+				   			Day.PUBLICHOLIDAY;
+	}
+	
+	/**
+	 * Get the name of enum Day from user choice
+	 * @param choice
+	 * @return
+	 */
+	public static String getDayStringFromChoice(int choice) {
+		return choice == 1? "Weekday":
+			   choice == 2? "Weekend":
+				   			"Public Holiday";
+	}
+	
+	/**
+	 * Get the name of enum Day from Day itself
+	 * @param choice
+	 * @return
+	 */
+	public static String getDayStringFromDay(Day choice) {
+		return choice == Day.WEEKDAY? "Weekday":
+			   choice == Day.WEEKEND? "Weekend":
+				   			"Public Holiday";
+	}
+	
+	/**
+	 * Get the enum Day from its ordinal value
+	 * @param ordinal
+	 * @return
+	 */
+	public static Day getDayEnumFromOrdinal(int ordinal){
+		return ordinal == Day.WEEKDAY.ordinal() ? Day.WEEKDAY :
+			   ordinal == Day.WEEKEND.ordinal() ? Day.WEEKEND :
+				   	Day.PUBLICHOLIDAY;
 	}
 
 	public int getId() {
@@ -83,6 +101,11 @@ public class Showtime implements StandardData {
 		this.type = type;
 	}
 	
+	/**
+	 * Get the name of MovieType from enum MovieType
+	 * @param m
+	 * @return
+	 */
 	public static String getMovieTypeString(MovieType m){
 		return m==MovieType.BLOCKBUSTER ? "BlockBuster" :
 			m==MovieType.THREED ? "3D" : "Normal";
@@ -132,25 +155,6 @@ public class Showtime implements StandardData {
 		this.movieId = movieId;
 	}
 
-	public int getNumEmptySeat() {
-		Cinema c = this.getCinema();
-		int numOccupied = ShowtimeDao.getOccupiedSeats(this.id).size();
-		return c.getSeatNum() - numOccupied;
-	}
-
-	public void setNumEmptySeat(int numEmptySeat) {
-		this.numEmptySeat = numEmptySeat;
-	}
-	
-	@Deprecated
-	public void addSeat(String seatId) {
-//		ArrayList<String> seat = ShowtimeDao.getOccupiedSeats(this.id);
-//		if (!seat.contains(seatId))
-//			this.numEmptySeat--;
-//		else
-//			System.out.print("Failed adding, seat already assigned.");
-	}
-
 	public double getPrice() {
 		return price;
 	}
@@ -172,6 +176,14 @@ public class Showtime implements StandardData {
 		
 	}
 	
+	public int getNumEmptySeat(){
+		HashMap<Integer, Seat> seats = SeatDao.getSeatsWithPlane(this.getCinema().getSeatPlaneId());
+		HashMap<Integer, Ticket> tickets = TicketDao.findByShowtimeId(this.id);
+		int totalSeats = seats.values().size();
+		int bookedSeats = tickets.values().size();
+		return totalSeats - bookedSeats;
+	}
+	
 	public int[][] getSeatPlaneViewArray(){
 		HashMap<Integer, Ticket> ts = TicketDao.getTicketWithShowtime(this.id);
 		return getCinema().getSeatPlane().getSeatArray(ts);
@@ -188,7 +200,6 @@ public class Showtime implements StandardData {
 		o.put("cineplexid", this.cineplexId);
 		o.put("cinemaid", this.cinemaId);
 		o.put("movieid", this.movieId);
-		o.put("numEmptySeat", this.numEmptySeat);
 		return o;
 	}
 	
@@ -200,8 +211,7 @@ public class Showtime implements StandardData {
 				o.get("date").toString(), 
 				Integer.parseInt(o.get("cineplexid").toString()), 
 				Integer.parseInt(o.get("cinemaid").toString()), 
-				Integer.parseInt(o.get("movieid").toString()),
-				Integer.parseInt(o.get("numEmptySeat").toString()));
+				Integer.parseInt(o.get("movieid").toString()));
 	}
 	
 	public static HashMap<String, JSONObject> toJSONObjects(HashMap<Integer, Showtime> o){

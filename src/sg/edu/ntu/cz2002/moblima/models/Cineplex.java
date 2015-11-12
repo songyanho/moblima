@@ -11,8 +11,6 @@ import sg.edu.ntu.cz2002.moblima.dao.CineplexDao;
 public class Cineplex {
 	protected int id;
 	protected String name;
-//	protected HashMap<Integer, Cinema> cinema;
-//	protected HashMap<Integer, Movie> movies;
 	protected int cinemaNum;
 	
 	public Cineplex() {
@@ -49,10 +47,6 @@ public class Cineplex {
 		this.id = id;
 	}
 
-//	public void setCinema(HashMap<Integer, Cinema> cinema) {
-//		this.cinema = cinema;
-//	}
-
 	public void setCinemaNum(int num) {
 		if (num < 3) {
 			this.cinemaNum = 3;
@@ -61,14 +55,6 @@ public class Cineplex {
 		else
 			this.cinemaNum = num;
 	}
-	
-//	public HashMap<Integer, Movie> getMovies() {
-//		return movies;
-//	}
-
-//	public void setMovies(HashMap<Integer, Movie> movies) {
-//		this.movies = movies;
-//	}
 
 	@SuppressWarnings("unchecked")
 	public JSONObject toJSONObject() {

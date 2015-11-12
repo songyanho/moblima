@@ -23,6 +23,11 @@ public class Seat implements StandardData {
 		AVAILABLE, BOOKED
 	}
 	
+	/**
+	 * Get the ordinal value of enum SeatType from user choice
+	 * @param choice
+	 * @return
+	 */
 	public static SeatType getSeatTypeEnumFromChoice(int choice) {
 		return choice == 1? SeatType.NORMAL:
 			   choice == 2? SeatType.COUPLE:
@@ -30,6 +35,11 @@ public class Seat implements StandardData {
 				   			SeatType.RESERVED;
 	}
 	
+	/**
+	 * Get the name of enum SeatType from SeatType itself
+	 * @param choice
+	 * @return
+	 */
 	public static String getSeatTypeStringFromSeatType(SeatType choice) {
 		return choice == SeatType.NORMAL ? "Normal":
 			   choice == SeatType.COUPLE ? "Couple":
@@ -37,6 +47,11 @@ public class Seat implements StandardData {
 				   			"Reserved";
 	}
 	
+	/**
+	 * Get the name of enum SeatType from user choice
+	 * @param choice
+	 * @return
+	 */
 	public static String getSeatTypeStringFromChoice(int choice) {
 		return choice == 1 ? "Normal":
 			   choice == 2 ? "Couple":
@@ -128,8 +143,6 @@ public class Seat implements StandardData {
 	}
 	
 	public static Seat fromJSONObject(JSONObject o){
-		if(!o.containsKey("seatname"))
-			o.put("seatname", "");
 		return new Seat(
 				Integer.parseInt(o.get("id").toString()), 
 				Integer.parseInt(o.get("row").toString()), 

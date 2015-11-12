@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -29,7 +30,12 @@ import sg.edu.ntu.cz2002.moblima.view.GeneralView;
 
 public class CineplexManager {
 	static Scanner sc = new Scanner(System.in);
-	
+
+	/**
+	 * Admin User Interface to CRUD the adiitional charges/discount for
+	 * ticket base price, extra charges for different cinema class, movie types,
+	 * age group, day and seat type
+	 */
 	public void runAdminChargesManagement() {
 		int choice;
 		String st;
@@ -128,43 +134,48 @@ public class CineplexManager {
 					if (select == seatMenus.length)
 						exit2 = true;
 					else {
-						setCharge("Seat", select);
+						setCharge(SeatType.class, select);
 						exit2 = false;
 					}
-					} while (!exit2);
-					exit = false;
-					break;
-				default:
-					exit = true;
-				}
-			} while (!exit);
+				} while (!exit2);
+				exit = false;
+				break;
+			default:
+				exit = true;
+			}
+		} while (!exit);
 	}
 	
-	public void setCharge(String className, int choice) {
+	/**
+	 * Prompt user to set new charges to respective type
+	 * @param classType Class of respective type
+	 * @param choice Choice from 1 to n, refer to available choices
+	 */
+	public void setCharge(Object classType, int choice) {
 		String st;
 		Settings settings = SettingsDao.getSettings();
-		
-		if (className == "CinemaClass") {
+
+		if (classType.getClass().isInstance(CinemaClass.class)) {
 			HashMap<CinemaClass, Double> c = settings.getCinemaClassCharges();
 			System.out.println("\nOriginal charge for cinema class of " + Cinema.getCinemaClassStringFromChoice(choice) + 
-				" is " + c.get(Cinema.getCinemaClassEnumFromChoice(choice)));
+					" is " + c.get(Cinema.getCinemaClassEnumFromChoice(choice)));
 		}
-		else if (className == "MovieType") {
+		else if (classType.getClass().isInstance(MovieType.class)) {
 			HashMap<MovieType, Double> m = settings.getMovieTypeCharges();
 			System.out.println("\nOriginal charge for movie type of " + Movie.getTypeStringFromChoice(choice) + 
 					" is " + m.get(Movie.getTypeEnumFromChoice(choice)));
 		}
-		else if (className == "AgeGroup") {
+		else if (classType.getClass().isInstance(AgeGroup.class)) {
 			HashMap<AgeGroup, Double> a = settings.getAgeGroupCharges();
 			System.out.println("\nOriginal charge for age group of " + Ticket.getAgeGroupStringFromChoice(choice) + 
 					" is " + a.get(Ticket.getAgeGroupEnumFromChoice(choice)));
 		}
-		else if (className == "Day") {
+		else if (classType.getClass().isInstance(Day.class)) {
 			HashMap<Day, Double> d = settings.getDayCharges();
 			System.out.println("\nOriginal charge for day type " + Showtime.getDayStringFromChoice(choice) + 
 					" is " + d.get(Showtime.getDayEnumFromChoice(choice)));
 		}
-		else if (className == "Seat") {
+		else if (classType.getClass().isInstance(SeatType.class)) {
 			HashMap<SeatType, Double> d = settings.getSeatTypeCharges();
 			System.out.println("\nOriginal multiplier for seat type " + Seat.getSeatTypeStringFromChoice(choice) + 
 					" is " + d.get(Seat.getSeatTypeEnumFromChoice(choice)));
@@ -177,24 +188,24 @@ public class CineplexManager {
 		System.out.print("Confirm (Y|N): ");
 		st = sc.nextLine();
 		if (st.equalsIgnoreCase("Y")) {
-			if (className == "CinemaClass") {
-				System.out.println("\nNew cinema class charge: " + value);
+			if (classType.getClass().isInstance(CinemaClass.class)) {
+				System.out.println("\nNew cinema class ["+Cinema.getCinemaClassStringFromChoice(choice)+"] charge: " + value);
 				settings.setCinemaClassCharges(choice, value);
 			}
-			else if (className == "MovieType") {
-				System.out.println("\nNew movie type charge: " + value);
+			else if (classType.getClass().isInstance(MovieType.class)) {
+				System.out.println("\nNew movie type ["+Movie.getTypeStringFromChoice(choice)+"] charge: " + value);
 				settings.setMovieTypeCharges(choice, value);
 			}
-			else if (className == "AgeGroup") {
-				System.out.println("\nNew age group charge: " + value);
+			else if (classType.getClass().isInstance(AgeGroup.class)) {
+				System.out.println("\nNew age group ["+Ticket.getAgeGroupStringFromChoice(choice)+"] charge: " + value);
 				settings.setAgeGroupCharges(choice, value);
 			}
-			else if (className == "Day") {
-				System.out.println("\nNew day type charge: " + value);
+			else if (classType.getClass().isInstance(Day.class)) {
+				System.out.println("\nNew day type ["+Showtime.getDayStringFromChoice(choice)+"] charge: " + value);
 				settings.setDayCharges(choice, value);
 			}
 			else {
-				System.out.println("\nNew seat type multiplier: " + value);
+				System.out.println("\nNew seat type ["+Seat.getSeatTypeStringFromChoice(choice)+"] multiplier: " + value);
 				settings.setSeatTypeCharges(choice, value);
 			}
 			SettingsDao.save();
@@ -203,7 +214,7 @@ public class CineplexManager {
 		else 
 			return;
 	}
-	
+
 
 	public boolean loginAdmin(Data data){
 		System.out.println("Please enter your username and password for authorisation");
@@ -221,60 +232,45 @@ public class CineplexManager {
 		}
 		return false;
 	}
-	
+
+	/**
+	 * Print every charges for every type of Cinema Class,
+	 * Movie Type, Age Group, Day Type and Seat Type
+	 */
 	public void printCharge() {
-//		int i;
-		
 		Settings s = SettingsDao.getSettings();
 		Double basePrice = s.getBasePrice();
 		System.out.println("\nBase price for a ticket: " + basePrice);
-		
+
 		HashMap<CinemaClass, Double> cinemaClass = s.getCinemaClassCharges();
 		System.out.println("\n<< CINEMA CLASS >>");
-//		i = 0;
-		for (CinemaClass v: cinemaClass.keySet()) {
-			System.out.println(Cinema.getCinemaClassStringFromCinemaClass(v) +
-					", Charge: " + cinemaClass.get(v));
-//			i++;
-		}
-		
+		for (CinemaClass v: cinemaClass.keySet())
+			System.out.println(Cinema.getCinemaClassStringFromCinemaClass(v) + ", Charge: " + cinemaClass.get(v));
+
 		HashMap<MovieType, Double> movieType = s.getMovieTypeCharges();
 		System.out.println("\n<< MOVIE TYPE >>");
-//		i = 0;
-		for (MovieType v: movieType.keySet()) {
-			System.out.println(Movie.getTypeStringFromMovieType(v) +
-					", Charge: " + movieType.get(v));
-//			i++;
-		}
+		for (MovieType v: movieType.keySet()) 
+			System.out.println(Movie.getTypeStringFromMovieType(v) + ", Charge: " + movieType.get(v));
 
 		HashMap<AgeGroup, Double> ageGroup = s.getAgeGroupCharges();
 		System.out.println("\n<< AGE GROUP >>");
-//		i = 0;
-		for (AgeGroup v: ageGroup.keySet()) {
-			System.out.println(Ticket.getAgeGroupStringFromAgeGroup(v) +
-					", Charge: " + ageGroup.get(v));
-//			i++;
-		}
+		for (AgeGroup v: ageGroup.keySet())
+			System.out.println(Ticket.getAgeGroupStringFromAgeGroup(v) + ", Charge: " + ageGroup.get(v));
 
 		HashMap<Day, Double> day = s.getDayCharges();
 		System.out.println("\n<< DAY TYPE >>");
-//		i = 0;
-		for (Day v: day.keySet()) {
-			System.out.println(Showtime.getDayStringFromDay(v) +
-					", Charge: " + day.get(v));
-//			i++;
-		}
-		
+		for (Day v: day.keySet())
+			System.out.println(Showtime.getDayStringFromDay(v) + ", Charge: " + day.get(v));
+
 		HashMap<SeatType, Double> seat = s.getSeatTypeCharges();
 		System.out.println("\n<< SEAT TYPE >>");
-//		i = 0;
-		for (SeatType v: seat.keySet()) {
-			System.out.println(Seat.getSeatTypeStringFromSeatType(v) +
-					", Multiplier: " + seat.get(v));
-//			i++;
-		}
+		for (SeatType v: seat.keySet())
+			System.out.println(Seat.getSeatTypeStringFromSeatType(v) + ", Multiplier: " + seat.get(v));
 	}
-	
+
+	/**
+	 * Admin User Interface for CRUD of public holidays
+	 */
 	public void runAdminHolidayManagement(){
 		String[] menus = {"Show current year calendar", 
 				"Show specific calendar of year", 
@@ -302,12 +298,15 @@ public class CineplexManager {
 				break;
 			case 3: 
 				t = 0;
+				ArrayList<String> sorted = new ArrayList<String>();
 				year = Calendar.getInstance().get(Calendar.YEAR);
 				System.out.println("List of Holidays in Current Year("+year+")");
 				for(String h: SettingsDao.getHolidays()){
 					String[] holidayParts = h.split("\\/");
-					if(Integer.parseInt(holidayParts[2]) == year)
+					if(Integer.parseInt(holidayParts[2]) == year) {
+						sorted.add(holidayParts[0]+" "+new DateFormatSymbols().getMonths()[Integer.parseInt(holidayParts[1])-1]+" "+year);
 						System.out.println((++t)+". "+holidayParts[0]+" "+new DateFormatSymbols().getMonths()[Integer.parseInt(holidayParts[1])-1]+" "+year);
+					}
 				}
 				if(t==0)
 					System.out.println("No record found");
@@ -339,7 +338,6 @@ public class CineplexManager {
 						month = sc.nextInt();
 						sc.nextLine();
 					}while(month<1 || month>12);
-//					month--;
 					c = new GregorianCalendar(year, month-1, 1);
 					c.setTimeZone(TimeZone.getTimeZone("Asia/Singapore"));
 					do{
@@ -425,6 +423,11 @@ public class CineplexManager {
 		}while(!exit);
 	}
 
+	/**
+	 * Calculate overall rating from reviews provided by movie goers
+	 * @param movieId Unique ID of user
+	 * @return Average rating of the movie
+	 */
 	public double calculateOverallRating(int movieId) {
 		HashMap<Integer, Review> reviews = ReviewDao.findByMovieId(movieId);
 		double rating = 0;
@@ -445,21 +448,45 @@ public class CineplexManager {
 			return 0;
 	}
 	
-	  @SuppressWarnings({ "rawtypes", "unchecked" })
+	/**
+	 * Sort a hash map by its value
+	 * @param map
+	 * @return
+	 */
+	@SuppressWarnings({ "rawtypes", "unchecked" })
 	public HashMap sortByValues(HashMap map) { 
-	       List l = new LinkedList(map.entrySet());
-	       Collections.sort(l, new Comparator() {
-	            public int compare(Object o1, Object o2) {
-	               return ((Comparable) ((Map.Entry) (o2)).getValue())
-	                  .compareTo(((Map.Entry) (o1)).getValue());
-	            }
-	       });
+		List l = new LinkedList(map.entrySet());
+		Collections.sort(l, new Comparator() {
+			public int compare(Object o1, Object o2) {
+				return ((Comparable) ((Map.Entry) (o2)).getValue())
+						.compareTo(((Map.Entry) (o1)).getValue());
+			}
+		});
 
-	       HashMap sortedHashMap = new LinkedHashMap();
-	       for (Iterator it = l.iterator(); it.hasNext();) {
-	              Map.Entry entry = (Map.Entry) it.next();
-	              sortedHashMap.put(entry.getKey(), entry.getValue());
-	       } 
-	       return sortedHashMap;
-	  }
+		HashMap sortedHashMap = new LinkedHashMap();
+		for (Iterator it = l.iterator(); it.hasNext();) {
+			Map.Entry entry = (Map.Entry) it.next();
+			sortedHashMap.put(entry.getKey(), entry.getValue());
+		} 
+		return sortedHashMap;
+	}
+	
+	public static class MyObject implements Comparable<MyObject> {
+		private Date dateTime;
+
+		public Date getDateTime() {
+			return dateTime;
+		}
+
+		public void setDateTime(Date datetime) {
+			this.dateTime = datetime;
+		}
+
+		@Override
+		public int compareTo(MyObject o) {
+			if (getDateTime() == null || o.getDateTime() == null)
+				return 0;
+			return getDateTime().compareTo(o.getDateTime());
+		}
+	}
 }

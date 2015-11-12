@@ -17,12 +17,22 @@ public class CineplexApp {
 		this.cineplexMgr = cineplexMgr;
 	}
 	
+	/**
+	 * List all the cineplexes details in database
+	 * @param cineplexes
+	 * @param showId
+	 */
 	public void listCineplexesView(HashMap<Integer, Cineplex> cineplexes, boolean showId){
 		for (Cineplex c: cineplexes.values()) {
 			listCineplexView(c, showId);
 		}
 	}
 
+	/**
+	 * List the specific cineplex detail
+	 * @param c
+	 * @param showId
+	 */
 	public void listCineplexView(Cineplex c, boolean showId){
 		if (showId)
 			System.out.println("Cineplex ID: " + c.getId());
@@ -31,6 +41,9 @@ public class CineplexApp {
 		System.out.print("\n");
 	}
 
+	/**
+	 * Main interface of admin
+	 */
 	public void printView(){
 		int choice;
 		String[] menus = {"Public Holiday Management", "Ticket Charges Management","Back to previous menu"};
@@ -48,9 +61,12 @@ public class CineplexApp {
 		}while(true);
 	}
 	
+	/**
+	 * List ranking of the movie by ticket sales or by overall reviews' rating
+	 */
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	public void listRanking() {
-	    String[] menus = {"By ticket sales", "By overall reviews' rating"};
+	    String[] menus = {"By ticket sales", "By overall reviews' rating", "Back to previous menu"};
 		HashMap<String, Double> rankList = new HashMap<String, Double>();
 	    int choice = GeneralView.printMenuAndReturnChoice("Admin Panel > List top 5 ranking", menus);
 	    if (choice == 1) {
@@ -90,9 +106,10 @@ public class CineplexApp {
 	    if (set.isEmpty() && choice == 2) {
 	    	System.out.println("\nNo rating is available in all movies.");
 	    }
+	    int limit = 5;
 	    while(it.hasNext()) {
 	    	Map.Entry entry = (Map.Entry)it.next();
-	    	if (!Double.isNaN(Double.parseDouble(entry.getValue().toString()))) {
+	    	if (!Double.isNaN(Double.parseDouble(entry.getValue().toString())) && limit != 0) {
 	    		if (choice == 1) {
 	    			System.out.print("\nRank " + index + ". << " + entry.getKey() + " >>, Total sales = ");
 	    			System.out.format("%.0f", entry.getValue());
@@ -101,6 +118,7 @@ public class CineplexApp {
 	    			System.out.print("\nRank " + index + ". << " + entry.getKey() + " >>, rating = ");
 	    			System.out.format("%.1f", entry.getValue());
 	    		}
+	    		limit--;
 	    		index++;
 	    	}
 	    }

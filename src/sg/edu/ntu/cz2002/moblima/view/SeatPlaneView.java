@@ -104,6 +104,7 @@ public class SeatPlaneView {
 	}
 	
 	private static void printScreen(int width){
+		System.out.print("\n");	
 		System.out.print("   ");
 		for(int i=0; i<width; i++)
 			System.out.print("***");

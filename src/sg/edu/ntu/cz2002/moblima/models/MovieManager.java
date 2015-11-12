@@ -14,12 +14,22 @@ public class MovieManager {
 	CineplexManager cineplexMgr = new CineplexManager();
 	static Scanner sc = new Scanner(System.in);
 
+	/**
+	 * List all the movie details in database
+	 * @param movies
+	 * @param showId
+	 */
 	public void listMoviesView(HashMap<Integer, Movie> movies, boolean showId){
 		for(Movie m: movies.values()){
 			listMovieView(m, showId);
 		}
 	}
 
+	/**
+	 * List specific movie detail
+	 * @param m
+	 * @param showId
+	 */
 	protected void listMovieView(Movie m, boolean showId){
 		if(showId)
 			System.out.println("Movie ID: "+m.getId());
@@ -43,6 +53,9 @@ public class MovieManager {
 		System.out.print("\n");
 	}
 
+	/**
+	 * Interface for user to select which movie to be edited
+	 */
 	protected void editMovieViewController(){
 		boolean exit = false;
 		int choice, it;
@@ -52,7 +65,7 @@ public class MovieManager {
 			choice = GeneralView.printMenuAndReturnChoice("Admin Panel > Movie Listing Management > Update Movie", menu);
 			switch(choice){
 			case 1:
-				System.out.print("Enter ID of movie that you want to modify: ");
+				System.out.print("\nEnter ID of movie that you want to modify: ");
 				it = sc.nextInt();
 				sc.nextLine();
 				Movie m = MovieDao.findById(it);
@@ -81,6 +94,10 @@ public class MovieManager {
 		}while(!exit);
 	}
 
+	/**
+	 * Interface to edit the movie detail
+	 * @param m
+	 */
 	protected void updateMovieViewController(Movie m){
 		int choice, it;
 		String st, st2;
@@ -104,10 +121,10 @@ public class MovieManager {
 			case 1: 
 				exit2 = false;
 				do{
-					System.out.println("Current movie title: "+m.getTitle());
+					System.out.println("\nCurrent movie title: "+m.getTitle());
 					System.out.print("Update movie title to: ");
 					st = sc.nextLine();
-					System.out.println("Movie title: "+m.getTitle()+" -> "+st);
+					System.out.println("\nMovie title: "+m.getTitle()+" -> "+st);
 					System.out.println("Please confirm the record:\nTo edit, type Y\nTo redo, type N\nTo exit, type E");
 					System.out.print("Your choice: ");
 					st2 = sc.nextLine();
@@ -125,10 +142,10 @@ public class MovieManager {
 			case 2:
 				exit2 = false;
 				do{
-					System.out.println("Current movie director: "+m.getDirector());
+					System.out.println("\nCurrent movie director: "+m.getDirector());
 					System.out.print("Update movie director to: ");
 					st = sc.nextLine();
-					System.out.println("Movie director: "+m.getDirector()+" -> "+st);
+					System.out.println("\nMovie director: "+m.getDirector()+" -> "+st);
 					System.out.println("Please confirm the record:\nTo edit, type Y\nTo redo, type N\nTo exit, type E");
 					System.out.print("Your choice: ");
 					st2 = sc.nextLine();
@@ -148,7 +165,7 @@ public class MovieManager {
 				do{
 					exit2 = false;
 					boolean exit3 = false;
-					System.out.println("Current movie casts: ");
+					System.out.println("\nCurrent movie casts: ");
 					int i=0;
 					for(String c: m.getCasts())
 						System.out.println("\t"+(++i)+". "+c);
@@ -158,7 +175,7 @@ public class MovieManager {
 					case 1:
 						exit3 = false;
 						do{
-							System.out.print("New cast name: ");
+							System.out.print("\nNew cast name: ");
 							String st3 = sc.nextLine();
 							System.out.println("Confirm adding new cast with name "+st3);
 							System.out.println("Please confirm the record:\nTo add, type Y\nTo redo, type N\nTo exit, type E");
@@ -213,7 +230,7 @@ public class MovieManager {
 			case 4:
 				exit2 = false;
 				do{
-					System.out.println("Current movie status: "+m.getStatusString());
+					System.out.println("\nCurrent movie status: "+m.getStatusString());
 					do{
 						System.out.println("Movie status: ");
 						Movie.printMovieStatusChoice();
@@ -221,7 +238,7 @@ public class MovieManager {
 						it = sc.nextInt();
 						sc.nextLine();
 					}while(it<1 || it>4);
-					System.out.println("Movie status: "+m.getStatusString()+" -> "+Movie.getStatusStringFromChoice(it));
+					System.out.println("\nMovie status: "+m.getStatusString()+" -> "+Movie.getStatusStringFromChoice(it));
 					System.out.println("Please confirm the record:\nTo edit, type Y\nTo redo, type N\nTo exit, type E");
 					System.out.print("Your choice: ");
 					st2 = sc.nextLine();
@@ -239,10 +256,10 @@ public class MovieManager {
 			case 5:
 				exit2 = false;
 				do{
-					System.out.println("Current movie synopsis: \n"+m.getSynopsis());
+					System.out.println("\nCurrent movie synopsis: \n"+m.getSynopsis());
 					System.out.println("Update movie synopsis to: ");
 					st = sc.nextLine();
-					System.out.println("Movie synopsis: \n"+m.getSynopsis()+"\n->\n"+st);
+					System.out.println("\nMovie synopsis: \n"+m.getSynopsis()+"\n->\n"+st);
 					System.out.println("Please confirm the record:\nTo edit, type Y\nTo redo, type N\nTo exit, type E");
 					System.out.print("Your choice: ");
 					st2 = sc.nextLine();
@@ -260,10 +277,10 @@ public class MovieManager {
 			case 6:
 				exit2 = false;
 				do{
-					System.out.println("Current movie duration: " + m.getDuration());
+					System.out.println("\nCurrent movie duration: " + m.getDuration());
 					System.out.println("Update movie duration(in minutes) to: ");
 					it = sc.nextInt();
-					System.out.println("Movie duration: " + m.getDuration() + " -> " + it);
+					System.out.println("\nMovie duration: " + m.getDuration() + " -> " + it);
 					System.out.println("Please confirm the record:\nTo edit, type Y\nTo redo, type N\nTo exit, type E");
 					System.out.print("Your choice: ");
 					st2 = sc.nextLine();
@@ -280,7 +297,7 @@ public class MovieManager {
 			case 7:
 				exit2 = false;
 				do{
-					System.out.println("Current movie type: "+Movie.getTypeStringFromMovieType(m.getType()));
+					System.out.println("\nCurrent movie type: "+Movie.getTypeStringFromMovieType(m.getType()));
 					do{
 						System.out.println("Movie type: ");
 						Movie.printMovieTypeChoice();;
@@ -308,6 +325,9 @@ public class MovieManager {
 		}while(!exit);
 	}
 
+	/**
+	 * Remove a movie by changing its status to "End of Showing"
+	 */
 	protected void removeMovieViewController(){
 		int choice, it;
 		String st;
@@ -350,6 +370,11 @@ public class MovieManager {
 		}while(!exit);
 	}
 
+	/**
+	 * Interface to search a movie by movie title, director or status
+	 * @param showId
+	 * @param panel
+	 */
 	public void searchMovieViewController(boolean showId, String panel){
 		int choice, it;
 		String st;
@@ -397,6 +422,9 @@ public class MovieManager {
 		}while(!exit);
 	}
 
+	/**
+	 * Interface to add a new movie
+	 */
 	protected void addMovieViewController(){
 		int it, check = 0;
 		String st, name;
@@ -466,158 +494,144 @@ public class MovieManager {
 			}
 		}while(!exitNewMovie);
 	}
-	
-	  public void addReviewViewController(HashMap<Integer, Movie> movies) {
-		  int it, edit, movie, index;
-		  boolean movieExit, showExit;
-		  double dt;
-		  String st;
-		  DecimalFormat df = new DecimalFormat("#.##");
-		  df.setRoundingMode(RoundingMode.DOWN);
-		  Review r = new Review();
-		  movieExit = false;
-		  while (!movieExit) {
-			  System.out.println("Which movie you want to review for: ");
-			  index = 1;
-			  for (Movie m: movies.values()) {
-				  System.out.println(index + ". " + m.getTitle());
-				  index++;
-			  }
-			  System.out.print("\n");
-			  movie = sc.nextInt();
-			  sc.nextLine();
-			  r.setMovieId(movie);
-			  System.out.print("Enter name: ");
-			  st = sc.nextLine();
-			  r.setName(st);
-			  do {
-			  System.out.print("Enter rating: ");
-			  dt = sc.nextDouble();
-			  dt = Double.parseDouble(df.format(dt));
-			  if (dt < 1.0 || dt > 5.0)
-				  System.out.println("Enter only 1 - 5 [best]");
-			  sc.nextLine();
-			  } while (dt < 1.0 || dt > 5.0);
-			  r.setRating(dt);
-			  System.out.print("Enter comment: ");
-			  st = sc.nextLine();
-			  r.setComment(st);
-			  showExit = false;
-			  while (!showExit) {
-				  System.out.println("\nReviewing for movie <<" + movies.get(movie).getTitle() + ">>");
-				  System.out.println("Name: " + r.getName());
-				  System.out.println("Rating: " + r.getRating());
-				  System.out.println("Comment: " + r.getComment());
-				  String[] menus = {"Confirm to add review", "Edit entry", "Back to movie selection", "Back to main menu"};
-				  it = GeneralView.printMenuAndReturnChoice("Movie-goer Panel > Add Review", menus);
-				  switch (it) {
-				  case 1: 
-					  ReviewDao.save(r);
-					  HashMap<Integer, Review> reviews = new HashMap<Integer, Review>();
-					  reviews.put(r.getId(), r);
-					  movies.get(movie).setReviews(reviews);
-					  System.out.print("Review successfully added.");
-					  movieExit = true;
-					  showExit = true;
-					  break;
-				  case 2: 
-					  String[] editMenus = {"Edit name", "Edit rating", "Edit comment"};
-					  edit = GeneralView.printMenuAndReturnChoice("Add Review > Edit", editMenus);
-					  if (edit == 1) {
-						  System.out.print("Enter name: ");
-						  st = sc.nextLine();
-						  r.setName(st);
-					  }
-					  else if (edit == 2) {
-						  do {
-						  System.out.print("Enter rating: ");
-						  dt = sc.nextDouble();
-						  if (dt < 1.0 || dt > 5.0)
-							  System.out.println("Enter only 1 - 5 [best]");
-						  } while (dt < 1.0 || dt > 5.0);
-						  r.setRating(dt);
-					  }
-					  else {
-						  System.out.print("Enter comment: ");
-						  st = sc.nextLine();
-						  r.setComment(st);
-					  }
-					  movieExit = false;
-					  showExit = false;
-					  break;
-				  case 3:
-					  showExit = true;
-					  movieExit = false;
-					  break;
-				  case 4:
-					  showExit = true;
-					  movieExit = true;
-					  break;
-				  default:
-					  System.out.println("Invalid option.");
-					  break;
-				  }
-			  }
-		  }
-	  }
-	  
-	  protected void showReviews(HashMap<Integer, Movie> movies) {
-		  int index = 1;
-		  int movie;
-		  System.out.println("Which movie reviews you want to read?");
-		  for (Movie m: movies.values()) {
-			  System.out.println(index + ". " + m.getTitle());
-			  index++;
-		  }
-		  System.out.print("\n");
-		  movie = sc.nextInt();
-		  sc.nextLine();
-		  HashMap<Integer, Review> reviews = ReviewDao.findByMovieId(movie);
-		  index = 1;
-		  if (!reviews.isEmpty()) {
-			  for (Review r: reviews.values()) {
-				  System.out.print("\n");
-				  System.out.println("[" + MovieDao.findById(movie).getTitle() + "] " + "<< Review " + index + " >>");
-				  System.out.println("Name: " + r.getName());
-				  System.out.println("Rating: " + r.getRating());
-				  System.out.println("Comment: " + r.getComment());
-				  index++;
-			  }
-		  }
-		  else
-			  System.out.print("No past reviews.");
-	  }
-	  
-	  public void showReviewsByMovie(int movieId) {
-		  Movie m = MovieDao.findById(movieId);
-		  HashMap<Integer, Review> reviews = m.getReviews();
-		  int index = 1;
-		  if (!reviews.isEmpty()) {
-			  for (Review r: reviews.values()) {
-				  System.out.print("\n");
-				  System.out.println("[" + m.getTitle() + "] " + "<< Review " + index + " >>");
-				  System.out.println("Name: " + r.getName());
-				  System.out.println("Rating: " + r.getRating());
-				  System.out.println("Comment: " + r.getComment());
-				  index++;
-			  }
-		  }
-		  else
-			  System.out.print("No past reviews.");
-	  }
-	  
-		public int selectMovie(HashMap<Integer, Movie> movies) {
-			int i = 0;
-			int choice;
-			System.out.println("\nWhich movie you are interested in?");
-			for (Movie m : movies.values()) {
-				i++;
-				System.out.println(i + ". " + m.getTitle());
+
+	/**
+	 * Interface to add a review for a movie
+	 * @param movies
+	 */
+	public void addReviewViewController(HashMap<Integer, Movie> movies) {
+		int it, edit, movie, index;
+		boolean movieExit, showExit;
+		double dt;
+		String st;
+		DecimalFormat df = new DecimalFormat("#.##");
+		df.setRoundingMode(RoundingMode.DOWN);
+		Review r = new Review();
+		movieExit = false;
+		while (!movieExit) {
+			System.out.println("\nWhich movie you want to review for: ");
+			index = 1;
+			for (Movie m: movies.values()) {
+				System.out.println(index + ". " + m.getTitle());
+				index++;
 			}
-			do {
-				choice = sc.nextInt();
-			} while (choice < 0 || choice > i);
+			System.out.print("\n");
+			movie = sc.nextInt();
 			sc.nextLine();
-			return choice;
+			r.setMovieId(movie);
+			System.out.print("Enter name: ");
+			st = sc.nextLine();
+			r.setName(st.toUpperCase());
+			do {
+				System.out.print("Enter rating: ");
+				dt = sc.nextDouble();
+				dt = Double.parseDouble(df.format(dt));
+				if (dt < 1.0 || dt > 5.0)
+					System.out.println("Enter only 1 - 5 [best]");
+				sc.nextLine();
+			} while (dt < 1.0 || dt > 5.0);
+			r.setRating(dt);
+			System.out.print("Enter comment: ");
+			st = sc.nextLine();
+			r.setComment(st);
+			showExit = false;
+			while (!showExit) {
+				System.out.println("\nReviewing for movie <<" + movies.get(movie).getTitle() + ">>");
+				System.out.println("Name: " + r.getName());
+				System.out.println("Rating: " + r.getRating());
+				System.out.println("Comment: " + r.getComment());
+				String[] menus = {"Confirm to add review", "Edit entry", "Back to movie selection", "Back to main menu"};
+				it = GeneralView.printMenuAndReturnChoice("Movie-goer Panel > Add Review", menus);
+				switch (it) {
+				case 1: 
+					ReviewDao.save(r);
+					HashMap<Integer, Review> reviews = new HashMap<Integer, Review>();
+					reviews.put(r.getId(), r);
+					movies.get(movie).setReviews(reviews);
+					System.out.print("Review successfully added.");
+					movieExit = true;
+					showExit = true;
+					break;
+				case 2: 
+					String[] editMenus = {"Edit name", "Edit rating", "Edit comment"};
+					edit = GeneralView.printMenuAndReturnChoice("Add Review > Edit", editMenus);
+					if (edit == 1) {
+						System.out.print("Enter name: ");
+						st = sc.nextLine();
+						r.setName(st.toUpperCase());
+					}
+					else if (edit == 2) {
+						do {
+							System.out.print("Enter rating: ");
+							dt = sc.nextDouble();
+							if (dt < 1.0 || dt > 5.0)
+								System.out.println("Enter only 1 - 5 [best]");
+						} while (dt < 1.0 || dt > 5.0);
+						r.setRating(dt);
+					}
+					else {
+						System.out.print("Enter comment: ");
+						st = sc.nextLine();
+						r.setComment(st);
+					}
+					movieExit = false;
+					showExit = false;
+					break;
+				case 3:
+					showExit = true;
+					movieExit = false;
+					break;
+				case 4:
+					showExit = true;
+					movieExit = true;
+					break;
+				default:
+					System.out.println("Invalid option.");
+					break;
+				}
+			}
 		}
+	}
+
+	/**
+	 * List all the previous reviews made by others for a particular movie
+	 * @param movieId
+	 */
+	public void showReviewsByMovie(int movieId) {
+		Movie m = MovieDao.findById(movieId);
+		HashMap<Integer, Review> reviews = m.getReviews();
+		int index = 1;
+		if (!reviews.isEmpty()) {
+			for (Review r: reviews.values()) {
+				System.out.print("\n");
+				System.out.println("[" + m.getTitle() + "] " + "<< Review " + index + " >>");
+				System.out.println("Name: " + r.getName());
+				System.out.println("Rating: " + r.getRating());
+				System.out.println("Comment: " + r.getComment());
+				index++;
+			}
+		}
+		else
+			System.out.print("No past reviews.");
+	}
+
+	/**
+	 * Select a movie from a list of movies from database
+	 * @param movies
+	 * @return
+	 */
+	public int selectMovie(HashMap<Integer, Movie> movies) {
+		int i = 0;
+		int choice;
+		System.out.println("\nWhich movie you are interested in?");
+		for (Movie m : movies.values()) {
+			i++;
+			System.out.println(i + ". " + m.getTitle());
+		}
+		do {
+			choice = sc.nextInt();
+		} while (choice < 0 || choice > i);
+		sc.nextLine();
+		return choice;
+	}
 }

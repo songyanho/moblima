@@ -12,18 +12,36 @@ public class Cinema {
 	protected String name;
 	protected CinemaClass cinemaClass;
 	protected int cineplexId;
-	@Deprecated
-	protected int seatNum;
 	protected int seatPlaneId;
+
+	public enum CinemaClass {
+		PREMIUM, PLATINUM, GOLD, NORMAL;
+	}
 
 	public Cinema() {
 		this.id = CinemaDao.getLastId() + 1;
 	}
-	
-	public enum CinemaClass {
-		PREMIUM, PLATINUM, GOLD, NORMAL;
+
+	/**
+	 * Constructor strictly for Database Initialization
+	 * @param id Unique ID of Cinema
+	 * @param name Name of Cinema
+	 * @param cinemaClass Cinema Class in ordinal
+	 * @param cineplexId Unique ID points to parent Cineplex
+	 * @param seatPlaneId Unique ID of the seat plane
+	 */
+	public Cinema(int id, String name, int cinemaClass, int cineplexId, int seatPlaneId) {
+		this.id = id;
+		this.name = name;
+		this.cinemaClass = Cinema.getCinemaClassEnumFromOrdinal(cinemaClass);
+		this.cineplexId = cineplexId;
+		this.seatPlaneId = seatPlaneId;
 	}
-	
+
+	/**
+	 * Assign enum of CinemaClass from user choice
+	 * @param choice
+	 */
 	public void setCinemaClassFromChoice(int choice) {
 		switch (choice) {
 		case 1: 
@@ -39,49 +57,63 @@ public class Cinema {
 			this.cinemaClass = CinemaClass.NORMAL;
 		}
 	}
-	
+
+	/**
+	 * Return ordinal value of enum CinemaClass from user choice
+	 * @param choice
+	 * @return
+	 */
 	public static CinemaClass getCinemaClassEnumFromChoice(int choice) {
 		return choice == 1? CinemaClass.PREMIUM:
 			   choice == 2? CinemaClass.PLATINUM:
 			   choice == 3? CinemaClass.GOLD:
 				   			CinemaClass.NORMAL;
 	}
-	
+
+	/**
+	 * Assign enum CinemaClass from its ordinal value 
+	 * @param ordinal
+	 * @return 
+	 */
 	public static CinemaClass getCinemaClassEnumFromOrdinal(int ordinal) {
 		return ordinal == CinemaClass.PREMIUM.ordinal() ? CinemaClass.PREMIUM:
 			   ordinal == CinemaClass.PLATINUM.ordinal() ? CinemaClass.PLATINUM:
 			   ordinal == CinemaClass.GOLD.ordinal() ? CinemaClass.GOLD:
 				   CinemaClass.NORMAL;
 	}
-	
+
+	/**
+	 * Return the name of enum CinemaClass from user choice
+	 * @param choice
+	 * @return "Premium", "Platinum", "Gold", "Normal"
+	 */
 	public static String getCinemaClassStringFromChoice(int choice) {
 		return choice == 1? "Premium":
 			   choice == 2? "Platinum":
 			   choice == 3? "Gold":
 				   			"Normal";
 	}
-	
+
+	/**
+	 * Return the name of enum CinemaClass from CinemaClass itself
+	 * @param choice
+	 * @return "Premium", "Platinum", "Gold", "Normal"
+	 */
 	public static String getCinemaClassStringFromCinemaClass(CinemaClass choice) {
 		return choice == CinemaClass.PREMIUM? "Premium":
 			   choice == CinemaClass.PLATINUM? "Platinum":
 			   choice == CinemaClass.GOLD? "Gold":
 				   			"Normal";
 	}
-	
+
+	/**
+	 * Print all the available choices in CinemaClass
+	 */
 	public static void printCinemaClassChoice() {
 		for (CinemaClass cc: CinemaClass.values())
 			System.out.print("\t" + (cc.ordinal()+1) + ". " + cc.name());
 	}
-	
-	public Cinema(int id, String name, int cinemaClass, int cineplexId, int seatNum, int seatPlaneId) {
-		this.id = id;
-		this.name = name;
-		this.cinemaClass = Cinema.getCinemaClassEnumFromOrdinal(cinemaClass);
-		this.cineplexId = cineplexId;
-		this.seatNum = seatNum;
-		this.seatPlaneId = seatPlaneId;
-	}
-	
+
 	public String getName() {
 		return name;
 	}
@@ -105,48 +137,35 @@ public class Cinema {
 	public void setId(int id) {
 		this.id = id;
 	}
-	
+
 	@Deprecated
 	public void setCinemaClass(CinemaClass cinemaClass) {
 		this.cinemaClass = cinemaClass;
-	}
-	
-	public int getSeatNum() {
-		return seatNum;
-	}
-
-	public void setSeatNum(int seatNum) {
-		this.seatNum = seatNum;
 	}
 
 	public CinemaClass getCinemaClass() {
 		return cinemaClass;
 	}
-	
+
+	/**
+	 * Return the name of CinemaClass in this class
+	 * @return
+	 */
 	public String getCinemaClassString() {
-		return this.cinemaClass == CinemaClass.PREMIUM? "PREMIUM":
-			   this.cinemaClass == CinemaClass.PLATINUM? "PLATINUM":
-			   this.cinemaClass == CinemaClass.GOLD? "GOLD":
-				   	"NORMAL";
+		return this.cinemaClass == CinemaClass.PREMIUM? "Premium":
+			   this.cinemaClass == CinemaClass.PLATINUM? "Platinum":
+			   this.cinemaClass == CinemaClass.GOLD? "Gold":
+				   	"Normal";
 	}
-	
-	
-	
-	/*
-	public void assign(int seatId, int ticketId) {
-		if (seat.get(seatId).ticket.getTicketId() == -1) {
-			seat.get(seatId).assign(ticketId);
-			this.setNumEmptySeat(this.getNumEmptySeat() - 1);
-		}
-		else
-			System.out.println("Seat already assigned to a customer.");
-	}
-	*/
 	
 	public int getSeatPlaneId() {
 		return seatPlaneId;
 	}
-	
+
+	/**
+	 * Return SeatPlane object from SeatPlaneDao
+	 * @return
+	 */
 	public SeatPlane getSeatPlane(){
 		return SeatPlaneDao.findById(this.seatPlaneId);
 	}
@@ -162,22 +181,20 @@ public class Cinema {
 		o.put("name", this.name);
 		o.put("cinemaClass", this.cinemaClass.ordinal());
 		o.put("cineplexid", this.cineplexId);
-		o.put("seatNum", this.seatNum);
 		o.put("seatplaneid", this.seatPlaneId);
 		return o;
 	}
-	
+
 	public static Cinema fromJSONObject(JSONObject o){
 		return new Cinema(
 				Integer.parseInt(o.get("id").toString()), 
 				o.get("name").toString(), 
 				Integer.parseInt(o.get("cinemaClass").toString()), 
 				Integer.parseInt(o.get("cineplexid").toString()),
-				Integer.parseInt(o.get("seatNum").toString()),
 				Integer.parseInt(o.get("seatplaneid").toString())
 				);
 	}
-	
+
 	public static HashMap<String, JSONObject> toJSONObjects(HashMap<Integer, Cinema> o){
 		HashMap<String, JSONObject> a = new HashMap<String, JSONObject>();
 		Set<Integer> s = o.keySet();
@@ -186,7 +203,7 @@ public class Cinema {
 		}
 		return a;
 	}
-	
+
 	@SuppressWarnings("unchecked")
 	public static HashMap<Integer, Cinema> fromJSONObjects(JSONObject o){
 		HashMap<Integer, Cinema> a = new HashMap<Integer, Cinema>();

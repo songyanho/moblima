@@ -1,6 +1,5 @@
 package sg.edu.ntu.cz2002.moblima.models;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Set;
@@ -11,13 +10,12 @@ import sg.edu.ntu.cz2002.moblima.dao.SeatDao;
 import sg.edu.ntu.cz2002.moblima.models.Seat.SeatType;
 
 public class SeatPlane implements StandardData {
-	
+
 	protected int id;
 	protected String name;
 	protected int totalSeat;
 	protected int row;
 	protected int column;
-//	protected int[][] seatArray;
 
 	public SeatPlane(int id, String name, int totalSeat, int row, int column) {
 		this.id = id;
@@ -67,6 +65,11 @@ public class SeatPlane implements StandardData {
 		this.column = column;
 	}
 
+	/**
+	 * Return a 2D matrix view of seat arrangement
+	 * @param t
+	 * @return
+	 */
 	public int[][] getSeatArray(HashMap<Integer, Ticket> t) {
 		int[][] seatArray = new int[row][column];
 		for(int j=0; j<row; j++){

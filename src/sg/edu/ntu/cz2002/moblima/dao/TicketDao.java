@@ -38,13 +38,14 @@ public class TicketDao {
 		return ts;
 	}
 	
-	public static Ticket findByShowtimeId(int showtimeId) {
+	public static HashMap<Integer, Ticket> findByShowtimeId(int showtimeId) {
 		if(records == null) initialize();
+		HashMap<Integer, Ticket> bookedTickets = new HashMap<Integer, Ticket>();
 		for (Ticket t: records.values()) {
 			if (t.getShowtime() == showtimeId)
-				return records.get(t);
+				bookedTickets.put(t.getId(), t);
 		}
-		return null;
+		return bookedTickets;
 	}
 	
 	public static int getLastId(){
@@ -77,20 +78,17 @@ public class TicketDao {
 	}
 	
 	public static boolean save(Ticket t) {
-		// TODO Auto-generated method stub
 		if(records == null) initialize();
 		records.put(t.getId(), t);
 		return save();
 	}
 
 	public static boolean save() {
-		// TODO Auto-generated method stub
 		if(records == null) initialize();
 		return Database.save(DATABASE_NAME, Ticket.toJSONObjects(records));
 	}
 
 	public static void initialize() {
-		// TODO Auto-generated method stub
 		JSONObject t = Database.getObject(DATABASE_NAME);
 		records = Ticket.fromJSONObjects(t);
 	}

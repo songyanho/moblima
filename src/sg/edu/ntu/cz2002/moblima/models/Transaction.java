@@ -16,14 +16,11 @@ public class Transaction {
 	protected String email;
 	protected String mobileNumber;
 	protected Double total;
-//	protected Ticket ticket;
-//	protected int ticketId;
-	
+
 	public Transaction() {
 		this.id = TransactionDao.getLastId() + 1;
-		//this.ticketId = TicketDao.getLastId() + 1;
 	}
-	
+
 	public Transaction(int id, String TID, String name, String email, String mobileNumber, Double total) {
 		this.id = id;
 		this.TID = TID;
@@ -31,9 +28,8 @@ public class Transaction {
 		this.email = email;
 		this.mobileNumber = mobileNumber;
 		this.total = total;
-//		this.ticketId = ticketId;
 	}
-	
+
 	public int getId() {
 		return id;
 	}
@@ -62,11 +58,19 @@ public class Transaction {
 	public void setMobileNumber(String mobileNumber) {
 		this.mobileNumber = mobileNumber;
 	}
-	
+
+	/**
+	 * Get a hash map of ticket list of same transaction id from database
+	 * @return
+	 */
 	public HashMap<Integer, Ticket> getTickets() {
 		return TicketDao.findTicketsByTransactionId(this.id);
 	}
-	
+
+	/**
+	 * Set the transaction ID in the format of (cinema code - year - month - date - hour - minute)
+	 * @param showtime
+	 */
 	public void setTID(Showtime showtime) {
 		SimpleDateFormat formatter = new SimpleDateFormat("yyyyMMddHHmm");
 		Date date = new Date();
@@ -74,9 +78,15 @@ public class Transaction {
 		this.TID = String.format("%03d", code) + formatter.format(date);
 	}
 
+	/**
+	 * Method to print the transaction ID, customer's name, email and mobile number, including the ticket information
+	 */
 	public void printTransaction() {
 		TicketManager ticketMgr = new TicketManager();
-		System.out.println("\nTransaction ID: " + this.TID);
+		System.out.print("\n");
+		for(int i=0; i<78; i++)
+			System.out.print("=");
+		System.out.println("\n\nTransaction ID: " + this.TID);
 		System.out.println("Customer name: " + this.name);
 		System.out.println("Customer email: " + this.email);
 		System.out.println("Customer mobile number: " + this.mobileNumber);
@@ -89,7 +99,7 @@ public class Transaction {
 		}
 		System.out.print("\n");
 	}
-	
+
 	public Double getTotal() {
 		return total;
 	}
@@ -109,7 +119,7 @@ public class Transaction {
 		o.put("total", this.total);
 		return o;
 	}
-	
+
 	public static Transaction fromJSONObject(JSONObject o) {
 		return new Transaction(
 				Integer.parseInt(o.get("id").toString()),
@@ -119,7 +129,7 @@ public class Transaction {
 				o.get("mobileNumber").toString(),
 				Double.parseDouble(o.get("total").toString()));
 	}
-	
+
 	public static HashMap<String, JSONObject> toJSONObjects(HashMap<Integer, Transaction> o){
 		HashMap<String, JSONObject> a = new HashMap<String, JSONObject>();
 		Set<Integer> s = o.keySet();
@@ -128,7 +138,7 @@ public class Transaction {
 		}
 		return a;
 	}
-	
+
 	@SuppressWarnings("unchecked")
 	public static HashMap<Integer, Transaction> fromJSONObjects(JSONObject o){
 		HashMap<Integer, Transaction> a = new HashMap<Integer, Transaction>();

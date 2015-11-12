@@ -9,6 +9,9 @@ public class ShowtimeApp {
 		this.showtimeMgr = showtimeMgr;
 	}
 	
+	/**
+	 * Main interface for admin to list, search, add, update and remove showtime
+	 */
 	public void printView(){
 		int choice;
 		boolean exit = false;
