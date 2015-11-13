@@ -222,8 +222,7 @@ public class TicketManager {
 				t.setName(name.toUpperCase()); t.setEmail(email); t.setMobileNumber(mobileNumber);
 				t.setTID(showtime); t.setTotal(total);
 				TransactionDao.add(t);
-				for (int i = 0; i < seatIds.size(); i++) {
-					Ticket tt = ticketList.get(i);
+				for (Ticket tt: ticketList) {
 					tt.setId(TicketDao.getLastId() + 1);
 					TicketDao.add(tt);
 					System.out.print("\nTransaction ID " + t.getTID());
