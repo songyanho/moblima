@@ -106,10 +106,6 @@ public class SeatPlaneView {
 					System.out.print("   ");
 				}
 				seatToId.put(character.charAt(rr)+""+rowToId[i]+"", seatArray[j][i]);
-				Seat thisSeat = SeatDao.findById(Math.abs(seatArray[j][i]));
-				if(thisSeat!=null){
-				thisSeat.setSeatName(character.charAt(rr)+""+rowToId[i]+"");
-				SeatDao.save();}
 			}
 			System.out.println("");
 			rr++;
