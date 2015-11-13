@@ -2,6 +2,8 @@ package sg.edu.ntu.cz2002.moblima.view;
 
 import java.util.HashMap;
 
+import sg.edu.ntu.cz2002.moblima.dao.SeatDao;
+import sg.edu.ntu.cz2002.moblima.models.Seat;
 import sg.edu.ntu.cz2002.moblima.models.SeatPlane;
 import sg.edu.ntu.cz2002.moblima.models.Showtime;
 
@@ -104,6 +106,10 @@ public class SeatPlaneView {
 					System.out.print("   ");
 				}
 				seatToId.put(character.charAt(rr)+""+rowToId[i]+"", seatArray[j][i]);
+				Seat thisSeat = SeatDao.findById(Math.abs(seatArray[j][i]));
+				if(thisSeat!=null){
+				thisSeat.setSeatName(character.charAt(rr)+""+rowToId[i]+"");
+				SeatDao.save();}
 			}
 			System.out.println("");
 			rr++;
