@@ -156,7 +156,7 @@ public class ShowtimeManager {
 				}
 				printShowtimeInformationView(s);
 				boolean exit2 = false;
-				String menu2[] = {"Change movie", "Change cinema" ,"Back to previous menu"};
+				String menu2[] = {"Change movie","Back to previous menu"};
 				do{
 					exit2 = false;
 					choice = GeneralView.printMenuAndReturnChoice("Admin Panel > Movie Showtime Management > Update showtimes ID: "+s.getId(), menu2);
@@ -218,9 +218,6 @@ public class ShowtimeManager {
 								System.out.println("Showtime with ID: "+s.getId()+" was not updated.");
 							}
 						}
-						break;
-					case 2:
-
 						break;
 					default:
 						exit2 = true;
