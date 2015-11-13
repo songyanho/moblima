@@ -121,7 +121,7 @@ public class ShowtimeManager {
 			for(Cineplex cine: sortedShowtimes.keySet()){
 				if (cine.getId() == selectedCineplex.getId()) {
 					if (!sortedShowtimes.get(cine).isEmpty()) {
-						showtimeOfTheDayView(cine, sortedShowtimes.get(cine), selectedMovie, df.format(cal.getTime()), true);
+						showtimeOfTheDayView(cine, sortedShowtimes.get(cine), selectedMovie, df.format(cal.getTime()), false);
 						ArrayList<Showtime> a = sortedShowtimes.get(cine);
 						for (Showtime s: a)
 							showtimeList.add(s.getId());

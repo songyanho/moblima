@@ -1,5 +1,6 @@
 package sg.edu.ntu.cz2002.moblima.dao;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 
@@ -18,6 +19,16 @@ public class SettingsDao {
 		// TODO Auto-generated method stub
 		if(settings == null) initialize();
 		return settings;
+	}
+	
+	public static ArrayList<String> getHolidaysInString(){
+		if(settings == null) initialize();
+		ArrayList<String> holidays = new ArrayList<String>();
+		SimpleDateFormat formatter = new SimpleDateFormat("d/M/yyyy");
+		for(Calendar c: settings.getHolidays()){
+			holidays.add(formatter.format(c.getTime()));
+		}
+		return holidays;
 	}
 	
 	public static ArrayList<Calendar> getHolidays(){

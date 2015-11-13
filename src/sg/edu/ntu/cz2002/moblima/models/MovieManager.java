@@ -280,6 +280,7 @@ public class MovieManager {
 					System.out.println("\nCurrent movie duration: " + m.getDuration());
 					System.out.println("Update movie duration(in minutes) to: ");
 					it = sc.nextInt();
+					sc.nextLine();
 					System.out.println("\nMovie duration: " + m.getDuration() + " -> " + it);
 					System.out.println("Please confirm the record:\nTo edit, type Y\nTo redo, type N\nTo exit, type E");
 					System.out.print("Your choice: ");

@@ -48,7 +48,7 @@ public class TicketManager {
 
 		do {
 			int i = 0;
-			System.out.println("\nTo book seat, please enter any seat ID from A1 to "+seatIdAlpha.get(seatIdAlpha.size()-1));
+			System.out.println("\nTo book seat, please enter any seat ID from A1 to I16");
 			System.out.println("To end seat selection, please enter \"END\"");
 			System.out.print("\nEnter seat ID: ");
 			seatId = sc.nextLine();
@@ -268,7 +268,7 @@ public class TicketManager {
 		Calendar cal = s.getDate();
 		cal.setTimeZone(TimeZone.getTimeZone("Asia/Singapore"));
 		String showtimeDateString = formatter.format(cal.getTime());
-		if(SettingsDao.getHolidays().contains(showtimeDateString))
+		if(SettingsDao.getHolidaysInString().contains(showtimeDateString))
 			return Day.PUBLICHOLIDAY;
 		check = cal.get(Calendar.DAY_OF_WEEK);
 		if (check == 7 || check == 1)
@@ -314,10 +314,15 @@ public class TicketManager {
 		Cinema cinema = ShowtimeDao.findById(t.getShowtime()).getCinema();
 		Showtime s = ShowtimeDao.findById(t.getShowtime());
 		Movie m = MovieDao.findById(s.getMovieId());
+		Day day = checkDayType(s);
+		if(day != s.getDayType()){
+			s.setDayType(day);
+			ShowtimeDao.save();
+		}
 		System.out.println("Cineplex: " + cineplex.getCineplexName() + ", " + cinema.getName() + " <" + cinema.getCinemaClassString() + ">");
 		System.out.println("Movie: " + m.getTitle() + " <" + Movie.getTypeStringFromMovieType(m.getType()) + ">");
 		System.out.println("Age group: " + t.getAgeGroupString());
-		System.out.println("Day type: " + Showtime.getDayStringFromDay(s.getDayType()));
+		System.out.println("Day type: " + Showtime.getDayStringFromDay(day));
 		System.out.println("Seat ID: " + t.getSeat().getSeatName() +" <"+Seat.getSeatTypeStringFromSeatType(t.getSeat().getSeatType())+">");
 		System.out.println("Ticket price: " + Math.round(t.getPrice()));
 		System.out.print("\n");
