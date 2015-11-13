@@ -55,6 +55,7 @@ public class Moblima {
 				"View booking history", 
 				"Enter review for movie",
 				"Show past reviews",
+				"List Top 5 Ranking",
 				"Quit"};
 		do {
 			HashMap<Integer, Movie> movies = MovieDao.findActiveMovie();
@@ -92,6 +93,11 @@ public class Moblima {
 			case 7:
 				it = movieMgr.selectMovie(movies);
 				movieMgr.showReviewsByMovie(it);
+				break;
+			case 8:
+				CineplexManager cineplexMgr = new CineplexManager();
+				CineplexApp cineplexApp = new CineplexApp(cineplexMgr);
+				cineplexApp.listRanking();
 				break;
 			default:
 				exit = true;
